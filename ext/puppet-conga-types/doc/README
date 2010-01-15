@@ -1,0 +1,80 @@
+This package includes several puppet types for storage management. The
+types are currently tied to RHEL/Fedora systems, as the storage
+management operations are all done through Conga, Red Hat's cluster
+and storage management application. The puppet types bypass the Conga
+front end and communicate directly with Conga's ricci-modstorage via
+stdin/stdout XML message passing. The conga source is located at
+sources.redhat.com:/cvs/cluster. Conga is currently in the pipeline
+to inclusion in either Fedora extras or core. For the moment, the
+conga source is located at sources.redhat.com:/cvs/cluster/conga
+
+These types could be extended to allow for multiplatform support in
+various ways, including porting the Conga storage module (~10,000
+lines C++ code), by writing additional platform-specific storage
+modules which communicate via the same XML API, or by modifying the
+puppet types directly.
+
+The only steps required to use these types is to make sure that the
+lib directory is included in RUBYLIB.
+
+The included types are:
+
+partition:
+
+This type doesn't really do much -- it's mainly a placeholder so that
+we can use Puppet's dependency mechanism to ensure that the partition
+is there before Puppet tries to actually create something on the
+partition. Currently, actual partition creation is not supported via
+puppet, since I haven't come up with a declarative way to do
+this. Before the partition is created, we don't know what it's
+identifier will be -- i.e. we can't say "if /dev/sda2 isn't created,
+create it".
+
+manifest example:
+  partition { "/dev/sdc1": ensure => present}
+
+filesystem:
+
+ext2/ext3 filesystem. Currently conga fs support is limited to
+ext2/ext3 -- with multiplatform support, this type may need to be
+generalized.  We'd also need to come up with a better scheme for
+handling type-specific attributes -- i.e. dir_index for ext
+filesystems, perhaps others for reiser or solaris filesystems, etc.
+
+TODO: support unit suffixes on block_size (4K vs. 4096)
+
+manifest example:
+  filesystem { "/dev/sdc3": 
+   	        block_size => 4096,
+	        dir_index => true,
+ 	        fstab => true,
+  	        fs_type => "ext3"
+	        label => "my_fs2",
+  	        mountpoint => "/misc/foo2"
+  }
+
+volumegroup:
+
+LVM volume group. physicalvolumes can be either a single partition (or
+RAID array), or an array of them.
+
+manifest example:
+  volumegroup { "my_vg1": physicalvolumes => ["/dev/sdc5", "/dev/sdb1"]}
+
+logicalvolume:
+
+LVM logical volume. The parent volume group is included in the path
+(i.e. in the below example, "my_vg1" is the volume group)
+
+TODO: support unit suffixes on size (20M vs. 20971520)
+
+manifest example:
+  logicalvolume { "/dev/my_vg1/my_lv10": size => 20971520}
+
+mdraid:
+
+MD Raid array. Currently, conga must be patched to support mdraid (see
+conga-patch-notes.txt).
+
+manifest example:
+  mdraid { "/dev/md12": level => raid5, partitions => ["/dev/sdc7", "/dev/sdc10"]}

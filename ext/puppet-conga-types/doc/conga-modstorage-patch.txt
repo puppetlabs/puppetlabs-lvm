@@ -1,0 +1,138 @@
+Index: ricci/modules/storage/MDRaid.cpp
+===================================================================
+RCS file: /cvs/cluster/conga/ricci/modules/storage/MDRaid.cpp,v
+retrieving revision 1.5
+diff -u -r1.5 MDRaid.cpp
+--- ricci/modules/storage/MDRaid.cpp	12 Jul 2006 18:27:26 -0000	1.5
++++ ricci/modules/storage/MDRaid.cpp	18 Jul 2006 21:33:15 -0000
+@@ -100,7 +100,7 @@
+ 	   iter_bd != mapper.targets.end();
+ 	   iter_bd++) {
+ 	if ((*iter_bd)->content->type == CONTENT_NONE_TYPE &&
+-	    (*iter_bd)->size() >= targets.front()->size())
++	    (*iter_bd)->size() >= sources.front()->size())
+ 	  new_sources.push_back(*iter_bd);
+       }
+     }
+@@ -166,6 +166,7 @@
+     devs.push_back((*iter)->path());
+   
+   string raid_path = mdadm::create_raid(temp.props.get("level").get_string(),
++					temp.props.get("md_device_num").get_int(),
+ 					devs);
+   
+   return counting_auto_ptr<Mapper>(new MDRaid(MDRAID_PREFIX + raid_path));
+@@ -233,6 +234,7 @@
+     throw string("not enough sources for mdraid");
+   props.set(Variable("min_sources", (long long) 2));
+   props.set(Variable("max_sources", (long long) new_sources.size()));
++  props.set(Variable("md_device_num", (long long) -1, (long long) -1, (long long) 29, (long long) 1));
+   
+   list<string> levels = mdadm::valid_raid_levels();
+   props.set(Variable("level", levels.front(), levels));
+Index: ricci/modules/storage/MDRaidTarget.cpp
+===================================================================
+RCS file: /cvs/cluster/conga/ricci/modules/storage/MDRaidTarget.cpp,v
+retrieving revision 1.2
+diff -u -r1.2 MDRaidTarget.cpp
+--- ricci/modules/storage/MDRaidTarget.cpp	16 May 2006 20:12:00 -0000	1.2
++++ ricci/modules/storage/MDRaidTarget.cpp	18 Jul 2006 21:33:15 -0000
+@@ -28,6 +28,7 @@
+ #include "utils.h"
+ #include "ContentFactory.h"
+ #include "ContentNone.h"
++#include "PV.h"
+ 
+ 
+ using namespace std;
+@@ -59,6 +60,8 @@
+ 	   iter++) {
+ 	content->add_replacement(*iter);
+       }
++      // add PV
++      content->add_replacement(counting_auto_ptr<ContentTemplate>(new PVTemplate()));
+     } else
+       content->add_replacement(counting_auto_ptr<ContentTemplate>(new ContentNoneTemplate()));
+   }
+Index: ricci/modules/storage/VG.cpp
+===================================================================
+RCS file: /cvs/cluster/conga/ricci/modules/storage/VG.cpp,v
+retrieving revision 1.4
+diff -u -r1.4 VG.cpp
+--- ricci/modules/storage/VG.cpp	28 Jun 2006 20:09:08 -0000	1.4
++++ ricci/modules/storage/VG.cpp	18 Jul 2006 21:33:15 -0000
+@@ -87,6 +87,9 @@
+   if (id == VG_PREFIX) {
+     list<counting_auto_ptr<Mapper> > mappers = 
+       MapperFactory::get_mappers(MAPPER_PT_TYPE);
++    list<counting_auto_ptr<Mapper> > raid_mappers = 
++      MapperFactory::get_mappers(MAPPER_MDRAID_TYPE);
++    mappers.splice(mappers.end(), raid_mappers);
+     for (list<counting_auto_ptr<Mapper> >::iterator iter_map = mappers.begin();
+ 	 iter_map != mappers.end();
+ 	 iter_map++) {
+Index: ricci/modules/storage/mdadm_wrapper.cpp
+===================================================================
+RCS file: /cvs/cluster/conga/ricci/modules/storage/mdadm_wrapper.cpp,v
+retrieving revision 1.3
+diff -u -r1.3 mdadm_wrapper.cpp
+--- ricci/modules/storage/mdadm_wrapper.cpp	16 May 2006 20:12:00 -0000	1.3
++++ ricci/modules/storage/mdadm_wrapper.cpp	18 Jul 2006 21:33:15 -0000
+@@ -197,13 +197,14 @@
+ 
+ string 
+ mdadm::create_raid(const string& level,
++		   const long long device_num,
+ 		   const list<string>& dev_paths)
+ {
+   string md_path_templ = "/dev/md";
+   string new_md_path = md_path_templ;
+   
+   list<mdraid> raids = mdadm::raids();
+-  for (long long i=1; i<30; i++) {
++  for (long long i=(device_num == -1 ? 1 : device_num); i<(device_num == -1 ? 30 : device_num+1); i++) {
+     string tmp_path = md_path_templ + utils::to_string(i);
+     bool found = false;
+     for (list<mdraid>::const_iterator iter = raids.begin();
+@@ -217,7 +218,7 @@
+     }
+   }
+   if (new_md_path == md_path_templ)
+-    throw string("no more raid devices allowed");
++    throw (device_num == -1) ? string("no more raid devices allowed") : string("specified raid device is not available");
+   
+   list<string>::size_type raid_devices = 3;
+   if (level == "raid1")
+@@ -266,14 +267,14 @@
+   vector<string> args;
+   args.push_back("--examine");
+   args.push_back("--scan");
+-  args.push_back("--brief");
++  args.push_back("--verbose");
+   args.push_back("--config=partitions");
+   string out, err;
+   int status;
+   if (utils::execute(MDADM_BIN_PATH, args, out, err, status))
+     throw string("execute failed");
+-  if (status)
+-    throw string("mdadm failed");
++  //if (status)
++  //  throw string("mdadm probe raids failed, out: " + out);
+   
+   // remove '\n'
+   string::size_type i = 0;
+Index: ricci/modules/storage/mdadm_wrapper.h
+===================================================================
+RCS file: /cvs/cluster/conga/ricci/modules/storage/mdadm_wrapper.h,v
+retrieving revision 1.2
+diff -u -r1.2 mdadm_wrapper.h
+--- ricci/modules/storage/mdadm_wrapper.h	16 May 2006 20:12:00 -0000	1.2
++++ ricci/modules/storage/mdadm_wrapper.h	18 Jul 2006 21:33:15 -0000
+@@ -87,6 +87,7 @@
+   static void stop_raid(const mdraid& raid);
+   
+   static std::string create_raid(const std::string& level,
++				 const long long device_num,
+ 				 const std::list<std::string>& dev_paths);
+   
+   

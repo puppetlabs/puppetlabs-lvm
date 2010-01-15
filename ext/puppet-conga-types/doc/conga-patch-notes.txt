@@ -1,0 +1,109 @@
+Currently conga-modstorage must be rebuilt with
+conga-modstorage-patch.txt applied to your cvs checkout in order
+configure mdraid devices with puppet. This should go away once we
+resolve these issues upstream.  The conga source is located at
+sources.redhat.com:/cvs/cluster
+
+The patch includes the following (a couple of these are nasty
+temporary hacks and labeled as such):
+
+1) **HACK** mdadm_wrapper: comment out error check for probing raids:
+
+   Out of the box, probing raids failed for me because mdadm seems to be
+   returning a status of '1' rather than '0' when probing raids while
+   otherwise working -- when modstorage gets this return value, it just
+   errors out. Commenting out this one error check, I can create a raid
+   array, but the source of this problem has not yet been found. I'm
+   not sure if it's a bug in mdadm v2.3.1 on FC5 or if this is an
+   acceptible return value (and thus a bug in modstorage).
+
+   Feedback from Jim and Stan:  
+     not sure what's going on here -- they'll look into this.
+
+2) mdadm_wrapper: use "--verbose" rather than "--brief" in "mdadm --examine --scan..." 
+
+   Modstorage was not presenting the source partition list for mdraid
+   (showing up as empty, which causes all sorts of problems). The
+   problem is mdadm_wrapper was passing "--brief" rather than
+   "--verbose" to "mdadm --examine --scan..." which causes the device
+    list to be suppressed.
+
+   Feedback from Jim and Stan:
+     They will apply this fix
+
+3) Allow the user to set the mdraid device explicitly
+
+   Modstorage iterates through /dev/md1 ... /dev/md29 and grabs the
+   first empty one. For declarative raid creation (i.e. create foo
+   unless it already exists) -- a requirement for puppet, we need to
+   be able to set this explicitly. I've come up with a fairly quick
+   fix for this, although a more elegant solution may be required. The
+   trick is that, while adding support for explicit device selection,
+   the default behavior of auto-selection should remain. What I've
+   done for now is add a single parameter to the mapper_template named
+   "md_device_num" -- if set to -1 (the default), the code grabs the
+   first available (preserving current behavior), and if the value is
+   between 0 and 29, then it creates /dev/md?? explicitly, erroring
+   out if it's already in use. This solution does result in one device
+   num (/dev/md0) which can be set explicitly but which will never be
+   automatically selected, but perhaps the skipping of /dev/md0 in the
+   auto-selection is a bug anyway.
+
+   It might be better to not overload the device num param and,
+   instead, use two separate parameters, a boolean
+   "use_explicit_device_num" and the existing "md_device_num" param
+   which will be ignored when use_explicit_device_num="false" -- I
+   took the single param approach first just to see if it would
+   actually work.
+
+   Feedback from Jim and Stan:
+     They will add this feature with the two-param approach rather
+     than what I've done. Once this is in place, we'll need to modify
+     the puppet type accordingly.
+
+4) **HACK** For mdraid, new partitions are not available to add to the
+   array unless the partition itself is larger than the target (not
+   the source) of the array. The target is the raid device itself --
+   is this correct behavior, or should we be comparing to the other
+   sources -- i.e. only add partitions to an array that are similar in
+   size to existing partitions. At the api level, mdadm lets me add
+   partitions that are smaller than the current ones, so perhaps this
+   check isn't needed at all? My situation is I have 6 available
+   partitions on one drive (obviously a testing-only setup) which were
+   all created with a size of "1000M" in fdisk. The sizes are actually
+   slightly different for some of them, so even when I modified the
+   code to compare the size of existing partitions (rather than the
+   whole array), not all of them show up as available.
+
+   The change here is to compare the size to the sources (actual
+   devices) rather than targets (the array itself). It's still not an
+   ideal fix because it fails in some cases with almost-equally-sized
+   partitions. 
+
+   Feedback from Jim and Stan:
+     They will incorporate this fix
+
+5) Allow lvm over raid.
+
+   The underlying tools already support this. The only changes to
+   modstorage were to include the /dev/md* block devices in
+   new_contents for volume groups and adding volume_group to
+   available_contents for mdraid targets. 
+
+   Feedback from Jim and Stan:
+     This was not supported in the initial version but should be
+     supported once the proper error checks to avoid loops
+     (lvm-over-raid-over-lvm-over...) are put in place.
+
+Usage notes:
+
+1) conga allows partitions to be first marked failed and then removed
+   from the array. Two separate steps are required. Is there any
+   reason for puppet to model the failed case, or should we just
+   manage a set of partitions for an array? Thus if a partition is
+   removed in the manifest, we will, fail and then remove that
+   partition in two sequential steps. As an alternative, we can allow
+   all three states, but this will definitely complicate the manifest
+   -- we'll need separate lists for failed and non-failed partitions
+   and validate a larger set of transitions.
+

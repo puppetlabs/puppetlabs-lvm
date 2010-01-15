@@ -17,6 +17,12 @@ Puppet::Type.newtype(:volume_group) do
 
     ensurable
 
+    autorequire :physical_volume do
+        self[:physical_volumes].collect do |pv|
+            [:physical_volume, pv]
+        end
+    end
+
     def generate
         @physical_volumes
     end

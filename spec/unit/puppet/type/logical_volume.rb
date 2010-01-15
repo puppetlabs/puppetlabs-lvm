@@ -8,7 +8,8 @@ describe Puppet::Type.type(:logical_volume) do
             :fstype => 'ext3',
             :volume_group => 'myvg',
             :size => '1g',
-            :ensure => :present
+            :ensure => :present,
+            :physical_volumes => %w{/disk/1 /disk/2}
         }
     end
 
@@ -20,19 +21,77 @@ describe Puppet::Type.type(:logical_volume) do
         @type.should be_depthfirst
     end
 
-    describe "the name parameter" do
+    describe "when specifying the name parameter" do
         it "should exist" do
             @type.attrclass(:name).should_not be_nil
         end
+
+        it "should not allow qualified files" do
+            lambda { @type.new :name => "my/lv" }.should raise_error(Puppet::Error)
+        end
+        
+        it "should support unqualified names" do
+            @type.new(:name => "mylv")[:name].should == "mylv"
+        end
     end
 
-    describe "the volume_group parameter" do
-        it "should exist" do
-            @type.attrclass(:volume_group).should_not be_nil
+    describe "when specifying the volume_group parameter" do
+        before do
+            @vgtype = Puppet::Type.type(:volume_group)
+        end
+
+        it "should not create a volume group if not specified" do
+            should_not_create(:vg)
+            with(valid_params_without(:volume_group))
+        end
+
+        it "should create a volume group if specified at initialization" do
+            should_create(:vg) { |args| args[:name] == "myvg" }
+            with(valid_params)
+        end
+
+        it "should include its physical volumes when creating the volume group if physical volumes are specified" do
+            should_create(:vg) { |args| args[:name] == "myvg" }
+            with(valid_params)
+        end
+
+        it "should configure the volume group for creation if the logical volume should exist" do
+            should_create(:vg) { |args| args[:ensure] == :present }
+            with(valid_params.merge(:ensure => :present))
+        end
+
+        it "should configure the volume group for deletion if the logical volume should not exist" do
+            should_create(:vg) { |args| args[:ensure] == :absent }
+            with(valid_params.merge(:ensure => :absent))
+        end
+
+        it "should not create volume groups if 'ensure' was not specified on the logical volume" do
+            should_not_create(:vg)
+            with(valid_params_without(:ensure))
+        end
+
+        it "should return a volume group instance when generating resources" do
+            resource = with(valid_params)
+            resource.generate.detect { |resource| resource.is_a?(@vgtype) }.should_not be_nil
+        end
+
+        it "should generate the resources from the volume group when generating a volume group" do
+            resource = with(valid_params)
+            resource.generate.detect { |resource| resource.is_a?(Puppet::Type.type(:physical_volume)) }.should_not be_nil
+        end
+
+        it "should return nil when no resources were generated" do
+            resource = with(valid_params_without(:volume_group))
+            resource.generate.detect { |resource| resource.is_a?(@vgtype) }.should be_nil
+        end
+
+        it "should support specifying a volume_group" do
+            should_create(:vg) { |args| args[:name] == "my_vg" }
+            with(valid_params.merge(:volume_group => "my_vg"))
         end
     end
     
-    describe "the 'ensure' parameter" do
+    describe "when specifying the 'ensure' parameter" do
         it "should exist" do
             @type.attrclass(:ensure).should_not be_nil
         end
@@ -83,13 +142,14 @@ describe Puppet::Type.type(:logical_volume) do
             with(valid_params_without(:ensure))
         end
 
-        it "should return filesystem  when generating resources" do
+        it "should return a filesystem when generating resources" do
             resource = with(valid_params)
-            resource.generate[0].should be_instance_of(@fstype)
+            resource.generate.detect { |resource| resource.is_a?(@fstype) }.should_not be_nil
         end
 
         it "should return nil when no resources were generated" do
-            with(valid_params_without(:fstype)).generate.should be_nil
+            resource = with(valid_params_without(:fstype))
+            resource.generate.detect { |resource| resource.is_a?(@fstype) }.should be_nil
         end
 
         it "should support specifying a filesystem" do

@@ -6,10 +6,9 @@ Puppet::Type.newtype(:volume_group) do
     end
 
     newparam(:physical_volumes) do
-        desc "The list of physical volumes to be included in the volume group.  Will automatically
-            configure any volumes that are unmanaged.  This will also remove physical volumes if the
-            volume group is being removed."
-
+        desc "The list of physical volumes to be included in the volume group; this
+             will automatically set these as dependencies, but they must be defined elsewhere
+             using the physical_volume resource type."
         munge do |pvs|
             pvs = Array(pvs)
         end
@@ -23,22 +22,4 @@ Puppet::Type.newtype(:volume_group) do
         end
     end
 
-    def generate
-        @physical_volumes
-    end
-
-    def initialize(*args)
-        super
-        @physical_volumes = create_physical_volumes if self[:physical_volumes]
-    end
-
-    private
-
-    def create_physical_volumes
-        return unless self[:ensure]
-
-        self[:physical_volumes].collect do |name|
-            Puppet::Type.type(:physical_volume).new(:name => name, :ensure => self[:ensure])
-        end
-    end
 end

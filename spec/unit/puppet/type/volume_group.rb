@@ -37,53 +37,20 @@ describe Puppet::Type.type(:volume_group) do
         end
     end
 
-    describe "when managing physical volumes" do
-        before do
-            @pvtype = Puppet::Type.type(:physical_volume)
+    describe "the 'physical_volumes' parameter" do
+        it "should exist" do
+            @type.attrclass(:physical_volumes).should_not be_nil
         end
 
-        it "should not create physical volumes if none are specified" do
-            should_not_create(:pv)
-            with(:name => "myvg", :ensure => :present)
+        it "should support a single value" do
+            with(:name => "myvg", :physical_volumes => 'mypv')[:physical_volumes].should == %w{mypv}
         end
 
-        it "should create a physical volume for each specified name at initialization" do
-            should_create(:pv) { |args| args[:name] == "/my/pv" }
-            with(:name => "myvg", :physical_volumes => %w{/my/pv}, :ensure => :present)
+        it "should support an array" do
+            with(:name => "myvg", :physical_volumes => %w{mypv otherpv})[:physical_volumes].should == %w{mypv otherpv}
         end
 
-        it "should configure the physical volumes for creation if the volume group should exist" do
-            should_create(:pv) { |args| args[:ensure] == :present }
-            with(:name => "myvg", :physical_volumes => %w{/my/pv}, :ensure => :present)
-        end
-
-        it "should configure the physical volumes for deletion if the volume group should not exist" do
-            should_create(:pv) { |args| args[:ensure] == :absent }
-            with(:name => "myvg", :physical_volumes => %w{/my/pv}, :ensure => :absent)
-        end
-
-        it "should not create physical volumes if 'ensure' was not specified on the volume group" do
-            should_not_create(:pv)
-            with(:name => "myvg", :physical_volumes => %w{/my/pv})
-        end
-
-        it "should return all created volume resources when generating resources" do
-            resource = with(:name => "myvg", :physical_volumes => %w{/my/pv}, :ensure => :present)
-            resource.generate[0].should be_instance_of(@pvtype)
-        end
-
-        it "should return nil when no resources were generated" do
-            with(:name => "myvg", :ensure => :present).generate.should be_nil
-        end
-
-        it "should support specifying a single volume" do
-            should_create(:pv) { |args| args[:name] == "/my/pv" }
-            with(:name => "myvg", :physical_volumes => "/my/pv", :ensure => :present)
-        end
-
-        it "should support specifying an array of volumes" do
-            should_create(:pv) { |args| args[:name] == "/my/pv" }
-            with(:name => "myvg", :physical_volumes => %w{/my/pv}, :ensure => :present)
-        end
     end
+
+    
 end

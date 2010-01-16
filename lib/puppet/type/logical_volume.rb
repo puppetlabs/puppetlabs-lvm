@@ -18,13 +18,8 @@ Puppet::Type.newtype(:logical_volume) do
 
     newparam(:volume_group) do
         desc "The volume group name associated with this logical volume.  This will automatically
-            create the volume group, and thus should only be used if this logical volume is likely
-            to be the only volume in the volume group."
-    end
-
-    newparam(:physical_volumes) do
-        desc "The physical volumes to use when creating a volume group.  This is only used when
-            creating volume groups."
+            set this volume group as a dependency, but it must be defined elsewhere using the
+            volume_group resource type."
     end
 
     newparam(:size) do
@@ -34,13 +29,12 @@ Puppet::Type.newtype(:logical_volume) do
     ensurable
 
     def generate
-        [@filesystem, @volume_group].compact
+        [@filesystem].compact
     end
 
     def initialize(*args)
         super
         @filesystem = create_filesystem if self[:fstype]
-        @volume_group = create_volume_group if self[:volume_group]
     end
 
     private
@@ -48,13 +42,6 @@ Puppet::Type.newtype(:logical_volume) do
     def create_filesystem
         return unless self[:ensure]
         Puppet::Type.type(:filesystem).new(:name => filesystem_name, :fstype => self[:fstype], :size => self[:size], :ensure => self[:ensure])
-    end
-
-    def create_volume_group
-        return unless self[:ensure]
-        args = {:name => self[:volume_group], :ensure => self[:ensure]}
-        args.merge!(:physical_volumes => self[:physical_volumes]) if self[:physical_volumes]
-        Puppet::Type.type(:volume_group).new(args)
     end
 
     def filesystem_name

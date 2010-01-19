@@ -23,13 +23,15 @@ module Helpers
     end
 
     # Creates a new resource of +type+
-    def with(opts = {})
-        @type.new(opts)
+    def with(opts = {}, &block)
+        resource = @type.new(opts)
+        block ? (yield resource) : resource
     end 
 
     # Returns a lambda creating a resource (ready for use with +should+)
-    def specifying(opts = {})
-        lambda { with(opts) }
+    def specifying(opts = {}, &block)
+        specification = lambda { with(opts) }
+        block ? (yield specification) : specification
     end 
 
     # Sets up an expection that a resource for +type+ is not created    
@@ -53,10 +55,41 @@ module Helpers
     
 end
 
+module Matchers
+
+    class AutoRequireMatcher
+        def initialize(*expected)
+            @expected = expected
+        end
+
+        def matches?(resource)
+            resource_type = resource.class
+            configuration = resource_type.instance_variable_get(:@autorequires) || {}
+            @autorequires = configuration.inject([]) do |memo, (param, block)|
+                memo + resource.instance_eval(&block)
+            end
+            @autorequires.include?(@expected)
+        end
+        def failure_message_for_should
+            "expected resource autorequires (#{@autorequires.inspect}) to include #{@expected.inspect}"
+        end
+        def failure_message_for_should_not
+            "expected resource autorequires (#{@autorequires.inspect}) to not include #{@expected.inspect}"
+        end
+    end
+
+    # call-seq:
+    #   autorequire :logical_volume, 'mylv'
+    def autorequire(type, name)
+        AutoRequireMatcher.new(type, name)
+    end
+    
+end
 
 Spec::Runner.configure do |config|
     config.mock_with :mocha
     config.include Helpers
+    config.include Matchers
 end
 
 # We need this because the RAL uses 'should' as a method.  This

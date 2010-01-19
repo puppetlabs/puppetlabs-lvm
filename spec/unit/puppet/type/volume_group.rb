@@ -9,10 +9,6 @@ describe Puppet::Type.type(:volume_group) do
         Puppet::Type.type(:volume_group).should_not be_nil
     end
 
-    it "should be depth-first" do
-        Puppet::Type.type(:volume_group).should be_depthfirst
-    end
-
     describe "the name parameter" do
         it "should exist" do
             @type.attrclass(:name).should_not be_nil
@@ -50,6 +46,17 @@ describe Puppet::Type.type(:volume_group) do
             with(:name => "myvg", :physical_volumes => %w{mypv otherpv})[:physical_volumes].should == %w{mypv otherpv}
         end
 
+        it "should support autorequire a single physical volume" do
+            with(:name => "myvg", :physical_volumes => 'mypv').must autorequire(:physical_volume, 'mypv')
+        end
+
+        it "should support autorequire multiple physical volumes" do
+            with(:name => "myvg", :physical_volumes => %w{mypv otherpv}) do |resource|
+                resource.must autorequire(:physical_volume, 'mypv')
+                resource.must autorequire(:physical_volume, 'otherpv')
+            end
+        end
+        
     end
 
     

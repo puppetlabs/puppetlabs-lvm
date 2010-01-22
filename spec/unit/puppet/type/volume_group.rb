@@ -3,6 +3,7 @@ Dir.chdir(File.dirname(__FILE__)) { (s = lambda { |f| File.exist?(f) ? require(f
 describe Puppet::Type.type(:volume_group) do
     before do
         @type = Puppet::Type.type(:volume_group)
+        stub_default_provider!
     end
 
     it "should exist" do

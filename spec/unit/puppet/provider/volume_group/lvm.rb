@@ -12,7 +12,7 @@ describe provider_class do
     describe 'when creating' do
         it "should execute 'vgcreate'" do
             @resource.expects(:[]).with(:name).returns('myvg')
-            @resource.expects(:[]).with(:physical_volumes).returns(%w{/dev/hda})
+            @resource.expects(:should).with(:physical_volumes).returns(%w{/dev/hda})
             @provider.expects(:vgcreate).with('myvg', '/dev/hda')
             @provider.create
         end

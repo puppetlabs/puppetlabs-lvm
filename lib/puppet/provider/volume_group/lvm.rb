@@ -12,7 +12,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
     defaultfor :kernel => :linux
 
     def create
-        vgcreate(@resource[:name], *@resource[:physical_volumes])
+        vgcreate(@resource[:name], *@resource.should(:physical_volumes))
     end
     
     def destroy

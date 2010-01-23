@@ -40,11 +40,11 @@ describe Puppet::Type.type(:volume_group) do
         end
 
         it "should support a single value" do
-            with(:name => "myvg", :physical_volumes => 'mypv')[:physical_volumes].should == %w{mypv}
+            with(:name => "myvg", :physical_volumes => 'mypv').should(:physical_volumes).should == %w{mypv}
         end
 
         it "should support an array" do
-            with(:name => "myvg", :physical_volumes => %w{mypv otherpv})[:physical_volumes].should == %w{mypv otherpv}
+            with(:name => "myvg", :physical_volumes => %w{mypv otherpv}).should(:physical_volumes).should == %w{mypv otherpv}
         end
 
         it "should support autorequire a single physical volume" do

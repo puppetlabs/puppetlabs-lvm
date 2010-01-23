@@ -57,8 +57,5 @@ describe Puppet::Type.type(:volume_group) do
                 resource.must autorequire(:physical_volume, 'otherpv')
             end
         end
-        
     end
-
-    
 end

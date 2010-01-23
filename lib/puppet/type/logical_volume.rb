@@ -17,7 +17,7 @@ Puppet::Type.newtype(:logical_volume) do
             volume_group resource type."
     end
 
-    newparam(:size) do
+    newproperty(:size) do
         desc "The size of the logical volume. Set to undef to use all available space"
     end
     

@@ -1,24 +1,24 @@
 Puppet::Type.type(:volume_group).provide :lvm do
-    
+
     desc "Manages LVM volume groups"
-    
+
     commands :vgcreate => 'vgcreate',
              :vgremove => 'vgremove',
              :vgs      => 'vgs',
              :vgextend => 'vgextend',
              :vgreduce => 'vgreduce'
-    
+
     confine    :kernel => :linux
     defaultfor :kernel => :linux
 
     def create
         vgcreate(@resource[:name], *@resource.should(:physical_volumes))
     end
-    
+
     def destroy
         vgremove(@resource[:name])
     end
-    
+
     def exists?
         vgs(@resource[:name])
     end
@@ -56,5 +56,4 @@ Puppet::Type.type(:volume_group).provide :lvm do
     rescue Puppet::ExecutionFailure => detail
         raise Puppet::Error, "Could not extend volume group '#{@resource[:name]}' with physical volume #{volume} (#{detail.message})"
     end
-    
 end

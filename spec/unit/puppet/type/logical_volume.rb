@@ -9,6 +9,7 @@ describe Puppet::Type.type(:logical_volume) do
             :size => '1g',
             :ensure => :present
         }
+        stub_default_provider!
     end
 
     it "should exist" do
@@ -35,6 +36,14 @@ describe Puppet::Type.type(:logical_volume) do
         end
     end
 
+    describe "when specifying the 'size' property" do
+        it "should exist" do
+            @type.attrclass(:size).should_not be_nil
+        end
+        it 'should support setting a value' do
+            with(valid_params).should(:size).should == valid_params[:size]
+        end
+    end
     
     describe "when specifying the 'ensure' parameter" do
         it "should exist" do

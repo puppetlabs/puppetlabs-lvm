@@ -1,4 +1,6 @@
 module Helpers
+
+    TEST_DIR = Pathname.new(__FILE__).parent + '..'
     
     TYPES = {
         :pv => :physical_volume,
@@ -49,6 +51,10 @@ module Helpers
         end
         provider = @type.provider(:lvm)
         @type.stubs(:defaultprovider => provider)
+    end
+
+    def fixture(name, ext = '.txt')
+        (TEST_DIR + 'fixtures' + "#{name}#{ext}").read
     end
     
 end

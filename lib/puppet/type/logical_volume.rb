@@ -1,4 +1,5 @@
 Puppet::Type.newtype(:logical_volume) do
+    ensurable
 
     newparam(:name) do
         desc "The name of the logical volume.  This is the unqualified name and will be
@@ -17,10 +18,7 @@ Puppet::Type.newtype(:logical_volume) do
             volume_group resource type."
     end
 
-    newproperty(:size) do
+    newparam(:size) do
         desc "The size of the logical volume. Set to undef to use all available space"
     end
-    
-    ensurable
-
 end

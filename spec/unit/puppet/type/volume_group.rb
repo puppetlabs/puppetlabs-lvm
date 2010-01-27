@@ -20,15 +20,16 @@ describe Puppet::Type.type(:volume_group) do
         it "should exist" do
             @type.attrclass(:ensure).should_not be_nil
         end
-
         it "should support 'present' as a value" do
-            with(:name => "myvg", :ensure => :present)[:ensure].should == :present
+            with(:name => "myvg", :ensure => :present) do |resource|
+                resource[:ensure].should == :present
+            end
         end
-
         it "should support 'absent' as a value" do
-            with(:name => "myvg", :ensure => :absent)[:ensure].should == :absent
+            with(:name => "myvg", :ensure => :absent) do |resource|
+                resource[:ensure].should == :absent
+            end
         end
-
         it "should not support other values" do
             specifying(:name => "myvg", :ensure => :foobar).should raise_error(Puppet::Error)
         end
@@ -38,19 +39,21 @@ describe Puppet::Type.type(:volume_group) do
         it "should exist" do
             @type.attrclass(:physical_volumes).should_not be_nil
         end
-
         it "should support a single value" do
-            with(:name => "myvg", :physical_volumes => 'mypv').should(:physical_volumes).should == %w{mypv}
+            with(:name => "myvg", :physical_volumes => 'mypv') do |resource|
+                resource.should(:physical_volumes).should == %w{mypv}
+            end
         end
-
         it "should support an array" do
-            with(:name => "myvg", :physical_volumes => %w{mypv otherpv}).should(:physical_volumes).should == %w{mypv otherpv}
+            with(:name => "myvg", :physical_volumes => %w{mypv otherpv}) do |resource|
+                resource.should(:physical_volumes).should == %w{mypv otherpv}
+            end
         end
-
         it "should support autorequire a single physical volume" do
-            with(:name => "myvg", :physical_volumes => 'mypv').must autorequire(:physical_volume, 'mypv')
+            with(:name => "myvg", :physical_volumes => 'mypv') do |resource|
+                resource.must autorequire(:physical_volume, 'mypv')
+            end
         end
-
         it "should support autorequire multiple physical volumes" do
             with(:name => "myvg", :physical_volumes => %w{mypv otherpv}) do |resource|
                 resource.must autorequire(:physical_volume, 'mypv')

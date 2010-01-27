@@ -1,5 +1,4 @@
 Puppet::Type.type(:volume_group).provide :lvm do
-
     desc "Manages LVM volume groups"
 
     commands :vgcreate => 'vgcreate',
@@ -7,9 +6,6 @@ Puppet::Type.type(:volume_group).provide :lvm do
              :vgs      => 'vgs',
              :vgextend => 'vgextend',
              :vgreduce => 'vgreduce'
-
-    confine    :kernel => :linux
-    defaultfor :kernel => :linux
 
     def create
         vgcreate(@resource[:name], *@resource.should(:physical_volumes))

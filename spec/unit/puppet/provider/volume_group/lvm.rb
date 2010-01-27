@@ -3,7 +3,6 @@ Dir.chdir(File.dirname(__FILE__)) { (s = lambda { |f| File.exist?(f) ? require(f
 provider_class = Puppet::Type.type(:volume_group).provider(:lvm)
 
 describe provider_class do
-
     before do
         @resource = stub("resource")
         @provider = provider_class.new(@resource)
@@ -25,6 +24,4 @@ describe provider_class do
             @provider.destroy
         end
     end
-    
-    
 end

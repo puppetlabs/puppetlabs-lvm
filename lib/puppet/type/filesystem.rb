@@ -1,6 +1,17 @@
 require 'pathname'
 
 Puppet::Type.newtype(:filesystem) do
+    desc "The filesystem type"
+
+    ensurable do
+        newvalue(/^\w+$/, :event => :created_filesystem) do |fstype|
+            provider.create(fstype)
+        end
+
+        def insync?(desired_fstype)
+            provider.fstype == desired_fstype
+        end
+    end
 
     newparam(:name) do
         validate do |value|
@@ -10,18 +21,7 @@ Puppet::Type.newtype(:filesystem) do
         end
     end
 
-    newparam(:fstype) do
-        desc "The filesystem type. Valid values depend on the operating system."
-    end
-
-    newparam(:size) do
-        desc "The size of the logical volume.  Set to undef to use all available space."
-    end
-
-    ensurable
-
     autorequire :logical_volume do
         [[:logical_volume, File.basename(self[:name])]]
     end
-
 end

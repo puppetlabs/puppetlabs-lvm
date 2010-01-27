@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:volume_group) do
-    @depthfirst = true
+    ensurable
 
     newparam(:name) do
         desc "The name of the volume group."
@@ -11,12 +11,9 @@ Puppet::Type.newtype(:volume_group) do
              using the physical_volume resource type."
     end
 
-    ensurable
-
     autorequire :physical_volume do
         self[:physical_volumes].collect do |pv|
             [:physical_volume, pv]
         end
     end
-
 end

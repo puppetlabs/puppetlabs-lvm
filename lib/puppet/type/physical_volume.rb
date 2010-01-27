@@ -1,6 +1,7 @@
 require 'pathname'
 
 Puppet::Type.newtype(:physical_volume) do
+    ensurable
 
     newparam(:name) do
         validate do |value|
@@ -9,6 +10,4 @@ Puppet::Type.newtype(:physical_volume) do
             end
         end
     end
-
-    ensurable
 end

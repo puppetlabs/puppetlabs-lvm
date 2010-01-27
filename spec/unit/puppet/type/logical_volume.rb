@@ -20,11 +20,9 @@ describe Puppet::Type.type(:logical_volume) do
         it "should exist" do
             @type.attrclass(:name).should_not be_nil
         end
-
         it "should not allow qualified files" do
             lambda { @type.new :name => "my/lv" }.should raise_error(Puppet::Error)
         end
-        
         it "should support unqualified names" do
             @type.new(:name => "mylv")[:name].should == "mylv"
         end
@@ -36,12 +34,12 @@ describe Puppet::Type.type(:logical_volume) do
         end
     end
 
-    describe "when specifying the 'size' property" do
+    describe "when specifying the 'size' parameter" do
         it "should exist" do
             @type.attrclass(:size).should_not be_nil
         end
         it 'should support setting a value' do
-            with(valid_params).should(:size).should == valid_params[:size]
+            with(valid_params)[:size].should == valid_params[:size]
         end
     end
     
@@ -49,18 +47,16 @@ describe Puppet::Type.type(:logical_volume) do
         it "should exist" do
             @type.attrclass(:ensure).should_not be_nil
         end
-
         it "should support 'present' as a value" do
             with(valid_params)[:ensure].should == :present
         end
-
         it "should support 'absent' as a value" do
-            with(valid_params.merge(:ensure => :absent))[:ensure].should == :absent
+            with(valid_params.merge(:ensure => :absent)) do |resource|
+                resource[:ensure].should == :absent
+            end
         end
-
         it "should not support other values" do
             specifying(valid_params.merge(:ensure => :foobar)).should raise_error(Puppet::Error)
         end
     end
-
 end

@@ -24,9 +24,9 @@ Puppet::Type.type(:volume_group).provide :lvm do
     def physical_volumes=(new_volumes = [])
         existing_volumes = physical_volumes
         extraneous = existing_volumes - new_volumes
-        extraneous.each { |volume| extend_with(volume) }
+        extraneous.each { |volume| reduce_with(volume) }
         missing = new_volumes - existing_volumes
-        missing.each { |volume| reduce_with(volume) }
+        missing.each { |volume| extend_with(volume) }
     end
 
     def physical_volumes

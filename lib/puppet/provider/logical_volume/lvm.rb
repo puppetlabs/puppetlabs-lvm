@@ -22,6 +22,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     
     def exists?
         lvs(@resource[:name])
+    rescue Puppet::ExecutionFailure
+        false
     end
 
     private
@@ -29,4 +31,5 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     def path
         "/dev/#{@resource[:volume_group]}/#{@resource[:name]}"
     end
+    
 end

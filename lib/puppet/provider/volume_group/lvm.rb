@@ -17,6 +17,8 @@ Puppet::Type.type(:volume_group).provide :lvm do
 
     def exists?
         vgs(@resource[:name])
+    rescue Puppet::ExecutionFailure
+        false
     end
 
     def physical_volumes=(new_volumes = [])

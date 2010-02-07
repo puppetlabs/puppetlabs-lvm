@@ -12,7 +12,9 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     end
 
     def exists?
-        pvs =~ /^\s*#{Regexp.quote @resource[:name]}\s*/m
+        pvs(@resource[:name])
+    rescue Puppet::ExecutionFailure
+        false
     end
 
 end

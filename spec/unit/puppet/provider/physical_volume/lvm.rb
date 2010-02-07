@@ -19,7 +19,7 @@ describe provider_class do
     describe 'when destroying' do
         it "should execute 'pvdestroy'" do
             @resource.expects(:[]).with(:name).returns('/dev/hdx')
-            @provider.expects(:pvdestroy).with('/dev/hdx')
+            @provider.expects(:pvremove).with('/dev/hdx')
             @provider.destroy
         end
     end

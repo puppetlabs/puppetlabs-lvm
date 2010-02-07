@@ -1,14 +1,14 @@
 Puppet::Type.type(:physical_volume).provide(:lvm) do
     desc "Manages LVM physical volumes"
 
-    commands :pvcreate  => 'pvcreate', :pvdestroy => 'pvdestroy'
+    commands :pvcreate  => 'pvcreate', :pvremove => 'pvremove'
 
     def create
         pvcreate(@resource[:name])
     end
 
     def destroy
-        pvdestroy(@resource[:name])
+        pvremove(@resource[:name])
     end
 
     def exists?

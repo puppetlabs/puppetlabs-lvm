@@ -3,6 +3,7 @@ Puppet::Type.newtype(:volume_group) do
 
     newparam(:name) do
         desc "The name of the volume group."
+        isnamevar
     end
 
     newproperty(:physical_volumes, :array_matching => :all) do

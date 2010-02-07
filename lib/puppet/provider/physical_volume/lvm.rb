@@ -10,4 +10,9 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     def destroy
         pvdestroy(@resource[:name])
     end
+
+    def exists?
+        File.exist?(@resource[:name])
+    end
+
 end

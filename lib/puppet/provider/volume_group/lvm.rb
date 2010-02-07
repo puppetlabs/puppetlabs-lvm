@@ -28,7 +28,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
     end
 
     def physical_volumes
-        lines = pvs(@resource[:name], '-o', 'pv_name,vg_name', '--separator', ',')
+        lines = vgs(@resource[:name], '-o', 'pv_name,vg_name', '--separator', ',')
         lines.inject([]) do |memo, line|
             pv, vg = line.split(',')
             if vg == @resource[:name]

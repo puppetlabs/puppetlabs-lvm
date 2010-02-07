@@ -1,7 +1,7 @@
 Puppet::Type.type(:physical_volume).provide(:lvm) do
     desc "Manages LVM physical volumes"
 
-    commands :pvcreate  => 'pvcreate', :pvremove => 'pvremove'
+    commands :pvcreate  => 'pvcreate', :pvremove => 'pvremove', :pvs => 'pvs'
 
     def create
         pvcreate(@resource[:name])
@@ -12,7 +12,7 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     end
 
     def exists?
-        File.exist?(@resource[:name])
+        pvs =~ /^\s*#{Regexp.quote @resource[:name]}\s*/m
     end
 
 end

@@ -27,7 +27,7 @@ describe provider_class do
     describe "when checking existence" do
         it "should execute 'pvs'" do
             @resource.expects(:[]).with(:name).returns('/dev/sdb')
-            @provider.expects(:pvs).returns(fixture(:pvs))
+            @provider.expects(:pvs).returns(true)
             @provider.should be_exists
         end
     end

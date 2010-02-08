@@ -1,5 +1,0 @@
-Filesystem    Type    Size  Used Avail Use% Mounted on
-/dev/sda1     ext3     19G  1.8G   16G  10% /
-tmpfs        tmpfs    257M     0  257M   0% /lib/init/rw
-varrun       tmpfs    257M   44K  257M   1% /var/run
-varlock      tmpfs    257M     0  257M   0% /var/lock

@@ -1,3 +1,0 @@
-PV         VG         Fmt  Attr PSize PFree
-  /dev/sda2  VolGroup00 lvm2 a-   7.88G    0 
-  /dev/sdb              lvm2 --   4.00G 4.00G

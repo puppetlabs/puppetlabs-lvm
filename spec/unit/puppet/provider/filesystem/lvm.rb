@@ -16,18 +16,4 @@ describe provider_class do
         end
     end
 
-    describe "when collecting info" do
-        it "should parse the output of 'df'" do
-            @provider.expects(:df).returns(fixture(:df))
-            info = @provider.info
-            info['/dev/sda1'].should == {
-                'fstype' => 'ext3',
-                'size' => '19G',
-                'used' => '1.8G',
-                'avail' => '16G',
-                'used_percentage' => '10%',
-                'mounted' => '/'
-            }
-        end
-    end
 end

@@ -21,12 +21,14 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
     
     def exists?
-        lvs(@resource[:name])
-    rescue Puppet::ExecutionFailure
-        false
+        lvs(@resource[:volume_group]) =~ lvs_pattern
     end
 
     private
+
+    def lvs_pattern
+      /\s+#{Regexp.quote @resource[:name]}\s+/
+    end
 
     def path
         "/dev/#{@resource[:volume_group]}/#{@resource[:name]}"

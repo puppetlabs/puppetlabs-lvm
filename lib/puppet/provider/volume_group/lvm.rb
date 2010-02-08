@@ -35,7 +35,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
         lines.inject([]) do |memo, line|
             pv, vg = line.split(',').map { |s| s.strip }
             if vg == @resource[:name]
-                memo << vg
+                memo << pv
             else
                 memo
             end

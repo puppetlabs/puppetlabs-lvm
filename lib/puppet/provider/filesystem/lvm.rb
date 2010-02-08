@@ -3,8 +3,8 @@ Puppet::Type.type(:filesystem).provide :lvm do
 
     commands :mount => 'mount'
 
-    def create(new_fstype)
-        mkfs(new_fstype)
+    def create
+        mkfs(@resource[:ensure])
     end
 
     def exists?

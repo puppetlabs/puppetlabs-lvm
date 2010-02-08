@@ -4,8 +4,8 @@ Puppet::Type.newtype(:filesystem) do
     desc "The filesystem type"
 
     ensurable do
-        newvalue(/^\w+$/, :event => :created_filesystem) do |fstype|
-            provider.create(fstype)
+        newvalue(/^\w+$/, :event => :created_filesystem) do
+            provider.create
         end
     end
 

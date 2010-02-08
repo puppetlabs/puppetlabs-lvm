@@ -5,7 +5,8 @@ Puppet::Type.type(:volume_group).provide :lvm do
              :vgremove => 'vgremove',
              :vgs      => 'vgs',
              :vgextend => 'vgextend',
-             :vgreduce => 'vgreduce'
+             :vgreduce => 'vgreduce',
+             :pvs      => 'pvs'
 
     def create
         vgcreate(@resource[:name], *@resource.should(:physical_volumes))
@@ -30,7 +31,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
     end
 
     def physical_volumes
-        lines = vgs(@resource[:name], '-o', 'pv_name,vg_name', '--separator', ',')
+        lines = pvs('-o', 'pv_name,vg_name', '--separator', ',')
         lines.inject([]) do |memo, line|
             pv, vg = line.split(',')
             if vg == @resource[:name]

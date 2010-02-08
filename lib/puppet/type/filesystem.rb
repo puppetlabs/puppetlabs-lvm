@@ -7,6 +7,9 @@ Puppet::Type.newtype(:filesystem) do
         newvalue(/^\w+$/, :event => :created_filesystem) do
             provider.create
         end
+        def retrieve
+            provider.fstype
+        end
         def insync?(desired_fstype)
             provider.fstype == desired_fstype
         end

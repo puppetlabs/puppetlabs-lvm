@@ -17,7 +17,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
     
     def destroy
-        lvremove(path)
+        lvremove('-f', path)
     end
     
     def exists?

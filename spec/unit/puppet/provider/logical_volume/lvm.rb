@@ -33,7 +33,7 @@ describe provider_class do
         it "should execute 'lvremove'" do
             @resource.expects(:[]).with(:volume_group).returns('myvg')
             @resource.expects(:[]).with(:name).returns('mylv')
-            @provider.expects(:lvremove).with('/dev/myvg/mylv')
+            @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
             @provider.destroy
         end
     end

@@ -11,8 +11,9 @@ describe provider_class do
     describe 'when creating' do
         it "should execute the correct filesystem command" do
             @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
+            @resource.expects(:[]).with(:ensure).returns('ext3')
             @provider.expects(:execute).with(['mkfs.ext3', '/dev/myvg/mylv'])
-            @provider.create('ext3')
+            @provider.create
         end
     end
 

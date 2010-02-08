@@ -1,6 +1,7 @@
 require 'pathname'
 
 Puppet::Type.newtype(:filesystem) do
+
     desc "The filesystem type"
 
     ensurable do
@@ -24,7 +25,4 @@ Puppet::Type.newtype(:filesystem) do
         end
     end
 
-    autorequire :logical_volume do
-        [[:logical_volume, File.basename(self[:name])]]
-    end
 end

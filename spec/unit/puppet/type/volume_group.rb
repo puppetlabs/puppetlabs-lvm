@@ -49,16 +49,5 @@ describe Puppet::Type.type(:volume_group) do
                 resource.should(:physical_volumes).should == %w{mypv otherpv}
             end
         end
-        it "should support autorequire a single physical volume" do
-            with(:name => "myvg", :physical_volumes => 'mypv') do |resource|
-                resource.must autorequire(:physical_volume, 'mypv')
-            end
-        end
-        it "should support autorequire multiple physical volumes" do
-            with(:name => "myvg", :physical_volumes => %w{mypv otherpv}) do |resource|
-                resource.must autorequire(:physical_volume, 'mypv')
-                resource.must autorequire(:physical_volume, 'otherpv')
-            end
-        end
     end
 end

@@ -37,9 +37,4 @@ describe Puppet::Type.type(:filesystem) do
         end
     end
 
-    describe "autorequiring" do
-        it "should guess the logical volume" do
-            with(valid_params).must autorequire(:logical_volume, 'mylv')
-        end
-    end
 end

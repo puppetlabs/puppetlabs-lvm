@@ -12,9 +12,4 @@ Puppet::Type.newtype(:volume_group) do
              using the physical_volume resource type."
     end
 
-    autorequire :physical_volume do
-        self[:physical_volumes].collect do |pv|
-            [:physical_volume, pv]
-        end
-    end
 end

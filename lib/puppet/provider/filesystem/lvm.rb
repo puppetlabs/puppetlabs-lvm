@@ -17,6 +17,8 @@ Puppet::Type.type(:filesystem).provide :lvm do
 
     def fstype
         mount('-f', '--guess-fstype', @resource[:name]).strip
+    rescue Puppet::ExecutionFailure
+        nil
     end
 
     def mkfs(new_fstype)

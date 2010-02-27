@@ -17,13 +17,12 @@ Puppet::Type.newtype(:logical_volume) do
             set this volume group as a dependency, but it must be defined elsewhere using the
             volume_group resource type."
     end
-    
+
     newproperty(:size) do
         desc "The size of the logical volume. Set to undef to use all available space"
-        
         validate do |value|
-            unless value =~ /^[0-9]+[MGTPE]/
-                raise ArgumentError , "%s is not a valid lv size" % value
+            unless value =~ /^[0-9]+[MGTPE]/i
+                raise ArgumentError , "#{value} is not a valid logical volume size"
             end
         end
     end

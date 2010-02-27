@@ -81,7 +81,6 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         else
             ## Check if new size fits the extend blocks
             if new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size != 0
-                p new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size
                 fail( "Cannot extend to size #{size} because VG extent size is #{vg_extent_size} KB" )
             end
             return lvextend( '-L', size, path)

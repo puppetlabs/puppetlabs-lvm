@@ -63,7 +63,6 @@ does not attempt to remove a physical volume in-use.
 
 ### Resizing Logical Volumes
 
-Currently when defining `logical_volume` resources the `size` is only
-used during creation.  Resizing the logical volume (which normally
-consists of modifying the logical volume, unmounting the filesystem,
-resizing the filesystem, and remounting) is not currently supported.
+Logical volume size can be extended, but not reduced -- this is for
+safety, as manual intervention is probably required for data
+migration, etc.

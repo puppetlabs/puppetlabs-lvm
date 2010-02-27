@@ -25,22 +25,14 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         lvs(@resource[:volume_group]) =~ lvs_pattern
     end
 
-    private
-
-    def lvs_pattern
-      /\s+#{Regexp.quote @resource[:name]}\s+/
-    end
-
-    def path
-        "/dev/#{@resource[:volume_group]}/#{@resource[:name]}"
-    end
-
     def size
-        if @resource[:size] =~ /^\d+.{0,1}\d{0,2}([MGTPE])/i
+        if @resource[:size] =~ /^\d+\.?\d{0,2}([KMGTPE])/i
             unit = $1.downcase
         end
 
-        if lvs('--noheading', '--unit', unit, path) =~ /\s+(\d+)\.(\d+)#{unit}/
+        raw = lvs('--noheading', '--unit', unit, path)
+
+        if raw =~ /\s+(\d+)\.(\d+)#{unit}/
             if $2.to_i == 00
                 return $1 + unit.capitalize
             else
@@ -49,8 +41,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
     end
 
-    def size=(size)
-        lvm_size_units = { "M" => 1024, "G" => 1048576, "T" => 1073741824, "P" => 1099511627776, "E" => 1125899906842624 }
+    def size=(new_size)
+        lvm_size_units = { "K" => 1, "M" => 1024, "G" => 1048576, "T" => 1073741824, "P" => 1099511627776, "E" => 1125899906842624 }
         lvm_size_units_match = lvm_size_units.keys().join('|')
 
         resizeable = false
@@ -61,7 +53,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             current_size_unit  = $2.upcase
         end
 
-        if size =~ /(\d+)(#{lvm_size_units_match})/
+        if new_size =~ /(\d+)(#{lvm_size_units_match})/i
             new_size_bytes = $1.to_i
             new_size_unit  = $2.upcase
         end
@@ -69,11 +61,6 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         ## Get the extend size
         if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ /\s+(\d+)\.\d+k/
             vg_extent_size = $1.to_i
-        end
-
-        ## Check if new size fits the extend blocks
-        if new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size != 0
-            fail( "Cannot extend to size #{size} because VG extent size is #{vg_extent_size} KB" )
         end
 
         ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
@@ -92,8 +79,23 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         if not resizeable
             fail( "Decreasing the size requires manual intervention (#{size} < #{current_size})" )
         else
+            ## Check if new size fits the extend blocks
+            if new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size != 0
+                p new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size
+                fail( "Cannot extend to size #{size} because VG extent size is #{vg_extent_size} KB" )
+            end
             return lvextend( '-L', size, path)
         end
+    end
+
+    private
+
+    def lvs_pattern
+        /\s+#{Regexp.quote @resource[:name]}\s+/
+    end
+
+    def path
+        "/dev/#{@resource[:volume_group]}/#{@resource[:name]}"
     end
 
 end

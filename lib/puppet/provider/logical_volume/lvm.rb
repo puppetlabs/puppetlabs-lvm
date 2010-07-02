@@ -32,7 +32,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
         raw = lvs('--noheading', '--unit', unit, path)
 
-        if raw =~ /\s+(\d+)\.(\d+)#{unit}/
+        if raw =~ /\s+(\d+)\.(\d+)#{unit}/i
             if $2.to_i == 00
                 return $1 + unit.capitalize
             else

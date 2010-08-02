@@ -1,5 +1,5 @@
 Puppet::Type.type(:filesystem).provide :lvm do
-    desc "Manages LVM volume groups"
+    desc "Manages filesystem of a logical volume"
 
     commands :mount => 'mount'
 
@@ -22,7 +22,14 @@ Puppet::Type.type(:filesystem).provide :lvm do
     end
 
     def mkfs(new_fstype)
-        execute ["mkfs.#{new_fstype}", @resource[:name]]
+        mkfs_params = { "reiserfs" => "-q" }
+        mkfs_cmd    = ["mkfs.#{new_fstype}", @resource[:name]]
+        
+        if mkfs_params[new_fstype]
+            command_array << mkfs_params[new_fstype]
+        end
+        
+        execute mkfs_cmd
     end
 
 end

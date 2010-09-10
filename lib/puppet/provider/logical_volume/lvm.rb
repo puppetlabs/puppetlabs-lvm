@@ -1,12 +1,13 @@
 Puppet::Type.type(:logical_volume).provide :lvm do
     desc "Manages LVM logical volumes"
 
-    commands :lvcreate => 'lvcreate',
-             :lvremove => 'lvremove',
-             :lvextend => 'lvextend',
-             :lvs      => 'lvs',
-             :umount   => 'umount',
-             :mount    => 'mount'
+    commands :lvcreate  => 'lvcreate',
+             :lvremove  => 'lvremove',
+             :lvextend  => 'lvextend',
+             :lvs       => 'lvs',
+             :resize2fs => 'resize2fs',
+             :umount    => 'umount',
+             :mount     => 'mount'
 
     def create
         args = ['-n', @resource[:name]]
@@ -61,7 +62,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
 
         ## Get the extend size
-        if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ /\s+(\d+)\.\d+k/
+        if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ /\s+(\d+)\.\d+k/i
             vg_extent_size = $1.to_i
         end
 
@@ -85,7 +86,13 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             if new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size != 0
                 fail( "Cannot extend to size #{size} because VG extent size is #{vg_extent_size} KB" )
             end
-            return lvextend( '-L', size, path)
+
+            lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{size} because lvextend failed." )
+
+            if mount( '-f', '--guess-fstype', path) =~ /ext[34]/
+              resize2fs( path) || fail( "Cannot resize file system to size #{size} because resize2fs failed." )
+            end
+
         end
     end
 

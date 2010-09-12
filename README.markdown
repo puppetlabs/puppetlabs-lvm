@@ -30,7 +30,8 @@ Here's a simple working example:
         size => "20G"
     }
     filesystem { "/dev/myvg/mylv":
-        ensure => "ext3"
+        ensure => present
+        fs_type => "ext3"
     }
 
 This simple 1 physical volume, 1 volume group, 1 logical volume case

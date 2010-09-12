@@ -18,20 +18,20 @@ looks something like:
 Here's a simple working example:
 
     physical_volume { "/dev/hdc":
-        ensure => present
+        ensure => present,
     }
     volume_group { "myvg":
         ensure => present,
-        physical_volumes => "/dev/hdc"
+        physical_volumes => "/dev/hdc",
     }
     logical_volume { "mylv":
         ensure => present,
-        volume_group => "myvg"
-        size => "20G"
+        volume_group => "myvg",
+        size => "20G",
     }
     filesystem { "/dev/myvg/mylv":
-        ensure => present
-        fs_type => "ext3"
+        ensure => present,
+        fs_type => "ext3",
     }
 
 This simple 1 physical volume, 1 volume group, 1 logical volume case

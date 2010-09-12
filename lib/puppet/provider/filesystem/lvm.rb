@@ -4,11 +4,11 @@ Puppet::Type.type(:filesystem).provide :lvm do
     commands :mount => 'mount'
 
     def create
-        mkfs(@resource[:ensure])
+        mkfs(@resource[:fs_type])
     end
 
     def exists?
-        fstype == @resource[:ensure]
+        fstype != nil
     end
 
     def destroy
@@ -21,12 +21,12 @@ Puppet::Type.type(:filesystem).provide :lvm do
         nil
     end
 
-    def mkfs(new_fstype)
+    def mkfs(fs_type)
         mkfs_params = { "reiserfs" => "-q" }
-        mkfs_cmd    = ["mkfs.#{new_fstype}", @resource[:name]]
+        mkfs_cmd    = ["mkfs.#{fs_type}", @resource[:name]]
         
-        if mkfs_params[new_fstype]
-            command_array << mkfs_params[new_fstype]
+        if mkfs_params[fs_type]
+            command_array << mkfs_params[fs_type]
         end
         
         execute mkfs_cmd

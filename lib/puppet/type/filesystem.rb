@@ -4,16 +4,10 @@ Puppet::Type.newtype(:filesystem) do
 
     desc "The filesystem type"
 
-    ensurable do
-        newvalue(/^\w+$/, :event => :created_filesystem) do
-            provider.create
-        end
-        def retrieve
-            provider.fstype
-        end
-        def insync?(desired_fstype)
-            provider.fstype == desired_fstype
-        end
+    ensurable
+
+    newparam(:fs_type) do
+        desc "The file system type. eg. ext3."
     end
 
     newparam(:name) do

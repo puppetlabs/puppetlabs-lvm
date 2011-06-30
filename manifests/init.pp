@@ -4,9 +4,24 @@ define lvm::volume($vg, $pv, $fstype, $size = undef, $ensure) {
     # Clean up the whole chain.
     #
     cleaned: {
-      physical_volume { $pv: ensure => present }
-      volume_group { $vg: ensure => present, physical_volumes => $pv, before => Physical_volume[$pv] }
-      logical_volume { $name: ensure => present, volume_group => $vg, size => $size, before => Volume_group[$vg] }
+			# This may only need to exist once
+			if ! defined(Physical_volume[$pv]) {	
+				physical_volume { $pv: ensure => present }
+			}
+			# This may only need to exist once
+			if ! defined(Volume_group[$vg]) {
+				volume_group { $vg: 
+					ensure => present, 
+					physical_volumes => $pv, 
+					before => Physical_volume[$pv] 
+			}
+
+      logical_volume { $name: 
+				ensure => present, 
+				volume_group => $vg, 
+				size => $size, 
+				before => Volume_group[$vg] 
+			}
     }
     #
     # Just clean up the logical volume
@@ -18,10 +33,33 @@ define lvm::volume($vg, $pv, $fstype, $size = undef, $ensure) {
     # Create the whole chain.
     #
     present: {
-      physical_volume { $pv: ensure => present }
-      volume_group { $vg: ensure => present, physical_volumes => $pv, require => Physical_volume[$pv] }
-      logical_volume { $name: ensure => present, volume_group => $vg, size => $size, require => Volume_group[$vg] }
-      filesystem { "/dev/${vg}/${name}": ensure => present, fs_type => $fstype, require => Logical_volume[$name] }
+			# This may only need to exist once
+			if ! defined(Physical_volume[$pv]) {	
+				physical_volume { $pv: ensure => present }
+			}
+		
+			# This may only need to exist once
+			if ! defined(Volume_group[$vg]) {
+				volume_group { $vg: 
+					ensure => present, 
+					physical_volumes => $pv, 
+					require => Physical_volume[$pv] 
+				}
+			}
+
+      logical_volume { $name: 
+				ensure => present, 
+				volume_group => $vg, 
+				size => $size, 
+				require => Volume_group[$vg] 
+			}
+
+      filesystem { "/dev/${vg}/${name}": 
+				ensure => present, 
+				fs_type => $fstype, 
+				require => Logical_volume[$name] 
+			}
+
     }
     default: {
      fail ( 'puppet-lvm::volume: ensure parameter can only be set to cleaned, absent or present' )

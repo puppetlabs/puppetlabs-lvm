@@ -4,6 +4,13 @@ Puppet LVM Module
 
 Provides Logical Resource Management (LVM) features for Puppet.
 
+History
+-------
+2011-06-30 : windowsrefund 
+- lvm::volume now uses defined() in order to avoid declaring duplicate
+  physical_volume and/or volume_group resources.
+- logical_volume provider now calls dmsetup when removing a volume.
+
 Usage
 -----
 

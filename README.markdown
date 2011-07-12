@@ -26,12 +26,13 @@ Here's a simple working example:
     }
     logical_volume { "mylv":
         ensure => present,
-        volume_group => "myvg"
+        volume_group => "myvg",
         size => "20G"
     }
     filesystem { "/dev/myvg/mylv":
-        ensure => present
-        fs_type => "ext3"
+        ensure => present,
+        fs_type => "ext3",
+        options => '-b 4096 -E stride=32,stripe-width=64'
     }
 
 This simple 1 physical volume, 1 volume group, 1 logical volume case
@@ -39,6 +40,8 @@ is provided as a simple `volume` definition, as well.  The above could
 be shortened to be:
 
     volume("myvg", "/dev/hdc", "mylv", "ext3", "20G")
+
+Except that in the latter case you cannot specify create options.
 
 If you need a more complex configuration, you'll need to build the
 resources out yourself.

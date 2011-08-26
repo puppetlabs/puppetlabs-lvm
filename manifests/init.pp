@@ -1,27 +1,27 @@
-define lvm::volume($vg, $pv, $fstype, $size = undef, $ensure) {
+define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
   case $ensure {
-    #
-    # Clean up the whole chain.
-    #
-    cleaned: {
-			# This may only need to exist once
-			if ! defined(Physical_volume[$pv]) {	
-				physical_volume { $pv: ensure => present }
-			}
-			# This may only need to exist once
-			if ! defined(Volume_group[$vg]) {
-				volume_group { $vg: 
-					ensure => present, 
-					physical_volumes => $pv, 
-					before => Physical_volume[$pv] 
-			}
+  #
+  # Clean up the whole chain.
+  #
+  cleaned: {
+    # This may only need to exist once
+    if ! defined(Physical_volume[$pv]) {
+      physical_volume { $pv: ensure => present }
+    }
+    # This may only need to exist once
+    if ! defined(Volume_group[$vg]) {
+      volume_group { $vg:
+        ensure => present,
+        physical_volumes => $pv,
+	before => Physical_volume[$pv]
+      }
 
-      logical_volume { $name: 
-				ensure => present, 
-				volume_group => $vg, 
-				size => $size, 
-				before => Volume_group[$vg] 
-			}
+      logical_volume { $name:
+        ensure => present,
+        volume_group => $vg,
+        size => $size,
+        before => Volume_group[$vg]
+      }
     }
     #
     # Just clean up the logical volume
@@ -33,32 +33,34 @@ define lvm::volume($vg, $pv, $fstype, $size = undef, $ensure) {
     # Create the whole chain.
     #
     present: {
-			# This may only need to exist once
-			if ! defined(Physical_volume[$pv]) {	
-				physical_volume { $pv: ensure => present }
-			}
-		
-			# This may only need to exist once
-			if ! defined(Volume_group[$vg]) {
-				volume_group { $vg: 
-					ensure => present, 
-					physical_volumes => $pv, 
-					require => Physical_volume[$pv] 
-				}
-			}
+      # This may only need to exist once
+      if ! defined(Physical_volume[$pv]) {
+        physical_volume { $pv: ensure => present }
+      }
 
-      logical_volume { $name: 
-				ensure => present, 
-				volume_group => $vg, 
-				size => $size, 
-				require => Volume_group[$vg] 
-			}
+      # This may only need to exist once
+      if ! defined(Volume_group[$vg]) {
+        volume_group { $vg:
+          ensure => present,
+          physical_volumes => $pv,
+          require => Physical_volume[$pv]
+        }
+      }
 
-      filesystem { "/dev/${vg}/${name}": 
-				ensure => present, 
-				fs_type => $fstype, 
-				require => Logical_volume[$name] 
-			}
+      logical_volume { $name:
+        ensure => present,
+        volume_group => $vg,
+        size => $size,
+        require => Volume_group[$vg]
+      }
+
+      if $fstype != undef {
+        filesystem { "/dev/${vg}/${name}":
+          ensure => present,
+	  fs_type => $fstype,
+	  require => Logical_volume[$name]
+        }
+      }
 
     }
     default: {

@@ -6,7 +6,7 @@ Provides Logical Resource Management (LVM) features for Puppet.
 
 History
 -------
-2011-06-30 : windowsrefund 
+2011-06-30 : windowsrefund
 
   * lvm::volume now uses defined() in order to avoid declaring duplicate
     physical_volume and/or volume_group resources.
@@ -23,7 +23,7 @@ The basic dependency graph needed to define a working logical volume
 looks something like:
 
     filesystem -> logical_volume -> volume_group -> physical_volume(s)
-    
+
 Here's a simple working example:
 
     physical_volume { "/dev/hdc":
@@ -51,6 +51,11 @@ be shortened to be:
     volume("myvg", "/dev/hdc", "mylv", "ext3", "20G")
 
 Except that in the latter case you cannot specify create options.
+=======
+If you want to omit the file system type, but still specify the size of the
+logical volume, i.e. in the case if you are planning on using this logical
+volume as a swap partition or a block device for a virtual machine image, you
+need to use a hash to pass the parameters to the definition.
 
 If you need a more complex configuration, you'll need to build the
 resources out yourself.

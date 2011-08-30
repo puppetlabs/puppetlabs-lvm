@@ -8,7 +8,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
              :resize2fs => 'resize2fs',
              :umount    => 'umount',
              :mount     => 'mount',
-						 :dmsetup 	=> 'dmsetup'
+             :dmsetup   => 'dmsetup'
 
     def create
         args = ['-n', @resource[:name]]
@@ -22,7 +22,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     def destroy
-				dmsetup('remove', "#{@resource[:volume_group]}-#{@resource[:name]}")
+        dmsetup('remove', "#{@resource[:volume_group]}-#{@resource[:name]}")
         lvremove('-f', path)
     end
 

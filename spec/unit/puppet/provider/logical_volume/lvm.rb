@@ -23,6 +23,7 @@ describe provider_class do
                 @resource.expects(:[]).with(:name).returns('mylv')
                 @resource.expects(:[]).with(:volume_group).returns('myvg')
                 @resource.expects(:[]).with(:size).returns(nil).at_least_once
+                @resource.expects(:[]).with(:initial_size)
                 @provider.expects(:lvcreate).with('-n', 'mylv', 'myvg')
                 @provider.create
             end
@@ -40,7 +41,8 @@ describe provider_class do
                     @provider.create
                     @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
                     @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
-                    @provider.expects(:lvextend)
+                    @provider.expects(:lvextend).with('-L', '2000000k', '/dev/myvg/mylv').returns(true)
+                    @provider.expects(:mount).with('-f', '--guess-fstype', '/dev/myvg/mylv')
                     @provider.size = '2000000k'
                 end
             end
@@ -72,9 +74,10 @@ describe provider_class do
     end
 
     describe 'when destroying' do
-        it "should execute 'lvremove'" do
-            @resource.expects(:[]).with(:volume_group).returns('myvg')
-            @resource.expects(:[]).with(:name).returns('mylv')
+        it "should execute 'dmsetup' and 'lvremove'" do
+            @resource.expects(:[]).with(:volume_group).returns('myvg').twice
+            @resource.expects(:[]).with(:name).returns('mylv').twice
+            @provider.expects(:dmsetup).with('remove', 'myvg-mylv')
             @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
             @provider.destroy
         end

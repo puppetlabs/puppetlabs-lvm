@@ -5,7 +5,7 @@ describe Puppet::Type.type(:filesystem) do
         @type = Puppet::Type.type(:filesystem)
         @valid_params = {
             :name => '/dev/myvg/mylv',
-            :ensure => 'ext3'
+            :ensure => 'present'
         }
         stub_default_provider!
     end
@@ -33,7 +33,7 @@ describe Puppet::Type.type(:filesystem) do
             @type.attrclass(:ensure).should_not be_nil
         end
         it "should support a filesystem type as a value" do
-            with(valid_params)[:ensure].should == 'ext3'
+            with(valid_params)[:ensure].should == :present
         end
     end
 

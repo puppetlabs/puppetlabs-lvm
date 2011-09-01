@@ -6,6 +6,18 @@ Provides Logical Resource Management (LVM) features for Puppet.
 
 History
 -------
+2011-08-30 : matthaus
+
+  * Version 0.1.0 : Refactor tests, update readme, repackage for module forge
+
+2011-08-02 : zyv
+
+  * Make it possible to omit the file system type for lmv::volume
+
+2011-07-12 : frimik
+
+  * Allow filesystem type to accept parameters [:options]
+
 2011-06-30 : windowsrefund
 
   * lvm::volume now uses defined() in order to avoid declaring duplicate
@@ -84,3 +96,27 @@ does not attempt to remove a physical volume in-use.
 Logical volume size can be extended, but not reduced -- this is for
 safety, as manual intervention is probably required for data
 migration, etc.
+
+Contributors
+=======
+Bruce Williams <bruce@codefluency.com>
+
+Daniel Kerwin <github@reductivelabs.com>
+
+Luke Kanies <luke@reductivelabs.com>
+
+Matthaus Litteken <matthaus@puppetlabs.com>
+
+Michael Stahnke <stahnma@puppetlabs.com>
+
+Mikael Fridh <frimik@gmail.com>
+
+Tim Hawes <github@reductivelabs.com>
+
+Yury V. Zaytsev <yury@shurup.com>
+
+csschwe <github@reductivelabs.com>
+
+root <root@localhost.localdomain>
+
+windowsrefund <windowsrefund@gmail.com>

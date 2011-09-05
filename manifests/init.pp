@@ -13,7 +13,7 @@ define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
       volume_group { $vg:
         ensure           => present,
         physical_volumes => $pv,
-	      before           => Physical_volume[$pv]
+        before           => Physical_volume[$pv]
       }
 
       logical_volume { $name:
@@ -58,14 +58,14 @@ define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
       if $fstype != undef {
         filesystem { "/dev/${vg}/${name}":
           ensure  => present,
-	        fs_type => $fstype,
-	        require => Logical_volume[$name]
+          fs_type => $fstype,
+          require => Logical_volume[$name]
         }
       }
 
     }
     default: {
-     fail ( 'puppet-lvm::volume: ensure parameter can only be set to cleaned, absent or present' )
+      fail ( 'puppet-lvm::volume: ensure parameter can only be set to cleaned, absent or present' )
     }
   }
 }

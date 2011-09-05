@@ -23,6 +23,7 @@ define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
         before => Volume_group[$vg]
       }
     }
+  }
     #
     # Just clean up the logical volume
     #

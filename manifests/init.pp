@@ -28,7 +28,11 @@ define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
     # Just clean up the logical volume
     #
     absent: {
-      logical_volume { $name: ensure => absent, volume_group => $vg, size => $size }
+      logical_volume { $name:
+        ensure       => absent,
+        volume_group => $vg,
+        size         => $size
+      }
     }
     #
     # Create the whole chain.

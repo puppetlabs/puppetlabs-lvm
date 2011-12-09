@@ -21,7 +21,7 @@ Puppet::Type.newtype(:logical_volume) do
     newparam(:initial_size) do
         desc "The initial size of the logical volume. This will only apply to newly-created volumes"
         validate do |value|
-            unless value =~ /^[0-9]+[MGTPE]/i
+            unless value =~ /^\d+\.?\d{0,2}[KMGTPE]/i
                 raise ArgumentError , "#{value} is not a valid logical volume size"
             end
         end
@@ -30,7 +30,7 @@ Puppet::Type.newtype(:logical_volume) do
     newproperty(:size) do
         desc "The size of the logical volume. Set to undef to use all available space"
         validate do |value|
-            unless value =~ /^[0-9]+[MGTPE]/i
+            unless value =~ /^\d+\.?\d{0,2}[KMGTPE]/i
                 raise ArgumentError , "#{value} is not a valid logical volume size"
             end
         end

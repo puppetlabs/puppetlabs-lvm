@@ -1,4 +1,3 @@
-
 Puppet LVM Module
 =================
 
@@ -60,7 +59,13 @@ This simple 1 physical volume, 1 volume group, 1 logical volume case
 is provided as a simple `volume` definition, as well.  The above could
 be shortened to be:
 
-    volume("myvg", "/dev/hdc", "mylv", "ext3", "20G")
+    lvm::volume { 'mylv':
+        ensure => present,
+        vg => 'myvg',
+        pv => '/dev/hdc',
+        fstype => 'ext3',
+        size => '20G',
+    }
 
 Except that in the latter case you cannot specify create options.
 =======

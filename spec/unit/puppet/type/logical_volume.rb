@@ -37,9 +37,20 @@ describe Puppet::Type.type(:logical_volume) do
     describe "when specifying the 'size' parameter" do
         it "should exist" do
             @type.attrclass(:size).should_not be_nil
+            @type.attrclass(:extents).should be_nil
         end
         it 'should support setting a value' do
             with(valid_params)[:size].should == valid_params[:size]
+        end
+    end
+    
+    describe "when specifying the 'extents' parameter" do
+        it "should exist" do
+            @type.attrclass(:extents).should_not be_nil
+            @type.attrclass(:size).should be_nil
+        end
+        it 'should support setting a value' do
+            with(valid_params)[:extents].should == valid_params[:extents]
         end
     end
     

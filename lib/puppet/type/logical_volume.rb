@@ -27,7 +27,16 @@ Puppet::Type.newtype(:logical_volume) do
         end
     end
 
-    newproperty(:size) do
+    newparam(:extents) do
+        desc "The number of logical extents to allocate for the new logical volume. LogicalExtentsNumber[%{VG|PVS|FREE|ORIGIN}]"
+        validate do |value|
+            unless value =~ /^[0-9]+(%(VG|PVS|FREE|ORIGIN))?/
+                raise ArgumentError , "#{value} is not a valid logical volume extents value"
+            end
+        end
+    end
+
+    newproperty(initial_size:size) do
         desc "The size of the logical volume. Set to undef to use all available space"
         validate do |value|
             unless value =~ /^[0-9]+[KMGTPE]/i

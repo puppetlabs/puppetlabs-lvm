@@ -36,7 +36,7 @@ Puppet::Type.newtype(:logical_volume) do
         end
     end
 
-    newproperty(initial_size:size) do
+    newproperty(:size) do
         desc "The size of the logical volume. Set to undef to use all available space"
         validate do |value|
             unless value =~ /^[0-9]+[KMGTPE]/i

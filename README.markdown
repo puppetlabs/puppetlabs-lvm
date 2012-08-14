@@ -5,6 +5,10 @@ Provides Logical Resource Management (LVM) features for Puppet.
 
 History
 -------
+2012-08-14 : rcoleman
+
+  * Version 0.1.1 : More style-guide compliant, fixed a closing } bug and updated README
+
 2011-08-30 : matthaus
 
   * Version 0.1.0 : Refactor tests, update readme, repackage for module forge
@@ -122,6 +126,10 @@ Yury V. Zaytsev <yury@shurup.com>
 
 csschwe <github@reductivelabs.com>
 
-root <root@localhost.localdomain>
-
 windowsrefund <windowsrefund@gmail.com>
+
+Adam Gibbins <github@adamgibbins.com>
+
+Steffen Zieger <github@saz.sh>
+
+Jason A. Smith <smithj4@bnl.gov>

@@ -1,4 +1,10 @@
-define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
+define lvm::volume (
+  $ensure,
+  $vg,
+  $pv,
+  $fstype = undef,
+  $size = undef,
+) {
   case $ensure {
     #
     # Clean up the whole chain.

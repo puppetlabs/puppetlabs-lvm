@@ -5,9 +5,8 @@ define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
     #
     cleaned: {
       # This may only need to exist once
-      if ! defined(Physical_volume[$pv]) {
-        physical_volume { $pv: ensure => present }
-      }
+      lvm::physical { $pv: }
+
       # This may only need to exist once
       if ! defined(Volume_group[$vg]) {
         volume_group { $vg:
@@ -39,9 +38,7 @@ define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
     #
     present: {
       # This may only need to exist once
-      if ! defined(Physical_volume[$pv]) {
-        physical_volume { $pv: ensure => present }
-      }
+      lvm::physical { $pv: }
 
       # This may only need to exist once
       if ! defined(Volume_group[$vg]) {

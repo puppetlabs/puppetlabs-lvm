@@ -1,4 +1,4 @@
-define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
+define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $initial_size = undef, $ensure) {
   case $ensure {
     #
     # Clean up the whole chain.
@@ -56,6 +56,7 @@ define lvm::volume($vg, $pv, $fstype = undef, $size = undef, $ensure) {
         ensure       => present,
         volume_group => $vg,
         size         => $size,
+        initial_size => $initial_size,
         require      => Volume_group[$vg]
       }
 

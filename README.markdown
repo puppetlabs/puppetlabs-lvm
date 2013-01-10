@@ -91,7 +91,7 @@ resources out yourself.
 
 Optional Values
 ---------------
-  The unless_vg (physical_volume) and createonly (volume_group) will check 
+  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check 
   to see if "myvg" exists.  If "myvg" does exist then they will not modify
   the physical volume or volume_group.  This is usefull if you environment
   is build with certain disks but they change while the server grows, shrinks

@@ -5,6 +5,14 @@ Provides Logical Resource Management (LVM) features for Puppet.
 
 History
 -------
+2013-01-10 : csschwe
+
+  * physical_volume parameter unless_vg allows this to be skipped if the volume 
+    group exists
+
+  * volume_group parameter createonly makes it so that the volume group is not
+    modified if it exists
+
 2012-08-14 : rcoleman
 
   * Version 0.1.1 : More style-guide compliant, fixed a closing } bug and updated README
@@ -81,6 +89,26 @@ need to use a hash to pass the parameters to the definition.
 If you need a more complex configuration, you'll need to build the
 resources out yourself.
 
+Optional Values
+---------------
+  The unless_vg (physical_volume) and createonly (volume_group) will check 
+  to see if "myvg" exists.  If "myvg" does exist then they will not modify
+  the physical volume or volume_group.  This is usefull if you environment
+  is build with certain disks but they change while the server grows, shrinks
+  or moves.
+ 
+  Example:
+    physical_volume { "/dev/hdc":
+        ensure => present,
+        unless_vg => "myvg"
+    }
+    volume_group { "myvg":
+        ensure => present,
+        physical_volumes => "/dev/hdc",
+        createonly => true
+    }
+
+
 Limitations
 -----------
 
@@ -124,7 +152,7 @@ Tim Hawes <github@reductivelabs.com>
 
 Yury V. Zaytsev <yury@shurup.com>
 
-csschwe <github@reductivelabs.com>
+csschwe <csschwe@gmail.com>
 
 windowsrefund <windowsrefund@gmail.com>
 

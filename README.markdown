@@ -98,6 +98,7 @@ Optional Values
   or moves.
  
   Example:
+
     physical_volume { "/dev/hdc":
         ensure => present,
         unless_vg => "myvg"

@@ -1,8 +1,32 @@
-
 Puppet LVM Module
 =================
 
 Provides Logical Resource Management (LVM) features for Puppet.
+
+History
+-------
+2012-08-14 : rcoleman
+
+  * Version 0.1.1 : More style-guide compliant, fixed a closing } bug and updated README
+
+2011-08-30 : matthaus
+
+  * Version 0.1.0 : Refactor tests, update readme, repackage for module forge
+
+2011-08-02 : zyv
+
+  * Make it possible to omit the file system type for lmv::volume
+
+2011-07-12 : frimik
+
+  * Allow filesystem type to accept parameters [:options]
+
+2011-06-30 : windowsrefund
+
+  * lvm::volume now uses defined() in order to avoid declaring duplicate
+    physical_volume and/or volume_group resources.
+
+  * logical_volume provider now calls dmsetup when removing a volume.
 
 Usage
 -----
@@ -14,31 +38,45 @@ The basic dependency graph needed to define a working logical volume
 looks something like:
 
     filesystem -> logical_volume -> volume_group -> physical_volume(s)
-    
+
 Here's a simple working example:
 
     physical_volume { "/dev/hdc":
-        ensure => present,
+        ensure => present
     }
     volume_group { "myvg":
         ensure => present,
-        physical_volumes => "/dev/hdc",
+        physical_volumes => "/dev/hdc"
     }
     logical_volume { "mylv":
         ensure => present,
         volume_group => "myvg",
-        size => "20G",
+        size => "20G"
     }
     filesystem { "/dev/myvg/mylv":
         ensure => present,
         fs_type => "ext3",
+        options => '-b 4096 -E stride=32,stripe-width=64'
     }
 
 This simple 1 physical volume, 1 volume group, 1 logical volume case
 is provided as a simple `volume` definition, as well.  The above could
 be shortened to be:
 
-    volume("myvg", "/dev/hdc", "mylv", "ext3", "20G")
+    lvm::volume { 'mylv':
+        ensure => present,
+        vg => 'myvg',
+        pv => '/dev/hdc',
+        fstype => 'ext3',
+        size => '20G',
+    }
+
+Except that in the latter case you cannot specify create options.
+=======
+If you want to omit the file system type, but still specify the size of the
+logical volume, i.e. in the case if you are planning on using this logical
+volume as a swap partition or a block device for a virtual machine image, you
+need to use a hash to pass the parameters to the definition.
 
 If you need a more complex configuration, you'll need to build the
 resources out yourself.
@@ -67,3 +105,31 @@ does not attempt to remove a physical volume in-use.
 Logical volume size can be extended, but not reduced -- this is for
 safety, as manual intervention is probably required for data
 migration, etc.
+
+Contributors
+=======
+Bruce Williams <bruce@codefluency.com>
+
+Daniel Kerwin <github@reductivelabs.com>
+
+Luke Kanies <luke@reductivelabs.com>
+
+Matthaus Litteken <matthaus@puppetlabs.com>
+
+Michael Stahnke <stahnma@puppetlabs.com>
+
+Mikael Fridh <frimik@gmail.com>
+
+Tim Hawes <github@reductivelabs.com>
+
+Yury V. Zaytsev <yury@shurup.com>
+
+csschwe <github@reductivelabs.com>
+
+windowsrefund <windowsrefund@gmail.com>
+
+Adam Gibbins <github@adamgibbins.com>
+
+Steffen Zieger <github@saz.sh>
+
+Jason A. Smith <smithj4@bnl.gov>

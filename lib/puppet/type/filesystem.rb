@@ -19,4 +19,8 @@ Puppet::Type.newtype(:filesystem) do
         end
     end
 
+    newparam(:options) do
+        desc "Params for the mkfs command. eg. -l internal,agcount=x"
+    end
+
 end

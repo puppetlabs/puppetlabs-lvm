@@ -26,9 +26,14 @@ Puppet::Type.type(:filesystem).provide :lvm do
         mkfs_cmd    = ["mkfs.#{fs_type}", @resource[:name]]
         
         if mkfs_params[fs_type]
-            command_array << mkfs_params[fs_type]
+            mkfs_cmd << mkfs_params[fs_type]
         end
         
+        if resource[:options]
+            mkfs_options = Array.new(resource[:options].split)
+            mkfs_cmd << mkfs_options
+        end
+
         execute mkfs_cmd
     end
 

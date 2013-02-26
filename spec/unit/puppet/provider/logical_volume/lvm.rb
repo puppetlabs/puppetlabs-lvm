@@ -42,7 +42,7 @@ describe provider_class do
                     @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
                     @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
                     @provider.expects(:lvextend).with('-L', '2000000k', '/dev/myvg/mylv').returns(true)
-                    @provider.expects(:mount).with('-f', '--guess-fstype', '/dev/myvg/mylv')
+                    @provider.expects(:blkid).with('/dev/myvg/mylv')
                     @provider.size = '2000000k'
                 end
             end

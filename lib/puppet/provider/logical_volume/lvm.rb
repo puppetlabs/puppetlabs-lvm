@@ -7,7 +7,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
              :lvs       => 'lvs',
              :resize2fs => 'resize2fs',
              :umount    => 'umount',
-             :mount     => 'mount',
+             :blkid     => 'blkid',
              :dmsetup   => 'dmsetup'
 
     def create
@@ -91,7 +91,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
             lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{size} because lvextend failed." )
 
-            if mount( '-f', '--guess-fstype', path) =~ /ext[34]/
+            if /TYPE=\"(\S+)\"/.match(blkid(path)) {|m| m =~ /ext[34]/}
               resize2fs( path) || fail( "Cannot resize file system to size #{size} because resize2fs failed." )
             end
 

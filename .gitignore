@@ -1,3 +1,4 @@
 *.swp
 .*.swp
 Gemfile.lock
+metadata.json

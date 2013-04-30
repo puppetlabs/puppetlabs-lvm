@@ -1,31 +1,19 @@
-# outputs:
-# lvm_support: yes/no (based on "vgs" command presence)
-# lvm_pvs: [0-9]+
-# lvm_vgs: [0-9]+
-# lvm_pv_[0-9]+: physical volume name
-# lvm_vg_[0-9]+: volume group name
-
-# Generic LVM support
+# lvm_support: true/nil
+#   Whether there is LVM support (based on the presence of the "vgs" command)
 Facter.add('lvm_support') do
   confine :kernel => :linux
 
-  vgdisplay =  Facter::Util::Resolution.exec('which vgs')
-  if vgdisplay.nil?
-    setcode { 'no' }
-  else
-    setcode { 'yes' }
+  setcode do
+    vgdisplay =  Facter::Util::Resolution.exec('which vgs')
+    vgdisplay.nil? ? nil : true
   end
 end
 
-# Default to no
-Facter.add('lvm_support') do
-  setcode { 'no' }
-end
-
-# VGs
+# lvm_vgs: [0-9]+
+#   Number of VGs
 vg_list = []
 Facter.add('lvm_vgs') do
-  confine :lvm_support => :yes
+  confine :lvm_support => true
   vgs = Facter::Util::Resolution.exec('vgs -o name --noheadings 2>/dev/null')
   if vgs.nil?
     setcode { 0 }
@@ -35,16 +23,17 @@ Facter.add('lvm_vgs') do
   end
 end
 
-vg_num = 0
-vg_list.each do |vg|
-  Facter.add("lvm_vg_#{vg_num}") { setcode { vg } }
-  vg_num += 1
+# lvm_vg_[0-9]+
+#   VG name by index
+vg_list.each_with_index do |vg, i|
+  Facter.add("lvm_vg_#{i}") { setcode { vg } }
 end
 
-# PVs
+# lvm_pvs: [0-9]+
+#   Number of PVs
 pv_list = []
 Facter.add('lvm_pvs') do
-  confine :lvm_support => :yes
+  confine :lvm_support => true
   pvs = Facter::Util::Resolution.exec('pvs -o name --noheadings 2>/dev/null')
   if pvs.nil?
     setcode { 0 }
@@ -54,8 +43,8 @@ Facter.add('lvm_pvs') do
   end
 end
 
-pv_num = 0
-pv_list.each do |pv|
-  Facter.add("lvm_pv_#{pv_num}") { setcode { pv } }
-  pv_num += 1
+# lvm_pv_[0-9]+
+#   PV name by index
+pv_list.each_with_index do |pv, i|
+  Facter.add("lvm_pv_#{i}") { setcode { pv } }
 end

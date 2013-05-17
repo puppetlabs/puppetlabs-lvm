@@ -16,12 +16,15 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--size', @resource[:size])
         elsif @resource[:initial_size]
             args.push('--size', @resource[:initial_size])
-        else
-            args.push('--extents','100%FREE')
         end
         if @resource[:extents]
             args.push('--extents', @resource[:extents])
         end
+
+        if !@resource[:extents] and !@resource[:size]
+            args.push('--extents', '100%FREE')
+        end
+
         args << @resource[:volume_group]
         lvcreate(*args)
     end

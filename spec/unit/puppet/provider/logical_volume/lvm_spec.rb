@@ -14,6 +14,7 @@ describe provider_class do
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        @resource.expects(:[]).with(:extents).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
       end
@@ -23,8 +24,30 @@ describe provider_class do
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns(nil).at_least_once
+        @resource.expects(:[]).with(:extents).returns(nil).at_least_once
         @resource.expects(:[]).with(:initial_size)
         @provider.expects(:lvcreate).with('-n', 'mylv', '--extents', '100%FREE', 'myvg')
+        @provider.create
+      end
+    end
+    context 'with extents' do
+      it "should execute 'lvcreate' with a '--extents' option" do
+        @resource.expects(:[]).with(:name).returns('mylv')
+        @resource.expects(:[]).with(:volume_group).returns('myvg')
+        @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        @resource.expects(:[]).with(:extents).returns('80%vg').at_least_once
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg', '--extents', '80%vg')
+        @provider.create
+      end
+    end
+    context 'without extents' do
+      it "should execute 'lvcreate' without a '--extents' option" do
+        @resource.expects(:[]).with(:name).returns('mylv')
+        @resource.expects(:[]).with(:volume_group).returns('myvg')
+        @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        @resource.expects(:[]).with(:extents).returns(nil).at_least_once
+        @resource.expects(:[]).with(:initial_size)
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
       end
     end
@@ -37,6 +60,7 @@ describe provider_class do
           @resource.expects(:[]).with(:name).returns('mylv').at_least_once
           @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
           @resource.expects(:[]).with(:size).returns('1g').at_least_once
+          @resource.expects(:[]).with(:extents).returns(nil).at_least_once
           @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
@@ -51,6 +75,7 @@ describe provider_class do
           @resource.expects(:[]).with(:name).returns('mylv').at_least_once
           @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
           @resource.expects(:[]).with(:size).returns('1g').at_least_once
+          @resource.expects(:[]).with(:extents).returns(nil).at_least_once
           @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
@@ -64,6 +89,7 @@ describe provider_class do
         @resource.expects(:[]).with(:name).returns('mylv').at_least_once
         @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        @resource.expects(:[]).with(:extents).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
         @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once

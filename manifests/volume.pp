@@ -56,8 +56,9 @@ define lvm::volume (
   $ensure,
   $pv,
   $vg,
-  $fstype = undef,
-  $size   = undef
+  $fstype  = undef,
+  $size    = undef,
+  $extents = undef
 ) {
   case $ensure {
     #
@@ -116,6 +117,7 @@ define lvm::volume (
         ensure       => present,
         volume_group => $vg,
         size         => $size,
+        extents      => $extents,
         require      => Volume_group[$vg]
       }
 

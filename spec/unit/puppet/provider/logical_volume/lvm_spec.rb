@@ -19,14 +19,14 @@ describe provider_class do
         @provider.create
       end
     end
-    context 'without size' do
-      it "should execute 'lvcreate' without a '--size' option" do
+    context 'without size and without extents' do
+      it "should execute 'lvcreate' without a '--size' option or a '--extents' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns(nil).at_least_once
         @resource.expects(:[]).with(:initial_size)
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
-        @provider.expects(:lvcreate).with('-n', 'mylv', 'myvg')
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--extents', '100%FREE', 'myvg''--extents', '100%FREE')
         @provider.create
       end
     end

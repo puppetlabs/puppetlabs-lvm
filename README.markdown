@@ -133,3 +133,9 @@ Adam Gibbins <github@adamgibbins.com>
 Steffen Zieger <github@saz.sh>
 
 Jason A. Smith <smithj4@bnl.gov>
+
+Mathieu Bornoz <mathieu.bornoz@camptocamp.com>
+
+Cédric Jeanneret <cedric.jeanneret@camptocamp.com>
+
+Raphaël Pinson <raphael.pinson@camptocamp.com>

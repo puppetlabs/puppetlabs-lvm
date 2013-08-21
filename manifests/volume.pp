@@ -56,6 +56,8 @@ define lvm::volume (
   $ensure,
   $pv,
   $vg,
+  $stripe  = undef,
+  $mirror  = undef,
   $fstype  = undef,
   $size    = undef,
   $extents = undef,
@@ -83,6 +85,8 @@ define lvm::volume (
           volume_group => $vg,
           size         => $size,
           initial_size => $initial_size,
+          stripe       => $stripe,
+          mirror       => $mirror,
           before       => Volume_group[$vg]
         }
       }
@@ -120,6 +124,8 @@ define lvm::volume (
         volume_group => $vg,
         size         => $size,
         extents      => $extents,
+        stripe       => $stripe,
+        mirror       => $mirror,
         require      => Volume_group[$vg]
       }
 

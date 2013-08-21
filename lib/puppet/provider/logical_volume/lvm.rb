@@ -25,6 +25,14 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--extents', '100%FREE')
         end
 
+        if @resource[:mirror]
+            args.push('-m', @resource[:mirror])
+            args.push('--corelog')
+            args.push('--nosync')
+        elsif @resource[:stripe]
+            args.push('-i', @resource[:stripe])
+        end
+
         args << @resource[:volume_group]
         lvcreate(*args)
     end

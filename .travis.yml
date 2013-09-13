@@ -4,7 +4,7 @@ branches:
     - master
 language: ruby
 bundler_args: --without development
-script: bundle exec rake spec SPEC_OPTS='--format documentation'
+script: 'bundle exec rake validate && bundle exec rake lint && SPEC_OPTS="--format documentation" bundle exec rake spec'
 after_success:
   - git clone -q git://github.com/puppetlabs/ghpublisher.git .forge-releng
   - .forge-releng/publish

@@ -1,14 +1,15 @@
 Puppet::Type.type(:logical_volume).provide :lvm do
     desc "Manages LVM logical volumes"
 
-    commands :lvcreate  => 'lvcreate',
-             :lvremove  => 'lvremove',
-             :lvextend  => 'lvextend',
-             :lvs       => 'lvs',
-             :resize2fs => 'resize2fs',
-             :umount    => 'umount',
-             :blkid     => 'blkid',
-             :dmsetup   => 'dmsetup'
+    commands :lvcreate   => 'lvcreate',
+             :lvremove   => 'lvremove',
+             :lvextend   => 'lvextend',
+             :lvs        => 'lvs',
+             :resize2fs  => 'resize2fs',
+             :xfs_growfs => 'xfs_growfs',
+             :umount     => 'umount',
+             :blkid      => 'blkid',
+             :dmsetup    => 'dmsetup'
 
     def create
         args = ['-n', @resource[:name]]
@@ -99,8 +100,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
             lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
 
-            if blkid(path) =~ /\bTYPE=\"(ext[34])\"/
+            blkid_type = blkid(path)
+            if blkid_type =~ /\bTYPE=\"(ext[34])\"/
               resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+            elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
+              xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
             end
 
         end

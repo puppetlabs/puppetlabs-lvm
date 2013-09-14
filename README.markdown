@@ -41,22 +41,25 @@ looks something like:
 
 Here's a simple working example:
 
-    physical_volume { "/dev/hdc":
-        ensure => present
+    physical_volume { '/dev/hdc':
+      ensure => present,
     }
-    volume_group { "myvg":
-        ensure => present,
-        physical_volumes => "/dev/hdc"
+
+    volume_group { 'myvg':
+      ensure           => present,
+      physical_volumes => '/dev/hdc',
     }
-    logical_volume { "mylv":
-        ensure => present,
-        volume_group => "myvg",
-        size => "20G"
+
+    logical_volume { 'mylv':
+      ensure       => present,
+      volume_group => 'myvg',
+      size         => '20G',
     }
-    filesystem { "/dev/myvg/mylv":
-        ensure => present,
-        fs_type => "ext3",
-        options => '-b 4096 -E stride=32,stripe-width=64'
+
+    filesystem { '/dev/myvg/mylv':
+      ensure  => present,
+      fs_type => 'ext3',
+      options => '-b 4096 -E stride=32,stripe-width=64',
     }
 
 This simple 1 physical volume, 1 volume group, 1 logical volume case
@@ -64,11 +67,11 @@ is provided as a simple `volume` definition, as well.  The above could
 be shortened to be:
 
     lvm::volume { 'mylv':
-        ensure => present,
-        vg => 'myvg',
-        pv => '/dev/hdc',
-        fstype => 'ext3',
-        size => '20G',
+      ensure => present,
+      vg     => 'myvg',
+      pv     => '/dev/hdc',
+      fstype => 'ext3',
+      size   => '20G',
     }
 
 Except that in the latter case you cannot specify create options.
@@ -139,3 +142,5 @@ Mathieu Bornoz <mathieu.bornoz@camptocamp.com>
 Cédric Jeanneret <cedric.jeanneret@camptocamp.com>
 
 Raphaël Pinson <raphael.pinson@camptocamp.com>
+
+Garrett Honeycutt <code@garretthoneycutt.com>

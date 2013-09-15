@@ -31,17 +31,6 @@ describe provider_class do
       @provider.expects(:pvs).returns(true)
       @provider.should be_exists
     end
-   ###
-   ###  Would like for this test to work
-   # it "should execute 'pvs' if vg does not exist" do
-   #   @resource.expects(:[]).with(:unless_vg).returns('vg01')
-   #   @resource.expects(:[]).with(:unless_vg).returns('vg01')
-   #   @provider.expects(:vgs).returns(false)
-   #   raise(:Puppet::ExecutionFailure)
-   #   @resource.expects(:[]).with(:name).returns('/dev/sdb')
-   #   @provider.expects(:pvs).returns(true)
-   #   @provider.should be_exists
-   # end
     it "should not execute 'pvs' if unless_vg VG exists" do
       @resource.expects(:[]).with(:unless_vg).returns('vg01')
       @resource.expects(:[]).with(:unless_vg).returns('vg01')

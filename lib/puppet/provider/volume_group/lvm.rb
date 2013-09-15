@@ -23,18 +23,29 @@ Puppet::Type.type(:volume_group).provide :lvm do
     end
 
     def physical_volumes=(new_volumes = [])
-        existing_volumes = physical_volumes
-        extraneous = existing_volumes - new_volumes
-        extraneous.each { |volume| reduce_with(volume) }
-        missing = new_volumes - existing_volumes
-        missing.each { |volume| extend_with(volume) }
+        # Only take action if createonly is false just to be safe
+        #  this is really only here to enforce the createonly setting
+        #  if something goes wrong in physical_volumes
+        if @resource[:createonly].to_s == "false"
+          existing_volumes = physical_volumes
+          extraneous = existing_volumes - new_volumes
+          extraneous.each { |volume| reduce_with(volume) }
+          missing = new_volumes - existing_volumes
+          missing.each { |volume| extend_with(volume) }
+        end
     end
 
     def physical_volumes
-        lines = pvs('-o', 'pv_name,vg_name', '--separator', ',')
-        lines.split(/\n/).grep(/,#{@resource[:name]}$/).map { |s|
+        if @resource[:createonly].to_s == "false" || ! vgs(@resource[:name])
+          lines = pvs('-o', 'pv_name,vg_name', '--separator', ',')
+          lines.split(/\n/).grep(/,#{@resource[:name]}$/).map { |s|
             s.split(/,/)[0].strip
-        }
+          }
+        else
+          # Trick the check by setting the returned value to what is
+          #  listed in the puppet catalog
+          @resource[:physical_volumes]
+        end
     end
 
     private

@@ -84,6 +84,26 @@ need to use a hash to pass the parameters to the definition.
 If you need a more complex configuration, you'll need to build the
 resources out yourself.
 
+Optional Values
+---------------
+  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check 
+  to see if "myvg" exists.  If "myvg" does exist then they will not modify
+  the physical volume or volume_group.  This is usefull if you environment
+  is build with certain disks but they change while the server grows, shrinks
+  or moves.
+ 
+  Example:
+
+    physical_volume { "/dev/hdc":
+        ensure => present,
+        unless_vg => "myvg"
+    }
+    volume_group { "myvg":
+        ensure => present,
+        physical_volumes => "/dev/hdc",
+        createonly => true
+    }
+
 Limitations
 -----------
 
@@ -127,7 +147,7 @@ Tim Hawes <github@reductivelabs.com>
 
 Yury V. Zaytsev <yury@shurup.com>
 
-csschwe <github@reductivelabs.com>
+csschwe <csschwe@gmail.com>
 
 windowsrefund <windowsrefund@gmail.com>
 

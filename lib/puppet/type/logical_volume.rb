@@ -44,4 +44,17 @@ Puppet::Type.newtype(:logical_volume) do
             end
         end
     end
+
+    newparam(:type) do
+      desc "Configures the logical volume type. AIX only"
+    end
+
+    newparam(:range) do
+      desc "Sets the inter-physical volume allocation policy. AIX only"
+      validate do |value|
+        unless ['maximum','minimum'].include?(value)
+          raise ArgumentError, "#{value} is not a valid range"
+        end
+      end
+    end
 end

@@ -23,7 +23,7 @@ describe 'lvm_support fact' do
     context 'when vgs is absent' do
       it 'should be set to no' do
         Facter::Util::Resolution.stubs('exec') # All other calls
-        Facter::Util::Resolution.expects('exec').with('which vgs').returns(nil)
+        Facter::Util::Resolution.expects('which').with('vgs').returns(nil)
         Facter.value(:lvm_support).should be_nil
       end
     end
@@ -31,7 +31,7 @@ describe 'lvm_support fact' do
     context 'when vgs is present' do
       it 'should be set to yes' do
         Facter::Util::Resolution.stubs('exec') # All other calls
-        Facter::Util::Resolution.expects('exec').with('which vgs').returns('/sbin/vgs')
+        Facter::Util::Resolution.expects('which').with('vgs').returns('/sbin/vgs')
         Facter.value(:lvm_support).should be_true
       end
     end

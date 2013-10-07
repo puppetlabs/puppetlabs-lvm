@@ -4,7 +4,7 @@ Facter.add('lvm_support') do
   confine :kernel => :linux
 
   setcode do
-    vgdisplay =  Facter::Util::Resolution.exec('which vgs')
+    vgdisplay = Facter::Util::Resolution.which('vgs')
     vgdisplay.nil? ? nil : true
   end
 end

@@ -6,6 +6,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
              :lvextend   => 'lvextend',
              :lvs        => 'lvs',
              :resize2fs  => 'resize2fs',
+             :resize4fs  => 'resize4fs',
              :umount     => 'umount',
              :blkid      => 'blkid',
              :dmsetup    => 'dmsetup'
@@ -102,7 +103,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
 
             blkid_type = blkid(path)
-            if blkid_type =~ /\bTYPE=\"(ext[34])\"/
+            if Facter.value(:osfamily) == 'RedHat' and Facter.value(:operatingsystemrelease) =~ /5\./ and blkid_type =~ /\bTYPE=\"(ext4)\"/
+              resize4fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+            elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
               resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
             elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
               xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )

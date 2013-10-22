@@ -6,12 +6,12 @@ Puppet::Type.type(:logical_volume).provide :lvm do
              :lvextend   => 'lvextend',
              :lvs        => 'lvs',
              :resize2fs  => 'resize2fs',
-             :resize4fs  => 'resize4fs',
              :umount     => 'umount',
              :blkid      => 'blkid',
              :dmsetup    => 'dmsetup'
 
-    optional_commands :xfs_growfs => 'xfs_growfs'
+    optional_commands :xfs_growfs => 'xfs_growfs',
+                      :resize4fs  => 'resize4fs'
 
     def create
         args = ['-n', @resource[:name]]

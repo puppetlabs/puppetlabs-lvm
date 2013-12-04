@@ -56,6 +56,7 @@ Puppet::Type.newtype(:logical_volume) do
           raise ArgumentError, "#{value} is not a valid range"
         end
       end
+    end
 
     newparam(:stripes) do
         desc "The number of stripes to allocate for the new logical volume."

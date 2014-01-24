@@ -129,6 +129,10 @@ Logical volume size can be extended, but not reduced -- this is for
 safety, as manual intervention is probably required for data
 migration, etc.
 
+### Mirroring and Striping ###
+
+The logical_volume resource will now take a stripe or mirror parameter defining that parameter to be passed to lvcreate. Corelog is enabled for mirroring.
+
 Contributors
 =======
 Bruce Williams <bruce@codefluency.com>

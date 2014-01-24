@@ -27,6 +27,24 @@ Puppet::Type.newtype(:logical_volume) do
         end
     end
 
+    newparam(:mirror) do
+        desc "The number of mirrors of the volume."
+        validate do |value|
+            unless Integer(value).between?(1, 4)
+                raise ArgumentError , "#{value} is not a valid number of mirrors (1,2,3,4)"
+            end
+        end
+    end
+
+    newparam(:stripe) do
+        desc "The number of stripes on the volumes."
+        validate do |value|
+            unless Integer(value).between?(1, 4)
+                raise ArgumentError , "#{value} is not a valid number of stripes (1,2,3,4)"
+            end
+        end
+    end
+
     newproperty(:size) do
         desc "The size of the logical volume. Set to undef to use all available space"
         validate do |value|

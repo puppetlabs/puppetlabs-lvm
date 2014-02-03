@@ -15,6 +15,8 @@ describe provider_class do
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
       end
@@ -26,6 +28,8 @@ describe provider_class do
         @resource.expects(:[]).with(:size).returns(nil).at_least_once
         @resource.expects(:[]).with(:initial_size)
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--extents', '100%FREE', 'myvg')
         @provider.create
       end
@@ -36,6 +40,8 @@ describe provider_class do
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
         @resource.expects(:[]).with(:extents).returns('80%vg').at_least_once
+        @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', '--extents', '80%vg', 'myvg')
         @provider.create
       end
@@ -46,6 +52,8 @@ describe provider_class do
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
       end
@@ -60,6 +68,8 @@ describe provider_class do
           @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
           @resource.expects(:[]).with(:size).returns('1g').at_least_once
           @resource.expects(:[]).with(:extents).returns(nil).at_least_once
+          @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
+          @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
           @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
@@ -75,6 +85,8 @@ describe provider_class do
           @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
           @resource.expects(:[]).with(:size).returns('1g').at_least_once
           @resource.expects(:[]).with(:extents).returns(nil).at_least_once
+          @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
+          @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
           @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
@@ -89,6 +101,8 @@ describe provider_class do
         @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
         @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once

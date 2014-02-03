@@ -28,6 +28,14 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--extents', '100%FREE')
         end
 
+        if @resource[:stripes]
+            args.push('--stripes', @resource[:stripes])
+        end
+
+        if @resource[:stripesize]
+            args.push('--stripesize', @resource[:stripesize])
+        end
+
         args << @resource[:volume_group]
         lvcreate(*args)
     end

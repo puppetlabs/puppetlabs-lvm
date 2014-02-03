@@ -36,7 +36,7 @@ Puppet::Type.newtype(:logical_volume) do
         end
     end
 
-    newproperty(:extents) do
+    newparam(:extents) do
         desc "The  number of logical extents to allocate for the new logical volume. Set to undef to use all available space"
         validate do |value|
             unless value =~ /^[0-9]+[%(vg|VG|pvs|PVS|free|FREE|origin|ORIGIN)]?/i
@@ -56,5 +56,23 @@ Puppet::Type.newtype(:logical_volume) do
           raise ArgumentError, "#{value} is not a valid range"
         end
       end
+    end
+
+    newparam(:stripes) do
+        desc "The number of stripes to allocate for the new logical volume."
+        validate do |value|
+            unless value =~ /^[0-9]+/i
+                raise ArgumentError , "#{value} is not a valid stripe count"
+            end
+        end
+    end
+
+    newparam(:stripesize) do
+        desc "The stripesize to use for the new logical volume."
+        validate do |value|
+            unless value =~ /^[0-9]+/i
+                raise ArgumentError , "#{value} is not a valid stripesize"
+            end
+        end
     end
 end

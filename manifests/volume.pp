@@ -68,14 +68,15 @@ define lvm::volume (
     cleaned: {
       # This may only need to exist once
       if ! defined(Physical_volume[$pv]) {
-        physical_volume { $pv: ensure => present }
+        physical_volume { $pv: ensure => present, unless_vg => $vg }
       }
       # This may only need to exist once
       if ! defined(Volume_group[$vg]) {
         volume_group { $vg:
           ensure           => present,
           physical_volumes => $pv,
-          before           => Physical_volume[$pv]
+          before           => Physical_volume[$pv],
+          createonly       => true,
         }
 
         logical_volume { $name:
@@ -110,7 +111,8 @@ define lvm::volume (
         volume_group { $vg:
           ensure           => present,
           physical_volumes => $pv,
-          require          => Physical_volume[$pv]
+          require          => Physical_volume[$pv],
+          createonly       => true,
         }
       }
 

@@ -41,38 +41,96 @@ looks something like:
 
 Here's a simple working example:
 
-    physical_volume { '/dev/hdc':
-      ensure => present,
-    }
+```puppet
+physical_volume { '/dev/hdc':
+  ensure => present,
+}
 
-    volume_group { 'myvg':
-      ensure           => present,
-      physical_volumes => '/dev/hdc',
-    }
+volume_group { 'myvg':
+  ensure           => present,
+  physical_volumes => '/dev/hdc',
+}
 
-    logical_volume { 'mylv':
-      ensure       => present,
-      volume_group => 'myvg',
-      size         => '20G',
-    }
+logical_volume { 'mylv':
+  ensure       => present,
+  volume_group => 'myvg',
+  size         => '20G',
+}
 
-    filesystem { '/dev/myvg/mylv':
-      ensure  => present,
-      fs_type => 'ext3',
-      options => '-b 4096 -E stride=32,stripe-width=64',
-    }
+filesystem { '/dev/myvg/mylv':
+  ensure  => present,
+  fs_type => 'ext3',
+  options => '-b 4096 -E stride=32,stripe-width=64',
+}
+```
 
 This simple 1 physical volume, 1 volume group, 1 logical volume case
 is provided as a simple `volume` definition, as well.  The above could
 be shortened to be:
 
-    lvm::volume { 'mylv':
-      ensure => present,
-      vg     => 'myvg',
-      pv     => '/dev/hdc',
-      fstype => 'ext3',
-      size   => '20G',
-    }
+```puppet
+lvm::volume { 'mylv':
+  ensure => present,
+  vg     => 'myvg',
+  pv     => '/dev/hdc',
+  fstype => 'ext3',
+  size   => '20G',
+}
+```
+
+You can also describe your Volume Group like this:
+
+```puppet
+class { 'lvm':
+  volume_groups    => {
+    'myvg' => {
+      physical_volumes => [ '/dev/sda2', '/dev/sda3', ],
+      logical_volumes  => {
+        'opt'    => {'size' => '20G'},
+        'tmp'    => {'size' => '1G' },
+        'usr'    => {'size' => '3G' },
+        'var'    => {'size' => '15G'},
+        'home'   => {'size' => '5G' },
+        'backup' => {
+          'size'              => '5G',
+          'mountpath'         => '/var/backups',
+          'mountpath_require' => true,
+        },
+      },
+    },
+  },
+}
+```
+
+This could be really convenient when used with hiera:
+
+```puppet
+include ::lvm
+```
+and
+```
+---
+lvm::volume_groups:
+  myvg:
+    physical_volumes:
+      - /dev/sda2
+      - /dev/sda3
+    logical_volumes:
+      opt:
+        size: 20G
+      tmp:
+        size: 1G
+      usr:
+        size: 3G
+      var:
+        size: 15G
+      home:
+        size: 5G
+      backup:
+        size: 5G
+        mountpath: /var/backups
+        mountpath_require: true
+```
 
 Except that in the latter case you cannot specify create options.
 =======

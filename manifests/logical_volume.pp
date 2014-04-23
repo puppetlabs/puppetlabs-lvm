@@ -6,10 +6,17 @@ define lvm::logical_volume(
   $fs_type           = 'ext4',
   $mountpath         = "/${name}",
   $mountpath_require = false,
+  # pass needs to be a parameter for managing root (/) volume
+  $pass              = '2'
 ) {
   validate_bool($mountpath_require)
 
   if $mountpath_require {
+    # Without this file mountpath resource, catalog runs fail for us on CentOS 6.5
+    file { "$mountpath":
+      ensure => directory,
+    }
+
     Mount {
       require => File[$mountpath],
     }
@@ -40,6 +47,11 @@ define lvm::logical_volume(
     ensure  => $ensure,
     fs_type => $fs_type,
   }
+   
+  # Required, at least on our CentOS 6.5 build or Puppet errors out when trying to run mkdir or test
+  Exec {
+    path => '/bin:/sbin:/usr/bin:/usr/sbin',
+  }
 
   exec { "ensure mountpoint '${mountpath}' exists":
     command => "mkdir -p ${mountpath}",
@@ -50,7 +62,7 @@ define lvm::logical_volume(
     device  => "/dev/${volume_group}/${name}",
     fstype  => $fs_type,
     options => $options,
-    pass    => 2,
+    pass    => $pass,
     dump    => 1,
     atboot  => true,
   }

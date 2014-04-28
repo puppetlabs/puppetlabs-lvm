@@ -44,7 +44,7 @@ define lvm::logical_volume(
   exec { "ensure mountpoint '${mountpath}' exists":
     command => "mkdir -p ${mountpath}",
     unless  => "test -d ${mountpath}",
-    path    => "/bin/:/usr/bin/",
+    path    => "/usr/bin/:/bin/",
   } ->
   mount {$mountpath:
     ensure  => $mount_ensure,

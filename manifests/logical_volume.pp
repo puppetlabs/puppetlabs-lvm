@@ -4,29 +4,56 @@ define lvm::logical_volume(
   $ensure            = present,
   $options           = 'defaults',
   $fs_type           = 'ext4',
-  $mountpath         = "/${name}",
+  $pass              = undef,
+  $dump              = undef,
+  $mountpath         = undef,
   $mountpath_require = false,
 ) {
   validate_bool($mountpath_require)
 
-  if $mountpath_require {
-    Mount {
-      require => File[$mountpath],
+  $lvm_device_path = "/dev/${volume_group}/${name}"
+
+  if $fs_type == 'swap' {
+    $mount_title      = "Swap${name}"
+    $mount_ensure     = 'unmounted'
+    # Mount path for swap should be none, should be fixed in puppet?
+    $fixed_mountpath  = $mount_title
+    $fixed_pass       = 0
+    $fixed_dump       = 0
+  } else {
+    $mount_title     = $mountpath
+    $fixed_mountpath = $mountpath ? {
+      undef   => "/${name}",
+      default => $mountpath
+    }
+    $mount_ensure = $ensure ? {
+      'absent' => absent,
+      default  => mounted
+    }
+    $fixed_pass = $pass ? {
+      undef   => 2,
+      default => $pass
+    }
+    $fixed_dump = $dump ? {
+      undef   => 1,
+      default => $dump
     }
   }
 
-  $mount_ensure = $ensure ? {
-    'absent' => absent,
-    default  => mounted,
+  if $mountpath_require and $fs_type != "swap" {
+    Mount {
+      require => File[$fixed_mountpath],
+    }
   }
+
 
   if $ensure == 'present' {
     Logical_volume[$name] ->
-    Filesystem["/dev/${volume_group}/${name}"] ->
-    Mount[$mountpath]
+    Filesystem[$lvm_device_path] ->
+    Mount[$mount_title]
   } else {
-    Mount[$mountpath] ->
-    Filesystem["/dev/${volume_group}/${name}"] ->
+    Mount[$mount_title] ->
+    Filesystem[$lvm_device_path] ->
     Logical_volume[$name]
   }
 
@@ -36,23 +63,39 @@ define lvm::logical_volume(
     size         => $size,
   }
 
-  filesystem {"/dev/${volume_group}/${name}":
+  filesystem {$lvm_device_path:
     ensure  => $ensure,
     fs_type => $fs_type,
   }
 
-  exec { "ensure mountpoint '${mountpath}' exists":
-    command => "mkdir -p ${mountpath}",
-    unless  => "test -d ${mountpath}",
-  } ->
-  mount {$mountpath:
+  if $fs_type != "swap" {
+    exec { "ensure mountpoint '${fixed_mountpath}' exists":
+      command => "mkdir -p ${fixed_mountpath}",
+      path => "/bin:/usr/bin",
+      unless  => "test -d ${fixed_mountpath}",
+      before => Mount[$mount_title]
+    }
+  } else {
+    if $ensure == 'present' { # if ensure was present mount the swap
+       exec {"swapon -a for '${mount_title}'":
+          command     => "swapon -a", 
+          path        => "/bin:/usr/bin:/sbin",
+          refreshonly => true,
+          subscribe   => Mount[$mount_title],
+       } 
+    }
+  }
+  mount {"$mount_title":
+    name    => $fixed_mountpath,
     ensure  => $mount_ensure,
-    device  => "/dev/${volume_group}/${name}",
+    device  => "${lvm_device_path}",
     fstype  => $fs_type,
     options => $options,
-    pass    => 2,
-    dump    => 1,
+    pass    => $fixed_pass,
+    dump    => $fixed_dump,
     atboot  => true,
+    alias   => $mount_title,
   }
 
 }
+

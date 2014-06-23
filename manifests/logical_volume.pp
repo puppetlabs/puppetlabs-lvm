@@ -34,6 +34,7 @@ define lvm::logical_volume(
     ensure       => $ensure,
     volume_group => $volume_group,
     size         => $size,
+    require      => Volume_group[$volume_group],
   }
 
   filesystem {"/dev/${volume_group}/${name}":

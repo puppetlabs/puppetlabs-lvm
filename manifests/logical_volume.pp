@@ -45,6 +45,7 @@ define lvm::logical_volume(
     path    => [ '/bin', '/usr/bin' ],
     command => "mkdir -p ${mountpath}",
     unless  => "test -d ${mountpath}",
+    path    => "/usr/bin/:/bin/",
   } ->
   mount {$mountpath:
     ensure  => $mount_ensure,

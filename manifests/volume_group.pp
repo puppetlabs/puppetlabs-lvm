@@ -20,6 +20,7 @@ define lvm::volume_group(
     {
       ensure       => $ensure,
       volume_group => $name,
+      require      => Volume_group[$name],
     }
   )
 }

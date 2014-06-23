@@ -75,4 +75,8 @@ Puppet::Type.newtype(:logical_volume) do
             end
         end
     end
+
+    autorequire(:volume_group) do
+      @parameters[:volume_group].value
+    end
 end

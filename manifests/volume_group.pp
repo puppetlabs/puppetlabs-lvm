@@ -1,8 +1,11 @@
-define lvm::volume_group(
+# == Define: lvm::volume_group
+#
+define lvm::volume_group (
   $physical_volumes,
   $ensure           = present,
   $logical_volumes  = {},
 ) {
+
   validate_hash($logical_volumes)
 
   physical_volume { $physical_volumes:

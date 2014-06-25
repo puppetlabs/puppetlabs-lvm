@@ -1,5 +1,5 @@
 Puppet::Type.type(:physical_volume).provide(:lvm) do
-    desc "Manages LVM physical volumes"
+    desc 'Manages LVM physical volumes'
 
     commands :pvcreate  => 'pvcreate', :pvremove => 'pvremove', :pvs => 'pvs', :vgs => 'vgs'
 

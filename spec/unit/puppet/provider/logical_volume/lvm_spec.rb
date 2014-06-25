@@ -4,13 +4,13 @@ provider_class = Puppet::Type.type(:logical_volume).provider(:lvm)
 
 describe provider_class do
   before do
-    @resource = stub("resource")
+    @resource = stub('resource')
     @provider = provider_class.new(@resource)
   end
 
   describe 'when creating' do
     context 'with size' do
-      it "should execute 'lvcreate' with a '--size' option" do
+      it 'should execute \'lvcreate\' with a \'--size\' option' do
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -22,7 +22,7 @@ describe provider_class do
       end
     end
     context 'without size and without extents' do
-      it "should execute 'lvcreate' without a '--size' option or a '--extents' option" do
+      it 'should execute \'lvcreate\' without a \'--size\' option or a \'--extents\' option' do
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns(nil).at_least_once
@@ -35,7 +35,7 @@ describe provider_class do
       end
     end
     context 'with extents' do
-      it "should execute 'lvcreate' with a '--extents' option" do
+      it 'should execute \'lvcreate\' with a \'--extents\' option' do
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -47,7 +47,7 @@ describe provider_class do
       end
     end
     context 'without extents' do
-      it "should execute 'lvcreate' without a '--extents' option" do
+      it 'should execute \'lvcreate\' without a \'--extents\' option' do
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -60,10 +60,10 @@ describe provider_class do
     end
   end
 
-  describe "when modifying" do
-    context "with a larger size" do
-      context "in extent portions" do
-        it "should execute 'lvextend'" do
+  describe 'when modifying' do
+    context 'with a larger size' do
+      context 'in extent portions' do
+        it 'should execute \'lvextend\'' do
           @resource.expects(:[]).with(:name).returns('mylv').at_least_once
           @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
           @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -79,8 +79,8 @@ describe provider_class do
           @provider.size = '2000000k'
         end
       end
-      context "not in extent portions" do
-        it "should raise an exception" do
+      context 'not in extent portions' do
+        it 'should raise an exception' do
           @resource.expects(:[]).with(:name).returns('mylv').at_least_once
           @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
           @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -95,8 +95,8 @@ describe provider_class do
         end
       end
     end
-    context "with a smaller size" do
-      it "should raise an exception" do
+    context 'with a smaller size' do
+      it 'should raise an exception' do
         @resource.expects(:[]).with(:name).returns('mylv').at_least_once
         @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -113,7 +113,7 @@ describe provider_class do
   end
 
   describe 'when destroying' do
-    it "should execute 'dmsetup' and 'lvremove'" do
+    it 'should execute \'dmsetup\' and \'lvremove\'' do
       @resource.expects(:[]).with(:volume_group).returns('myvg').twice
       @resource.expects(:[]).with(:name).returns('mylv').twice
       @provider.expects(:dmsetup).with('remove', 'myvg-mylv')

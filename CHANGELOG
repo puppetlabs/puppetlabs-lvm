@@ -1,3 +1,14 @@
+2014-06-25 - Version 0.3.2
+
+Summary:
+
+This release fixes a couple of small, but important, bugs.
+
+Bugs:
+- Fix the size comparision to be unit aware.
+- Fix exec that was missing a path attribute.
+- Add autorequire for the volume_group.
+
 2014-04-11 - Version 0.3.1
 
 Summary:

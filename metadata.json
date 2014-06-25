@@ -1,6 +1,6 @@
 {
     "name": "puppetlabs-lvm",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "source": "https://github.com/puppetlabs/puppetlabs-lvm",
     "author": "Puppet Labs",
     "license": "GPLv2",

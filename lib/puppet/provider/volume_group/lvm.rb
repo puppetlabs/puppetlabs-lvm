@@ -1,5 +1,5 @@
 Puppet::Type.type(:volume_group).provide :lvm do
-    desc "Manages LVM volume groups"
+    desc 'Manages LVM volume groups'
 
     commands :vgcreate => 'vgcreate',
              :vgremove => 'vgremove',
@@ -26,7 +26,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
         # Only take action if createonly is false just to be safe
         #  this is really only here to enforce the createonly setting
         #  if something goes wrong in physical_volumes
-        if @resource[:createonly].to_s == "false"
+        if @resource[:createonly].to_s == 'false'
           existing_volumes = physical_volumes
           extraneous = existing_volumes - new_volumes
           extraneous.each { |volume| reduce_with(volume) }
@@ -36,7 +36,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
     end
 
     def physical_volumes
-        if @resource[:createonly].to_s == "false" || ! vgs(@resource[:name])
+        if @resource[:createonly].to_s == 'false' || ! vgs(@resource[:name])
           lines = pvs('-o', 'pv_name,vg_name', '--separator', ',')
           lines.split(/\n/).grep(/,#{@resource[:name]}$/).map { |s|
             s.split(/,/)[0].strip

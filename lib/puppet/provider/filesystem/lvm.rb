@@ -1,5 +1,5 @@
 Puppet::Type.type(:filesystem).provide :lvm do
-    desc "Manages filesystem of a logical volume"
+    desc 'Manages filesystem of a logical volume'
 
     commands :blkid => 'blkid'
 
@@ -22,7 +22,7 @@ Puppet::Type.type(:filesystem).provide :lvm do
     end
 
     def mkfs(fs_type)
-        mkfs_params = { "reiserfs" => "-q" }
+        mkfs_params = { 'reiserfs' => '-q' }
         mkfs_cmd    = ["mkfs.#{fs_type}", @resource[:name]]
         
         if mkfs_params[fs_type]

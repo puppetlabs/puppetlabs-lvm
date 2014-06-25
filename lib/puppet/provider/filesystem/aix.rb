@@ -1,7 +1,7 @@
 require 'open3'
 Puppet::Type.type(:filesystem).provide :aix do
 
-  desc "Manages logical volume filesystems on AIX"
+  desc 'Manages logical volume filesystems on AIX'
 
   confine :operatingsystem => :AIX
   defaultfor :operatingsystem => :AIX

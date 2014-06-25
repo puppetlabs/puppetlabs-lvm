@@ -152,14 +152,14 @@ Optional Values
  
   Example:
 
-    physical_volume { "/dev/hdc":
-        ensure => present,
-        unless_vg => "myvg"
+    physical_volume { '/dev/hdc':
+        ensure    => present,
+        unless_vg => 'myvg',
     }
-    volume_group { "myvg":
-        ensure => present,
-        physical_volumes => "/dev/hdc",
-        createonly => true
+    volume_group { 'myvg':
+        ensure           => present,
+        physical_volumes => '/dev/hdc',
+        createonly       => true,
     }
 
 Limitations

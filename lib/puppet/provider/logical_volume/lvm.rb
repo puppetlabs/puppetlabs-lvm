@@ -1,5 +1,5 @@
 Puppet::Type.type(:logical_volume).provide :lvm do
-    desc "Manages LVM logical volumes"
+    desc 'Manages LVM logical volumes'
 
     commands :lvcreate   => 'lvcreate',
              :lvremove   => 'lvremove',
@@ -66,7 +66,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     def size=(new_size)
-        lvm_size_units = { "K" => 1, "M" => 1024, "G" => 1048576, "T" => 1073741824, "P" => 1099511627776, "E" => 1125899906842624 }
+        lvm_size_units = { 'K' => 1, 'M' => 1024, 'G' => 1048576, 'T' => 1073741824, 'P' => 1099511627776, 'E' => 1125899906842624 }
         lvm_size_units_match = lvm_size_units.keys().join('|')
 
         resizeable = false

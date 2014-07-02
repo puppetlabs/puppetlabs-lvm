@@ -4,6 +4,7 @@ define lvm::logical_volume(
   $ensure            = present,
   $options           = 'defaults',
   $fs_type           = 'ext4',
+  $mkfs_options      = undef,
   $mountpath         = "/${name}",
   $mountpath_require = false,
 ) {
@@ -39,6 +40,7 @@ define lvm::logical_volume(
   filesystem {"/dev/${volume_group}/${name}":
     ensure  => $ensure,
     fs_type => $fs_type,
+    options => $mkfs_options,
   }
 
   exec { "ensure mountpoint '${mountpath}' exists":

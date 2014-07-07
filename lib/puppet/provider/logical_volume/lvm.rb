@@ -24,7 +24,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--extents', @resource[:extents])
         end
 
-        if !@resource[:extents] and !@resource[:size]
+        if !@resource[:extents] and !@resource[:size] and !@resource[:initial_size]
             args.push('--extents', '100%FREE')
         end
 

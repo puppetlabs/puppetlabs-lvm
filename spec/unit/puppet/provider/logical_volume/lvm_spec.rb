@@ -21,12 +21,25 @@ describe provider_class do
         @provider.create
       end
     end
-    context 'without size and without extents' do
+    context 'with initial_size' do
+      it "should execute 'lvcreate' with a '--size' option" do
+        @resource.expects(:[]).with(:name).returns('mylv')
+        @resource.expects(:[]).with(:volume_group).returns('myvg')
+        @resource.expects(:[]).with(:initial_size).returns('1g').at_least_once
+        @resource.expects(:[]).with(:size).returns(nil).at_least_once
+        @resource.expects(:[]).with(:extents).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
+        @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
+        @provider.create
+      end
+    end
+     context 'without size and without extents' do
       it "should execute 'lvcreate' without a '--size' option or a '--extents' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns(nil).at_least_once
-        @resource.expects(:[]).with(:initial_size)
+        @resource.expects(:[]).with(:initial_size).returns(nil).at_least_once
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once

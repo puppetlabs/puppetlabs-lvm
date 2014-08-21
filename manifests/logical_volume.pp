@@ -30,13 +30,13 @@ define lvm::logical_volume(
     Logical_volume[$name]
   }
 
-  logical_volume { $name:
+  ::logical_volume { $name:
     ensure       => $ensure,
     volume_group => $volume_group,
     size         => $size,
   }
 
-  filesystem {"/dev/${volume_group}/${name}":
+  ::filesystem {"/dev/${volume_group}/${name}":
     ensure  => $ensure,
     fs_type => $fs_type,
   }

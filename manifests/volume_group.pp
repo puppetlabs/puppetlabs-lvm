@@ -5,11 +5,11 @@ define lvm::volume_group(
 ) {
   validate_hash($logical_volumes)
 
-  physical_volume { $physical_volumes:
+  ::physical_volume { $physical_volumes:
     ensure => $ensure,
   }
 
-  volume_group { $name:
+  ::volume_group { $name:
     ensure           => $ensure,
     physical_volumes => $physical_volumes,
   }

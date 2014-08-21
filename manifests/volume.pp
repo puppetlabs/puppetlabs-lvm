@@ -68,17 +68,17 @@ define lvm::volume (
     cleaned: {
       # This may only need to exist once
       if ! defined(Physical_volume[$pv]) {
-        physical_volume { $pv: ensure => present }
+        ::physical_volume { $pv: ensure => present }
       }
       # This may only need to exist once
       if ! defined(Volume_group[$vg]) {
-        volume_group { $vg:
+        ::volume_group { $vg:
           ensure           => present,
           physical_volumes => $pv,
           before           => Physical_volume[$pv]
         }
 
-        logical_volume { $name:
+        ::logical_volume { $name:
           ensure       => present,
           volume_group => $vg,
           size         => $size,
@@ -91,7 +91,7 @@ define lvm::volume (
     # Just clean up the logical volume
     #
     absent: {
-      logical_volume { $name:
+      ::logical_volume { $name:
         ensure       => absent,
         volume_group => $vg,
         size         => $size
@@ -107,14 +107,14 @@ define lvm::volume (
 
       # This may only need to exist once
       if ! defined(Volume_group[$vg]) {
-        volume_group { $vg:
+        ::volume_group { $vg:
           ensure           => present,
           physical_volumes => $pv,
           require          => Physical_volume[$pv]
         }
       }
 
-      logical_volume { $name:
+      ::logical_volume { $name:
         ensure       => present,
         volume_group => $vg,
         size         => $size,
@@ -123,7 +123,7 @@ define lvm::volume (
       }
 
       if $fstype != undef {
-        filesystem { "/dev/${vg}/${name}":
+        ::filesystem { "/dev/${vg}/${name}":
           ensure  => present,
           fs_type => $fstype,
           require => Logical_volume[$name]

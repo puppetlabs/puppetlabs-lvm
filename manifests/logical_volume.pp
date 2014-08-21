@@ -1,4 +1,6 @@
-define lvm::logical_volume(
+# == Define: lvm::logical_volume
+#
+define lvm::logical_volume (
   $volume_group,
   $size,
   $ensure            = present,
@@ -7,6 +9,7 @@ define lvm::logical_volume(
   $mountpath         = "/${name}",
   $mountpath_require = false,
 ) {
+
   validate_bool($mountpath_require)
 
   if $mountpath_require {
@@ -36,7 +39,7 @@ define lvm::logical_volume(
     size         => $size,
   }
 
-  filesystem {"/dev/${volume_group}/${name}":
+  filesystem { "/dev/${volume_group}/${name}":
     ensure  => $ensure,
     fs_type => $fs_type,
   }
@@ -46,7 +49,7 @@ define lvm::logical_volume(
     command => "mkdir -p ${mountpath}",
     unless  => "test -d ${mountpath}",
   } ->
-  mount {$mountpath:
+  mount { $mountpath:
     ensure  => $mount_ensure,
     device  => "/dev/${volume_group}/${name}",
     fstype  => $fs_type,
@@ -55,5 +58,4 @@ define lvm::logical_volume(
     dump    => 1,
     atboot  => true,
   }
-
 }

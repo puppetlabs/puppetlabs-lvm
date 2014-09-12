@@ -1,4 +1,5 @@
 Puppet::Type.newtype(:logical_volume) do
+
     ensurable
 
     newparam(:name) do
@@ -74,6 +75,18 @@ Puppet::Type.newtype(:logical_volume) do
                 raise ArgumentError , "#{value} is not a valid stripesize"
             end
         end
+    end
+
+    newparam(:size_is_minsize) do
+        desc "Set to true if the 'size' parameter specified, is just the 
+            minimum size you need (if the LV found is larger then the size requests
+            this is just logged not causing a FAIL)"
+        validate do |value|
+            unless [:true, true, "true", :false, false, "false"].include?(value)
+                raise ArgumentError , "size_is_minsize must either be true or false"
+            end
+        end
+        defaultto :false
     end
 
     autorequire(:volume_group) do

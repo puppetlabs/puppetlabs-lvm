@@ -8,7 +8,8 @@ describe Puppet::Type.type(:logical_volume) do
       :volume_group => 'myvg',
       :size => '1g',
       :extents => '80%vg',
-      :ensure => :present
+      :ensure => :present,
+      :size_is_minsize => :false,
     }
     stub_default_provider!
       end
@@ -42,6 +43,28 @@ describe Puppet::Type.type(:logical_volume) do
     it 'should support setting a value' do
       with(valid_params)[:size].should == valid_params[:size]
     end
+  end
+
+  describe "when specifying the 'size_is_minsize' parameter" do
+    it "should exist" do
+      @type.attrclass(:size_is_minsize).should_not be_nil
+    end
+    it 'should support setting a value' do
+      with(valid_params)[:size_is_minsize].should == valid_params[:size_is_minsize]
+    end
+    it "should support 'true' as a value" do
+      with(valid_params.merge(:size_is_minsize => :true)) do |resource|
+        resource[:size_is_minsize].should == :true
+        end
+      end
+    it "should support 'false' as a value" do
+      with(valid_params.merge(:size_is_minsize => :false)) do |resource|
+        resource[:size_is_minsize].should == :false
+        end
+      end
+    it "should not support other values" do
+      specifying(valid_params.merge(:size_is_minsize => :moep)).should raise_error(Puppet::Error)
+      end
   end
 
   describe "when specifying the 'extents' parameter" do

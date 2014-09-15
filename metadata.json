@@ -1,36 +1,45 @@
 {
-    "name": "puppetlabs-lvm",
-    "version": "0.3.2",
-    "source": "https://github.com/puppetlabs/puppetlabs-lvm",
-    "author": "Puppet Labs",
-    "license": "GPLv2",
-    "project_page": "https://github.com/puppetlabs/puppetlabs-lvm",
-    "summary": "LVM module",
-    "operatingsystem_support": [
-      {
-        "operatingsystem": "RedHat"
-      },
-      {
-        "operatingsystem": "CentOS"
-      },
-      {
-        "operatingsystem": "OracleLinux"
-      },
-      {
-        "operatingsystem": "Scientific"
-      },
-      {
-        "operatingsystem": "Debian"
-      },
-      {
-        "operatingsystem": "Ubuntu"
-      },
-      {
-        "operatingsystem": "AIX"
-      }
-    ],
-    "requirements": [
-      { "name": "puppet", "version_requirement": "3.x" }
-    ],
-    "dependencies": []
+  "name": "puppetlabs-lvm",
+  "version": "0.3.3",
+  "author": "Puppet Labs",
+  "summary": "Puppet types and providers to manage LVM",
+  "license": "GPLv2",
+  "source": "https://github.com/puppetlabs/puppetlabs-lvm",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-lvm",
+  "issues_url": "https://tickets.puppetlabs.com/MODULES",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat"
+    },
+    {
+      "operatingsystem": "CentOS"
+    },
+    {
+      "operatingsystem": "OracleLinux"
+    },
+    {
+      "operatingsystem": "Scientific"
+    },
+    {
+      "operatingsystem": "Debian"
+    },
+    {
+      "operatingsystem": "Ubuntu"
+    },
+    {
+      "operatingsystem": "AIX"
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">=4.1.0"
+    }
+  ]
 }

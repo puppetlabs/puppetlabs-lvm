@@ -32,7 +32,7 @@ describe 'lvm_support fact' do
       it 'should be set to yes' do
         Facter::Util::Resolution.stubs('exec') # All other calls
         Facter::Util::Resolution.expects('which').with('vgs').returns('/sbin/vgs')
-        Facter.value(:lvm_support).should be_true
+        Facter.value(:lvm_support).should be_truthy
       end
     end
   end

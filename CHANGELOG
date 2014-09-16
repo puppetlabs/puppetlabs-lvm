@@ -1,3 +1,14 @@
+2014-09-16 - Version 0.3.3
+
+Summary:
+
+This release fixes an issue with the metadata and fixes a bug with
+initial_size.
+
+Bugs:
+- Remove Modulefile and move dependencies to metadata.json
+- Don't set --extents=100%FREE if initial_size is set
+
 2014-06-25 - Version 0.3.2
 
 Summary:

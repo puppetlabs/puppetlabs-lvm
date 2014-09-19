@@ -18,6 +18,7 @@ env:
     - PUPPET_GEM_VERSION="~> 3.4.0"
     - PUPPET_GEM_VERSION="~> 3.5.1"
     - PUPPET_GEM_VERSION="~> 3.6.0"
+    - PUPPET_GEM_VERSION="~> 3.7.0"
   global:
 matrix:
   fast_finish: true

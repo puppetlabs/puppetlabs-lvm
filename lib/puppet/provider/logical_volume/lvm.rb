@@ -39,7 +39,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
 
         if @resource[:mirror]
-            args.push('-mirrors', @resource[:mirror])
+            args.push('--mirrors', @resource[:mirror])
             if @resource[:mirrorlog]
                 args.push('--mirrorlog', @resource[:mirrorlog])
             end

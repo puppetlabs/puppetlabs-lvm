@@ -1,4 +1,3 @@
-  
   package { "lvm2":
     ensure => "installed"
   }
@@ -14,7 +13,7 @@
   $devices=["/dev/sdb1","/dev/sdb2"]   # Physical Devices
   $lv_fs_size="2G"                     # Size of Logical Volume
 
-  physical_volume { [$devices]: 
+  physical_volume { [$devices]:
       ensure => present
   }
   volume_group { "${vgname}":
@@ -35,7 +34,7 @@
   filesystem { "/dev/${vgname}/${lvname}":
       ensure => present,
       fs_type => $lvm_file_system,
-  } ->      
+  } ->
   mount { "lvm-${vgname}-${lvname}":
     name    => "/u",
     ensure  => mounted,

@@ -13,5 +13,5 @@ else
   gem 'puppet', :require => false
 end
 
-gem 'puppet-lint', '>= 0.3.2'
+gem 'puppet-lint', '>= 1.0.0'
 # vim:ft=ruby

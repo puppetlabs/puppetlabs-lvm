@@ -2,7 +2,7 @@
   "name": "puppetlabs-lvm",
   "version": "0.3.3",
   "author": "Puppet Labs",
-  "summary": "Puppet types and providers to manage LVM",
+  "summary": "Provides Puppet types and providers to manage Logical Resource Management (LVM) features.",
   "license": "GPLv2",
   "source": "https://github.com/puppetlabs/puppetlabs-lvm",
   "project_page": "https://github.com/puppetlabs/puppetlabs-lvm",

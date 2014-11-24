@@ -59,7 +59,8 @@ define lvm::volume (
   $fstype  = undef,
   $size    = undef,
   $extents = undef,
-  $initial_size = undef
+  $encryptionkeyfile = undef,
+  $initial_size  = undef
 ) {
   case $ensure {
     #
@@ -115,11 +116,12 @@ define lvm::volume (
       }
 
       logical_volume { $name:
-        ensure       => present,
-        volume_group => $vg,
-        size         => $size,
-        extents      => $extents,
-        require      => Volume_group[$vg]
+        ensure        => present,
+        volume_group  => $vg,
+        size          => $size,
+        extents       => $extents,
+        encryptionkeyfile => $encryptionkeyfile,
+        require       => Volume_group[$vg]
       }
 
       if $fstype != undef {

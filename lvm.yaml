@@ -1,0 +1,18 @@
+---
+datadisk::use: 1
+lvm::volume_groups:
+  datavg:
+    physical_volumes:
+      - /dev/sdb
+    logical_volumes:
+      datalv:
+        encryptionkeyfile: '/root/keyfile'
+#        size: 5G
+        size: 4732M
+#        extents: 90%FREE
+        #extents: 100%FREE
+        mountpath: /data
+lbs::gmlc::mlp_ip: '192.168.1.126'
+lbs::gmlc::gmlc01_ip: '192.168.0.140'
+lbs::gmlc::gmlc02_ip: '192.168.0.41'
+lbs::gmlc::gmlc_sim_ip: '192.168.0.42'

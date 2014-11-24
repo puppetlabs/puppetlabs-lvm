@@ -1,15 +1,15 @@
-# == Define: lvm::logical_volume
-#
-define lvm::logical_volume (
+define lvm::logical_volume(
   $volume_group,
-  $size,
+  $size              = undef,
+  $extents           = undef,
+  $encryptionkeyfile = undef,
+  $luksdevice        = undef,
   $ensure            = present,
   $options           = 'defaults',
   $fs_type           = 'ext4',
   $mountpath         = "/${name}",
   $mountpath_require = false,
 ) {
-
   validate_bool($mountpath_require)
 
   if $mountpath_require {
@@ -22,24 +22,30 @@ define lvm::logical_volume (
     'absent' => absent,
     default  => mounted,
   }
+  $device = $encryptionkeyfile ? {
+    undef   => "/dev/${volume_group}/${name}",
+    default => "/dev/mapper/enc-${volume_group}-${name}",
+  }
 
   if $ensure == 'present' {
     Logical_volume[$name] ->
-    Filesystem["/dev/${volume_group}/${name}"] ->
+    Filesystem[$device] ->
     Mount[$mountpath]
   } else {
     Mount[$mountpath] ->
-    Filesystem["/dev/${volume_group}/${name}"] ->
+    Filesystem[$device] ->
     Logical_volume[$name]
   }
 
   logical_volume { $name:
-    ensure       => $ensure,
-    volume_group => $volume_group,
-    size         => $size,
+    ensure            => $ensure,
+    volume_group      => $volume_group,
+    size              => $size,
+    extents           => $extents,
+    encryptionkeyfile => $encryptionkeyfile,
   }
 
-  filesystem { "/dev/${volume_group}/${name}":
+  filesystem {$device:
     ensure  => $ensure,
     fs_type => $fs_type,
   }
@@ -49,13 +55,14 @@ define lvm::logical_volume (
     command => "mkdir -p ${mountpath}",
     unless  => "test -d ${mountpath}",
   } ->
-  mount { $mountpath:
+  mount {$mountpath:
     ensure  => $mount_ensure,
-    device  => "/dev/${volume_group}/${name}",
+    device  => $device,
     fstype  => $fs_type,
     options => $options,
     pass    => 2,
     dump    => 1,
     atboot  => true,
   }
+
 }

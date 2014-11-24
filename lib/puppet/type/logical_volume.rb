@@ -45,6 +45,10 @@ Puppet::Type.newtype(:logical_volume) do
         end
     end
 
+    newparam(:encryptionkeyfile) do
+        desc "The passphrase file"
+    end
+
     newparam(:type) do
       desc "Configures the logical volume type. AIX only"
     end

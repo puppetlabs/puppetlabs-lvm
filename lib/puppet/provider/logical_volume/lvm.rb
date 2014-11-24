@@ -8,20 +8,22 @@ Puppet::Type.type(:logical_volume).provide :lvm do
              :resize2fs  => 'resize2fs',
              :umount     => 'umount',
              :blkid      => 'blkid',
-             :dmsetup    => 'dmsetup'
+             :dmsetup    => 'dmsetup',
+             :cryptsetup => 'cryptsetup',
+             :echo       => 'echo',
+             :fsck	 => 'fsck'
 
     optional_commands :xfs_growfs => 'xfs_growfs',
                       :resize4fs  => 'resize4fs'
 
     def create
         args = ['-n', @resource[:name]]
-        if @resource[:size]
+        if @resource[:extents]
+            args.push('--extents', @resource[:extents])
+        elsif @resource[:size]
             args.push('--size', @resource[:size])
         elsif @resource[:initial_size]
             args.push('--size', @resource[:initial_size])
-        end
-        if @resource[:extents]
-            args.push('--extents', @resource[:extents])
         end
 
         if !@resource[:extents] and !@resource[:size] and !@resource[:initial_size]
@@ -37,10 +39,16 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
 
         args << @resource[:volume_group]
+
         lvcreate(*args)
+        if @resource[:encryptionkeyfile]
+            cryptsetup("-q", "-d", "#{@resource[:encryptionkeyfile]}", "luksFormat", "/dev/#{@resource[:volume_group]}/#{@resource[:name]}")
+            cryptsetup("-q", "-d", "#{@resource[:encryptionkeyfile]}", "open", "/dev/#{@resource[:volume_group]}/#{@resource[:name]}","enc-#{@resource[:volume_group]}-#{@resource[:name]}")
+        end
     end
 
     def destroy
+        cryptsetup("-q", "-d", "#{@resource[:encryptionkeyfile]}", "close", "enc-#{@resource[:volume_group]}-#{@resource[:name]}")
         dmsetup('remove', "#{@resource[:volume_group]}-#{@resource[:name]}")
         lvremove('-f', path)
     end
@@ -108,13 +116,22 @@ Puppet::Type.type(:logical_volume).provide :lvm do
                 fail( "Cannot extend to size #{new_size} because VG extent size is #{vg_extent_size} KB" )
             end
 
+            if @resource[:encryptionkeyfile]
+               encpath="/dev/mapper/enc-#{@resource[:volume_group]}-#{@resource[:name]}"
+               umount(encpath)
+               cryptsetup("-q", "-d", "", "close", encpath)
+            end
             lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
-
+            if @resource[:encryptionkeyfile]
+               path="/dev/mapper/enc-#{@resource[:volume_group]}-#{@resource[:name]}"
+               cryptsetup("-q", "-d", "#{@resource[:encryptionkeyfile]}", "open", "/dev/#{@resource[:volume_group]}/#{@resource[:name]}","enc-#{@resource[:volume_group]}-#{@resource[:name]}")
+               cryptsetup("-q", "resize", encpath)
+            end
             blkid_type = blkid(path)
             if command(:resize4fs) and blkid_type =~ /\bTYPE=\"(ext4)\"/
               resize4fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
             elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
-              resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+              fsck("-y", "-f",path) && resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
             elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
               xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
             end

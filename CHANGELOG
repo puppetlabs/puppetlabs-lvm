@@ -1,3 +1,11 @@
+Future Release
+Summary:
+
+Metadata fixes as well as fixes issue with volume_group and ensures we are checking two sorted arrays rather than random
+
+Bugs:
+- Fixed volume_group to be sorted upon comparision
+
 2014-09-16 - Version 0.3.3
 
 Summary:

@@ -101,7 +101,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
 
         if not resizeable
-            fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
+            if @resource[:size_is_minsize] == :true or @resource[:size_is_minsize] == true or @resource[:size_is_minsize] == 'true'
+                info( "Logical volume already has minimum size of #{new_size} (currently #{current_size})" )
+            else
+                fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
+            end
         else
             ## Check if new size fits the extend blocks
             if new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size != 0

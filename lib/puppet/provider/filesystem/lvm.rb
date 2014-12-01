@@ -8,7 +8,7 @@ Puppet::Type.type(:filesystem).provide :lvm do
     end
 
     def exists?
-        fstype != nil
+        fstype == @resource[:fs_type]
     end
 
     def destroy

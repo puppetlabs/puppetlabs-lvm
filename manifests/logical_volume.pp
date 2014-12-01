@@ -3,6 +3,7 @@
 define lvm::logical_volume (
   $volume_group,
   $size,
+  $initial_size      = undef,
   $ensure            = present,
   $options           = 'defaults',
   $fs_type           = 'ext4',
@@ -10,6 +11,10 @@ define lvm::logical_volume (
   $stripes           = undef,
   $mountpath         = "/${name}",
   $mountpath_require = false,
+  $extents           = undef,
+  $stripes           = undef,
+  $stripesize        = undef,
+  $range             = undef,
 ) {
 
   validate_bool($mountpath_require)
@@ -39,7 +44,11 @@ define lvm::logical_volume (
     ensure       => $ensure,
     volume_group => $volume_group,
     size         => $size,
+    initial_size => $initial_size,
     stripes      => $stripes,
+    stripesize   => $stripesize,
+    extents      => $extents,
+    range        => $range,
   }
 
   filesystem { "/dev/${volume_group}/${name}":

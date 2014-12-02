@@ -1,43 +1,53 @@
-Future Release
-Summary:
+##2014-12-2 - Release 0.4.0
+###Summary
 
-Metadata fixes as well as fixes issue with volume_group and ensures we are checking two sorted arrays rather than random
+This release contains a number of new parameters, adds support for non-integer sizes, and has a number of bugfixes.
 
-Bugs:
+####Features
+- New parameters in `lvm::logical_volume`
+  - `$initial_size`
+  - `$mkfs_options`
+  - `$stripes`
+  - `$extents`
+  - `$stripesize`
+  - `$range`
+- New `size_is_minsize` parameter in `logical_volume` type
+- Allow non-integer sizes
+
+####Bugfixes
+- Lint fixes
 - Fixed volume_group to be sorted upon comparision
+- Consider `fs_type` in `exists?` function
+- Metadata fixes
 
-2014-09-16 - Version 0.3.3
-
-Summary:
+##2014-09-16 - Release 0.3.3
+###Summary
 
 This release fixes an issue with the metadata and fixes a bug with
 initial_size.
 
-Bugs:
+####Bugfixes
 - Remove Modulefile and move dependencies to metadata.json
 - Don't set --extents=100%FREE if initial_size is set
 
-2014-06-25 - Version 0.3.2
-
-Summary:
+##2014-06-25 - Release 0.3.2
+###Summary
 
 This release fixes a couple of small, but important, bugs.
 
-Bugs:
+####Bugfixes
 - Fix the size comparision to be unit aware.
 - Fix exec that was missing a path attribute.
 - Add autorequire for the volume_group.
 
-2014-04-11 - Version 0.3.1
-
-Summary:
+##2014-04-11 - Release 0.3.1
+###Summary
 
 This release simply adds metadata consumed by the forge for displaying
 operating system compatibility.  No other changes.
 
-2014-04-10 - Version 0.3.0
-
-Summary:
+##2014-04-10 - Release 0.3.0
+###Summary
 
 This release features a new base lvm class, and set of defines, that allows you
 to express your volume groups through a `volume_groups` parameter.  This makes
@@ -45,16 +55,15 @@ it easier to hiera backend your LVM configuration.
 
 More information about this feature can be found in the README file.
 
-2014-02-04 - Version 0.2.0
-
-Summary:
+##2014-02-04 - Release 0.2.0
+###Summary
 
 It's been a long time since the previous release and the LVM module has seen a
 lot of community development.  It now supports AIX, thanks to Craig Dunn, and
 grew an enormous number of facts, properties, and parameters.  There's a
 fistful of bugfixes too which should help RHEL5 users.
 
-Features:
+####Features
  - A new `lvm_support` fact was added. 
  - A new `lvm_vgs` fact was added.
  - A new `lvm_pvs` fact was added.
@@ -69,7 +78,7 @@ Features:
  - Add `stripsize` property.
  - Huge number of parameters were added, most AIX only.
 
-Bugfixes:
+####Bugfixes
 - Fix messages with new_size variables in logical_volume/lvm.rb
 - size 'undef' doesn't work when creating a new logical volume
 - resize2fs isn't called during resizing on ruby>1.

@@ -40,7 +40,7 @@ define lvm::logical_volume(
     }
   }
 
-  if $mountpath_require and $fs_type != "swap" {
+  if $mountpath_require and $fs_type != 'swap' {
     Mount {
       require => File[$fixed_mountpath],
     }
@@ -68,26 +68,26 @@ define lvm::logical_volume(
     fs_type => $fs_type,
   }
 
-  if $fs_type != "swap" {
+  if $fs_type != 'swap' {
     exec { "ensure mountpoint '${fixed_mountpath}' exists":
       command => "mkdir -p ${fixed_mountpath}",
-      path => "/bin:/usr/bin",
+      path    => '/bin:/usr/bin',
       unless  => "test -d ${fixed_mountpath}",
-      before => Mount[$mount_title]
+      before  => Mount[$mount_title]
     }
   } else {
     if $ensure == 'present' { # if ensure was present mount the swap
-       exec {"swapon -a for '${mount_title}'":
-          command     => "swapon -a", 
-          path        => "/bin:/usr/bin:/sbin",
-          refreshonly => true,
-          subscribe   => Mount[$mount_title],
-       } 
+      exec {"swapon -a for '${mount_title}'":
+        command     => 'swapon -a',
+        path        => '/bin:/usr/bin:/sbin',
+        refreshonly => true,
+        subscribe   => Mount[$mount_title],
+      }
     }
   }
-  mount {"$mount_title":
-    name    => $fixed_mountpath,
+  mount {"${mount_title}":
     ensure  => $mount_ensure,
+    name    => $fixed_mountpath,
     device  => "${lvm_device_path}",
     fstype  => $fs_type,
     options => $options,

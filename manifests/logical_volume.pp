@@ -14,10 +14,10 @@ define lvm::logical_volume(
   $lvm_device_path = "/dev/${volume_group}/${name}"
 
   if $fs_type == 'swap' {
-    $mount_title      = "Swap${name}"
+    $mount_title      = "${name}"
     $mount_ensure     = 'unmounted'
     # Mount path for swap should be none, should be fixed in puppet?
-    $fixed_mountpath  = $mount_title
+    $fixed_mountpath  = swap
     $fixed_pass       = 0
     $fixed_dump       = 0
   } else {

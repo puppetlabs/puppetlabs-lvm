@@ -10,6 +10,7 @@ define lvm::logical_volume (
   $mkfs_options      = undef,
   $mountpath         = "/${name}",
   $mountpath_require = false,
+  $mount_pass        = 2,
   $extents           = undef,
   $stripes           = undef,
   $stripesize        = undef,
@@ -66,7 +67,7 @@ define lvm::logical_volume (
     device  => "/dev/${volume_group}/${name}",
     fstype  => $fs_type,
     options => $options,
-    pass    => 2,
+    pass    => $mount_pass,
     dump    => 1,
     atboot  => true,
   }

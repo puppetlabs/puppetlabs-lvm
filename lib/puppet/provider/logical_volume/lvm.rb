@@ -36,6 +36,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--stripesize', @resource[:stripesize])
         end
 
+        if @resource[:readahead]
+            args.push('--readahead', @resource[:readahead])
+        end
+
         args << @resource[:volume_group]
         lvcreate(*args)
     end

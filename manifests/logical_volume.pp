@@ -13,6 +13,7 @@ define lvm::logical_volume (
   $extents           = undef,
   $stripes           = undef,
   $stripesize        = undef,
+  $readahead         = undef,
   $range             = undef,
 ) {
 
@@ -46,6 +47,7 @@ define lvm::logical_volume (
     initial_size => $initial_size,
     stripes      => $stripes,
     stripesize   => $stripesize,
+    readahead    => $readahead,
     extents      => $extents,
     range        => $range,
   }

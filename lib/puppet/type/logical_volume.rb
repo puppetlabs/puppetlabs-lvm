@@ -77,6 +77,15 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
+  newparam(:readahead) do
+    desc "The readahead count to use for the new logical volume."
+    validate do |value|
+      unless value =~ /^([0-9]+|Auto|None)/i
+        raise ArgumentError , "#{value} is not a valid readahead count"
+      end
+    end
+  end
+
   newparam(:size_is_minsize) do
     desc "Set to true if the 'size' parameter specified, is just the 
             minimum size you need (if the LV found is larger then the size requests

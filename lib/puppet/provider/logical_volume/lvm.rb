@@ -75,7 +75,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         lvs(@resource[:volume_group]) =~ lvs_pattern
     end
 
-    def size
+    def size(real = false)
         if @resource[:size] =~ /^\d+\.?\d{0,2}([KMGTPE])/i
             unit = $1.downcase
         end
@@ -84,54 +84,50 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
         if raw =~ /\s+(\d+)\.(\d+)#{unit}/i
             if $2.to_i == 00
-                return $1 + unit.capitalize
+                current_size = $1 + unit.capitalize
             else
-                return $1 + '.' + $2 + unit.capitalize
+                current_size = $1 + '.' + $2 + unit.capitalize
+            end
+        end
+
+        # normal (old) behavior is size_is_minsize is not enabled
+        if real or !allow_minsize()
+            return current_size
+        else
+            # if we're growing, don't lie because we want to run the commands
+            if is_resizeable(current_size, @resource[:size])
+                return current_size
+            else
+                # this check is to avoid emitting the info() message when the
+                # size is already at the desired value
+                if current_size != @resource[:size]
+                    # if size_is_minisize is set and the current size is larger,
+                    # lie about our size so we do not trigger a resource change
+                    # on every run
+                    info( "Logical volume already has a minimum size of #{@resource[:size]} (currently #{current_size})" )
+                end
+
+                return @resource[:size]
             end
         end
     end
 
     def size=(new_size)
-        lvm_size_units = { "K" => 1, "M" => 1024, "G" => 1048576, "T" => 1073741824, "P" => 1099511627776, "E" => 1125899906842624 }
         lvm_size_units_match = lvm_size_units.keys().join('|')
 
-        resizeable = false
-        current_size = size()
+        current_size = size(real = true)
+        resizeable = is_resizeable(current_size, new_size)
 
-        if current_size =~ /(\d+\.{0,1}\d{0,2})(#{lvm_size_units_match})/i
-            current_size_bytes = $1.to_i
-            current_size_unit  = $2.upcase
-        end
-
-        if new_size =~ /(\d+)(#{lvm_size_units_match})/i
-            new_size_bytes = $1.to_i
-            new_size_unit  = $2.upcase
-        end
+        new_size_bytes, new_size_unit = get_size_parts('\d+', new_size)
 
         ## Get the extend size
         if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ /\s+(\d+)\.\d+k/i
             vg_extent_size = $1.to_i
         end
 
-        ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
-        if lvm_size_units[current_size_unit] < lvm_size_units[new_size_unit]
-            resizeable = true
-        elsif lvm_size_units[current_size_unit] > lvm_size_units[new_size_unit]
-            if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
-                resizeable = true
-            end
-        elsif lvm_size_units[current_size_unit] == lvm_size_units[new_size_unit]
-            if new_size_bytes > current_size_bytes
-                resizeable = true
-            end
-        end
-
         if not resizeable
-            if @resource[:size_is_minsize] == :true or @resource[:size_is_minsize] == true or @resource[:size_is_minsize] == 'true'
-                info( "Logical volume already has minimum size of #{new_size} (currently #{current_size})" )
-            else
-                fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
-            end
+            # this is only reachable when size_is_minsize == false
+            fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
         else
             ## Check if new size fits the extend blocks
             if new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size != 0
@@ -227,6 +223,27 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     private
 
+    def is_resizeable(current_size, new_size)
+        current_size_bytes, current_size_unit = get_size_parts('\d+\.{0,1}\d{0,2}', current_size)
+
+        new_size_bytes, new_size_unit = get_size_parts('\d+', new_size)
+
+        ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
+        if lvm_size_units[current_size_unit] < lvm_size_units[new_size_unit]
+            return true
+        elsif lvm_size_units[current_size_unit] > lvm_size_units[new_size_unit]
+            if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
+                return true
+            end
+        elsif lvm_size_units[current_size_unit] == lvm_size_units[new_size_unit]
+            if new_size_bytes > current_size_bytes
+                return true
+            end
+        end
+
+        return false
+    end
+
     def lvs_pattern
         /\s+#{Regexp.quote @resource[:name]}\s+/
     end
@@ -240,4 +257,24 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         "/dev/#{@resource[:volume_group]}"
     end
 
+    def lvm_size_units
+        { "K" => 1, "M" => 1024, "G" => 1048576, "T" => 1073741824, "P" => 1099511627776, "E" => 1125899906842624 }
+    end
+
+    def lvm_size_units_match
+        lvm_size_units.keys().join('|')
+    end
+
+    def get_size_parts(pattern, size)
+        if size =~ /(#{pattern})(#{lvm_size_units_match})/i
+            bytes = $1.to_i
+            unit  = $2.upcase
+        end
+
+        return bytes, unit
+    end
+
+    def allow_minsize
+        return (@resource[:size_is_minsize] == :true or @resource[:size_is_minsize] == true or @resource[:size_is_minsize] == 'true')
+    end
 end

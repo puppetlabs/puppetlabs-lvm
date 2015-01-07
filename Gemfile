@@ -14,4 +14,5 @@ else
 end
 
 gem 'puppet-lint', '>= 1.0.0'
+gem 'puppet-lint-unquoted_string-check', :require => false
 # vim:ft=ruby

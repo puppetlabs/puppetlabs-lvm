@@ -18,6 +18,7 @@ describe provider_class do
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+        @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
       end
@@ -31,6 +32,7 @@ describe provider_class do
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+        @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
       end
@@ -44,6 +46,7 @@ describe provider_class do
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+        @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--extents', '100%FREE', 'myvg')
         @provider.create
       end
@@ -56,6 +59,7 @@ describe provider_class do
         @resource.expects(:[]).with(:extents).returns('80%vg').at_least_once
         @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+        @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', '--extents', '80%vg', 'myvg')
         @provider.create
       end
@@ -68,6 +72,7 @@ describe provider_class do
         @resource.expects(:[]).with(:extents).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
         @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+        @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
         @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
         @provider.create
       end
@@ -84,6 +89,7 @@ describe provider_class do
           @resource.expects(:[]).with(:extents).returns(nil).at_least_once
           @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
           @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+          @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
           @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
@@ -101,6 +107,7 @@ describe provider_class do
           @resource.expects(:[]).with(:extents).returns(nil).at_least_once
           @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
           @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+          @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
           @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
@@ -118,6 +125,7 @@ describe provider_class do
           @resource.expects(:[]).with(:extents).returns(nil).at_least_once
           @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
           @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+          @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
           @resource.expects(:[]).with(:size_is_minsize).returns(:false).at_least_once
           @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
           @provider.create
@@ -136,6 +144,7 @@ describe provider_class do
           @resource.expects(:[]).with(:extents).returns(nil).at_least_once
           @resource.expects(:[]).with(:stripes).returns(nil).at_least_once
           @resource.expects(:[]).with(:stripesize).returns(nil).at_least_once
+          @resource.expects(:[]).with(:readahead).returns(nil).at_least_once
           @resource.expects(:[]).with(:size_is_minsize).returns(:true).at_least_once
           @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
           @provider.create

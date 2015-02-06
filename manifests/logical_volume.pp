@@ -2,7 +2,7 @@
 #
 define lvm::logical_volume (
   $volume_group,
-  $size,
+  $size              = undef,
   $initial_size      = undef,
   $ensure            = present,
   $options           = 'defaults',

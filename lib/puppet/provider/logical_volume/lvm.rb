@@ -8,7 +8,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
              :resize2fs  => 'resize2fs',
              :umount     => 'umount',
              :blkid      => 'blkid',
-             :dmsetup    => 'dmsetup'
+             :dmsetup    => 'dmsetup',
+             :lvconvert => 'lvconvert',
+             :lvdisplay => 'lvdisplay'
 
     optional_commands :xfs_growfs => 'xfs_growfs',
                       :resize4fs  => 'resize4fs'
@@ -35,6 +37,24 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         if @resource[:stripesize]
             args.push('--stripesize', @resource[:stripesize])
         end
+
+
+        if @resource[:mirror]
+            args.push('--mirrors', @resource[:mirror])
+            if @resource[:mirrorlog]
+                args.push('--mirrorlog', @resource[:mirrorlog])
+            end
+            if @resource[:region_size]
+                args.push('--regionsize', @resource[:region_size])
+            end
+            if @resource[:no_sync]
+                args.push('--nosync')
+            end
+        end
+
+        if @resource[:alloc]
+            args.push('--alloc', @resource[:alloc])
+
 
         if @resource[:readahead]
             args.push('--readahead', @resource[:readahead])
@@ -131,6 +151,77 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
     end
 
+
+    # Look up the current number of mirrors (0=no mirroring, 1=1 spare, 2=2 spares....). Return the number as string.
+    def mirror
+        raw = lvdisplay( path )
+        # If the first attribute bit is "m" or "M" then the LV is mirrored.
+        if raw =~ /Mirrored volumes\s+(\d+)/im
+            # Minus one because it says "2" when there is only one spare. And so on.
+            n = ($1.to_i)-1
+            #puts " current mirrors: #{n}"
+            return n.to_s 
+        end
+        return 0.to_s
+    end
+
+    def mirror=( new_mirror_count )
+        current_mirrors = mirror().to_i
+        if new_mirror_count.to_i != current_mirrors
+            puts "Change mirror from #{current_mirrors} to #{new_mirror_count}..."
+            args = ['-m', new_mirror_count]
+            if @resource[:mirrorlog]
+                args.push( '--mirrorlog', @resource[:mirrorlog] )
+            end
+
+            # Region size cannot be changed on an existing mirror (not even when changing to zero mirrors).
+            
+            if @resource[:alloc]
+                args.push( '--alloc', @resource[:alloc] )
+            end
+            args.push( path )
+            lvconvert( *args )
+        end
+    end
+
+    # Location of the mirror log. Empty string if mirror==0, else "mirrored", "disk" or "core".
+    def mirrorlog
+        vgname = "#{@resource[:volume_group]}"
+        lvname = "#{@resource[:name]}"
+        raw = lvs('-a', '-o', '+devices', vgpath)
+
+        if mirror().to_i > 0
+            if raw =~ /\[#{lvname}_mlog\]\s+#{vgname}\s+/im
+                if raw =~ /\[#{lvname}_mlog\]\s+#{vgname}\s+mw\S+/im #attributes start with "m" or "M"
+                    return "mirrored"
+                else
+                    return "disk"
+                end
+            else
+                return "core"
+            end
+        end
+        return nil
+    end
+
+    def mirrorlog=( new_mirror_log_location )
+        # It makes no sense to change this unless we use mirrors.
+        mirror_count = mirror().to_i
+        if mirror_count.to_i > 0
+            current_log_location = mirrorlog().to_s
+            if new_mirror_log_location.to_s != current_log_location
+                #puts "Change mirror log location to #{new_mirror_log_location}..."
+                args = [ '--mirrorlog', new_mirror_log_location ]
+                if @resource[:alloc]
+                    args.push( '--alloc', @resource[:alloc] )
+                end
+                args.push( path )
+                lvconvert( *args )
+            end
+        end
+    end
+
+
     private
 
     def lvs_pattern
@@ -141,4 +232,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         "/dev/#{@resource[:volume_group]}/#{@resource[:name]}"
     end
 
+    # Device path of only the volume group (does not include the logical volume).
+    def vgpath
+        "/dev/#{@resource[:volume_group]}"
+    end
 end

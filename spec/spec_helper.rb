@@ -20,6 +20,3 @@ end
 class Object
     alias :must :should
 end
-
-#You can add PATH environment variable in spec_helper.rb or other places like this.
-#set :path, '/sbin:/usr/local/sbin:$PATH'

@@ -76,6 +76,9 @@ Puppet::Type.newtype(:logical_volume) do
         end
     end
 
+    autorequire(:volume_group) do
+      @parameters[:volume_group].value
+    end
 
     newproperty(:mirror) do
         desc "The number of mirrors of the volume."
@@ -85,21 +88,21 @@ Puppet::Type.newtype(:logical_volume) do
             end
         end
     end
-
+  
     newproperty(:mirrorlog) do
         desc "How to store the mirror log (core, disk, mirrored)."
         newvalues( :core, :disk, :mirrored )
     end
-
+  
     newparam(:alloc) do
         desc "Selects the allocation policy when a command needs to allocate Physical Extents from the Volume Group."
         newvalues( :anywhere, :contiguous, :cling, :inherit, :normal )
     end
-
+  
     newparam(:no_sync) do
         desc "An optimization in lvcreate, at least on Linux."
     end
-
+  
     newparam(:region_size) do
         desc "A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are in sync. CAN NOT BE CHANGED on already mirrored volume. Take your mirror size in terabytes and round up that number to the next power of 2, using that number as the -R argument."
         validate do |value|
@@ -108,9 +111,6 @@ Puppet::Type.newtype(:logical_volume) do
             end
         end
     end
+  
+  end
 
-
-    autorequire(:volume_group) do
-      @parameters[:volume_group].value
-    end
-end

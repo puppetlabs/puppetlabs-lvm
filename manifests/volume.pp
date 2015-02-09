@@ -65,7 +65,7 @@ define lvm::volume (
     #
     # Clean up the whole chain.
     #
-    cleaned: {
+    'cleaned': {
       # This may only need to exist once
       if ! defined(Physical_volume[$pv]) {
         physical_volume { $pv: ensure => present }
@@ -90,7 +90,7 @@ define lvm::volume (
     #
     # Just clean up the logical volume
     #
-    absent: {
+    'absent': {
       logical_volume { $name:
         ensure       => absent,
         volume_group => $vg,
@@ -100,7 +100,7 @@ define lvm::volume (
     #
     # Create the whole chain.
     #
-    present: {
+    'present': {
       # This may only need to exist once.  Requires stdlib 4.1 to
       # handle $pv as an array.
       ensure_resource('physical_volume', $pv, { 'ensure' => $ensure })

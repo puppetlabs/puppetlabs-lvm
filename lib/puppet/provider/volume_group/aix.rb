@@ -38,8 +38,11 @@ Puppet::Type.type(:volume_group).provide :aix do
     def physical_volumes
         if @resource[:createonly].to_s == "false" || ! vgs(@resource[:name])
           # needs inspection - maybe just a simple lspv is enough
-          lines = pvs('-o', 'pv_name,vg_name', '--separator', ',')
-          lines.split(/\n/).grep(/,#{@resource[:name]}$/).map { |s|
+          # lines = pvs('-o', 'pv_name,vg_name', '--separator', ',')
+            lines = lspv
+          lines.split(/\n/).grep(/#{@resource[:name]}$/).map { |s|
+          # what is the result here? list of hdisks (hdisk2,hdisk3,hdiskx)?
+          # needs inspection on AIX system.
             s.split(/,/)[0].strip
           }
         else

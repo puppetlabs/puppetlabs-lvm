@@ -1,23 +1,26 @@
 Puppet::Type.type(:volume_group).provide :aix do
     desc "Manages LVM volume groups on AIX"
+confine :operatingsystem => :AIX
+
 
     commands :vgcreate => 'mkvg',
-             :vgremove => 'reducevg',
+             :vgremove => 'reducevg',    # evtl reducevg?
              :vgs      => 'lsvg',
              :vgextend => 'extendvg',
              :vgreduce => 'reducevg',
              :pvs      => 'lspv'
 
     def create
-        vgcreate(@resource[:name], *@resource.should(:physical_volumes))
+
+        vgcreate('-y', @resource[:name], *@resource.should(:physical_volumes))
     end
 
     def destroy
-        vgremove(@resource[:name])
+        vgremove(@resource[:name], *@resource.should(:physical_volumes))
     end
 
     def exists?
-        vgs(@resource[:name])
+        vgs(resource[:name])
     rescue Puppet::ExecutionFailure
         false
     end
@@ -36,14 +39,10 @@ Puppet::Type.type(:volume_group).provide :aix do
     end
 
     def physical_volumes
-        if @resource[:createonly].to_s == "false" || ! vgs(@resource[:name])
-          # needs inspection - maybe just a simple lspv is enough
-          # lines = pvs('-o', 'pv_name,vg_name', '--separator', ',')
-            lines = lspv
+        if @resource[:createonly].to_s == "false"  || ! vgs(@resource[:name])
+          lines = pvs
           lines.split(/\n/).grep(/#{@resource[:name]}$/).map { |s|
-          # what is the result here? list of hdisks (hdisk2,hdisk3,hdiskx)?
-          # needs inspection on AIX system.
-            s.split(/,/)[0].strip
+            s.split(".*")[0].strip
           }
         else
           # Trick the check by setting the returned value to what is

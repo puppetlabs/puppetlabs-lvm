@@ -1,17 +1,16 @@
 Puppet::Type.type(:volume_group).provide :aix do
     desc "Manages LVM volume groups on AIX"
-confine :operatingsystem => :AIX
-
+confine     :operatingsystem => :AIX
+defaultfor  :operatingsystem => :AIX
 
     commands :vgcreate => 'mkvg',
-             :vgremove => 'reducevg',    # evtl reducevg?
+             :vgremove => 'reducevg',  
              :vgs      => 'lsvg',
              :vgextend => 'extendvg',
              :vgreduce => 'reducevg',
              :pvs      => 'lspv'
 
     def create
-
         vgcreate('-y', @resource[:name], *@resource.should(:physical_volumes))
     end
 

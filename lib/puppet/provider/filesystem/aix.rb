@@ -45,6 +45,7 @@ Puppet::Type.type(:filesystem).provide :aix do
     args.push(*add_flag(:g, :volume_group))
     args.push(*add_flag(:A, :atboot))
     args.push(*add_flag(:p, :perms))
+    args.push(*add_flag(:u, :mountgroup))
     crfs(*args)
 
     # crfs on AIX will ignore -a size if the logical_volume already

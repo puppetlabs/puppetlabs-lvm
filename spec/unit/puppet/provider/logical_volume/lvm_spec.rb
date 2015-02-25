@@ -201,5 +201,12 @@ describe provider_class do
       @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
       @provider.destroy
     end
+    it "should execute 'dmsetup' and 'lvremove' and properly escape names with dashes" do
+      @resource.expects(:[]).with(:volume_group).returns('my-vg').twice
+      @resource.expects(:[]).with(:name).returns('my-lv').twice
+      @provider.expects(:dmsetup).with('remove', 'my--vg-my--lv')
+      @provider.expects(:lvremove).with('-f', '/dev/my-vg/my-lv')
+      @provider.destroy
+    end
   end
 end

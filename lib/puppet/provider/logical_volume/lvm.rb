@@ -66,8 +66,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     def destroy
-        name_escaped = @resource[:name].gsub('-','--')
-        dmsetup('remove', "#{@resource[:volume_group]}-#{name_escaped}")
+        name_escaped = "#{@resource[:volume_group].gsub('-','--')}-#{@resource[:name].gsub('-','--')}"
+        dmsetup('remove', name_escaped)
         lvremove('-f', path)
     end
 

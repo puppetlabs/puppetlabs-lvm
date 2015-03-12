@@ -8,11 +8,11 @@ define lvm::logical_volume (
   $options           = 'defaults',
   $pass              = '2',
   $dump              = '1',
-  $fs_type           = undef,
+  $fs_type           = 'ext4',
   $mkfs_options      = undef,
-  $mountpath         = undef,
+  $mountpath         = "/${name}",
   $mountpath_require = false,
-  $mountlv           = false,
+  $createfs          = true,
   $extents           = undef,
   $stripes           = undef,
   $stripesize        = undef,
@@ -33,16 +33,14 @@ define lvm::logical_volume (
     default  => mounted,
   }
 
-  if $mountlv {
-    if $ensure == 'present' {
-      Logical_volume[$name] ->
-      Filesystem["/dev/${volume_group}/${name}"] ->
-      Mount[$mountpath]
-    } else {
-      Mount[$mountpath] ->
-      Filesystem["/dev/${volume_group}/${name}"] ->
-      Logical_volume[$name]
-    }
+  if $ensure == 'present' and $createfs {
+    Logical_volume[$name] ->
+    Filesystem["/dev/${volume_group}/${name}"] ->
+    Mount[$mountpath]
+  } elsif $ensure != 'present' and $createfs {
+    Mount[$mountpath] ->
+    Filesystem["/dev/${volume_group}/${name}"] ->
+    Logical_volume[$name]
   }
 
   logical_volume { $name:
@@ -55,15 +53,17 @@ define lvm::logical_volume (
     readahead    => $readahead,
     extents      => $extents,
     range        => $range,
-  } ->
-
-  filesystem { "/dev/${volume_group}/${name}":
-    ensure  => $ensure,
-    fs_type => $fs_type,
-    options => $mkfs_options,
   }
 
-  if $mountlv {
+  if $createfs {
+    filesystem { "/dev/${volume_group}/${name}":
+      ensure  => $ensure,
+      fs_type => $fs_type,
+      options => $mkfs_options,
+    }
+  }
+
+  if $createfs or $ensure != 'present' {
     exec { "ensure mountpoint '${mountpath}' exists":
       path    => [ '/bin', '/usr/bin' ],
       command => "mkdir -p ${mountpath}",

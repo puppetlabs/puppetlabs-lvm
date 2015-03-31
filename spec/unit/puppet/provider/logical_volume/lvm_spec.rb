@@ -150,7 +150,7 @@ describe provider_class do
       end
     end
     context "with a smaller size" do
-      context "without size_is_minsize set to false" do
+      context "without size_is_minsize set to true" do
         it "should raise an exception" do
           @resource.expects(:[]).with(:name).returns('mylv').at_least_once
           @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
@@ -166,7 +166,7 @@ describe provider_class do
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
           @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
-          proc { @provider.size = '1m' }.should raise_error(Puppet::Error, /manual/)
+          proc { @provider.size = '1m', @provider.allow_minsize = false }.should raise_error(Puppet::Error, /manual/)
         end
       end
       context "with size_is_minsize set to true" do
@@ -187,7 +187,7 @@ describe provider_class do
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
           @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
-          proc { @provider.size = '1m' }.should output(/already/).to_stdout
+          proc { @provider.size = '1m', @provider.allow_minsize = true }.should output(/already/).to_stdout
         end
       end
     end

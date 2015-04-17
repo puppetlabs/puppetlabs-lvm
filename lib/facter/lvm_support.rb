@@ -27,6 +27,16 @@ end
 #   VG name by index
 vg_list.each_with_index do |vg, i|
   Facter.add("lvm_vg_#{i}") { setcode { vg } }
+  Facter.add("lvm_vg_#{vg}_pvs") do
+    setcode do
+      pvs = Facter::Util::Resolution.exec("pvs -S vg_name=#{vg} -o pv_name 2>/dev/null")
+      res = nil
+      unless pvs.nil?
+        res = pvs.split("\n").reject{|l| l =~ /^\s+PV\s*$/ }.collect(&:strip).sort.join(',')
+      end
+      res
+    end
+  end
 end
 
 # lvm_pvs: [0-9]+

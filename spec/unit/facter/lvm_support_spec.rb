@@ -63,8 +63,8 @@ describe 'lvm_vgs facts' do
       it 'should list vgs' do
         Facter::Util::Resolution.stubs('exec') # All other calls
         Facter::Util::Resolution.expects('exec').at_least(1).with('vgs -o name --noheadings 2>/dev/null').returns("vg0\nvg1")
-        Facter::Util::Resolution.expects('exec').at_least(1).with('pvs -S vg_name=vg0 -o pv_name 2>/dev/null').returns("  PV\n  /dev/pv3\n  /dev/pv2")
-        Facter::Util::Resolution.expects('exec').at_least(1).with('pvs -S vg_name=vg1 -o pv_name 2>/dev/null').returns("  PV\n  /dev/pv0")
+        Facter::Util::Resolution.expects('exec').at_least(1).with('vgs -o pv_name vg0 2>/dev/null').returns("  PV\n  /dev/pv3\n  /dev/pv2")
+        Facter::Util::Resolution.expects('exec').at_least(1).with('vgs -o pv_name vg1 2>/dev/null').returns("  PV\n  /dev/pv0")
         Facter.fact(:lvm_support).expects(:value).at_least(1).returns(true)
         Facter.value(:lvm_vgs).should == 2
         Facter.value(:lvm_vg_0).should == 'vg0'

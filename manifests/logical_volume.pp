@@ -2,7 +2,7 @@
 #
 define lvm::logical_volume (
   $volume_group,
-  $size,
+  $size              = undef,
   $initial_size      = undef,
   $ensure            = present,
   $options           = 'defaults',
@@ -12,6 +12,7 @@ define lvm::logical_volume (
   $mkfs_options      = undef,
   $mountpath         = "/${name}",
   $mountpath_require = false,
+  $createfs          = true,
   $extents           = undef,
   $stripes           = undef,
   $stripesize        = undef,
@@ -32,11 +33,11 @@ define lvm::logical_volume (
     default  => mounted,
   }
 
-  if $ensure == 'present' {
+  if $ensure == 'present' and $createfs {
     Logical_volume[$name] ->
     Filesystem["/dev/${volume_group}/${name}"] ->
     Mount[$mountpath]
-  } else {
+  } elsif $ensure != 'present' and $createfs {
     Mount[$mountpath] ->
     Filesystem["/dev/${volume_group}/${name}"] ->
     Logical_volume[$name]
@@ -54,24 +55,28 @@ define lvm::logical_volume (
     range        => $range,
   }
 
-  filesystem { "/dev/${volume_group}/${name}":
-    ensure  => $ensure,
-    fs_type => $fs_type,
-    options => $mkfs_options,
+  if $createfs {
+    filesystem { "/dev/${volume_group}/${name}":
+      ensure  => $ensure,
+      fs_type => $fs_type,
+      options => $mkfs_options,
+    }
   }
 
-  exec { "ensure mountpoint '${mountpath}' exists":
-    path    => [ '/bin', '/usr/bin' ],
-    command => "mkdir -p ${mountpath}",
-    unless  => "test -d ${mountpath}",
-  } ->
-  mount { $mountpath:
-    ensure  => $mount_ensure,
-    device  => "/dev/${volume_group}/${name}",
-    fstype  => $fs_type,
-    options => $options,
-    pass    => $pass,
-    dump    => $dump,
-    atboot  => true,
+  if $createfs or $ensure != 'present' {
+    exec { "ensure mountpoint '${mountpath}' exists":
+      path    => [ '/bin', '/usr/bin' ],
+      command => "mkdir -p ${mountpath}",
+      unless  => "test -d ${mountpath}",
+    } ->
+    mount { $mountpath:
+      ensure  => $mount_ensure,
+      device  => "/dev/${volume_group}/${name}",
+      fstype  => $fs_type,
+      options => $options,
+      pass    => $pass,
+      dump    => $dump,
+      atboot  => true,
+    }
   }
 }

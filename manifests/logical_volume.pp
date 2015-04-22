@@ -22,6 +22,10 @@ define lvm::logical_volume (
 
   validate_bool($mountpath_require)
 
+  if ($name == undef) {
+    fail("lvm::logical_volume \$name can't be undefined")
+  }
+
   if $mountpath_require {
     Mount {
       require => File[$mountpath],

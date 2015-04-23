@@ -103,6 +103,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--minor', @resource[:minor])
         end
 
+        if @resource[:type]
+            args.push('--type', @resource[:type])
+        end
+
         args << @resource[:volume_group]
         lvcreate(*args)
     end

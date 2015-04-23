@@ -10,7 +10,7 @@ define lvm::volume_group (
 
   physical_volume { $physical_volumes:
     ensure => $ensure,
-  }
+  } ->
 
   volume_group { $name:
     ensure           => $ensure,

@@ -61,6 +61,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--readahead', @resource[:readahead])
         end
 
+        if @resource[:type]
+            args.push('--type', @resource[:type])
+        end
+
         args << @resource[:volume_group]
         lvcreate(*args)
     end

@@ -1,3 +1,24 @@
+##2015-04-28 - Release 0.5.0
+###Summary
+
+This release contains new parameters, a number of bugfixes, and improved tests.
+
+####Features
+- New parameters in `lvm::logical_volume`
+  - `$readahead`
+  - `$pass`
+  - `$dump`
+- Mirror support
+- Ordering of resource creation
+- Allow creation of LV without a filesystem or mount points
+
+####Bugfixes
+- Correctly escape dashes in LVM name
+- Updates $ensure checking to be puppet4 compliant.
+- Fixes filesystem detection bug
+- Correctly escape dashes in VG names (MODULES-1801)
+- Validates logical_volume name is not undef
+
 ##2014-12-2 - Release 0.4.0
 ###Summary
 

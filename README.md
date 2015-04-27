@@ -222,3 +222,5 @@ Cédric Jeanneret <cedric.jeanneret@camptocamp.com>
 Raphaël Pinson <raphael.pinson@camptocamp.com>
 
 Garrett Honeycutt <code@garretthoneycutt.com>
+
+<a href="https://github.com/bmjen/puppetlabs-lvm/graphs/contributors">More Contributers</a>

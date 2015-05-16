@@ -74,6 +74,14 @@ describe Puppet::Type.type(:logical_volume) do
     it 'should support setting a value' do
       with(valid_params)[:extents].should == valid_params[:extents]
     end
+    it 'should support only valid values' do
+      %w[ 1 1% 1%vg 1%PVS 1%FrEe 1%Origin ].each do |extent|
+        with(valid_params.merge(:extents => extent))[:extents].should == extent
+      end
+      %w[ foo 1%bar 1( 1v 1g 1f ].each do |extent|
+        specifying(valid_params.merge(:extents => extent)).should raise_error(Puppet::Error)
+      end
+    end
   end
 
   describe "when specifying the 'ensure' parameter" do

@@ -26,24 +26,41 @@ define lvm::logical_volume (
     fail("lvm::logical_volume \$name can't be undefined")
   }
 
-  if $mountpath_require {
+  $lvm_device_path = "/dev/${volume_group}/${name}"
+
+  if $mountpath_require and $fs_type != 'swap' {
     Mount {
       require => File[$mountpath],
     }
   }
 
-  $mount_ensure = $ensure ? {
-    'absent' => absent,
-    default  => mounted,
+  if $fs_type == 'swap' {
+    $mount_title     = $lvm_device_path
+    $fixed_mountpath = "swap_${lvm_device_path}"
+    $fixed_pass      = 0
+    $fixed_dump      = 0
+    $mount_ensure    = $ensure ? {
+      'absent' => absent,
+      default  => present,
+    }
+  } else {
+    $mount_title     = $mountpath
+    $fixed_mountpath = $mountpath
+    $fixed_pass      = $pass
+    $fixed_dump      = $dump
+    $mount_ensure    = $ensure ? {
+      'absent' => absent,
+      default  => mounted,
+    }
   }
 
   if $ensure == 'present' and $createfs {
     Logical_volume[$name] ->
-    Filesystem["/dev/${volume_group}/${name}"] ->
-    Mount[$mountpath]
+    Filesystem[$lvm_device_path] ->
+    Mount[$mount_title]
   } elsif $ensure != 'present' and $createfs {
-    Mount[$mountpath] ->
-    Filesystem["/dev/${volume_group}/${name}"] ->
+    Mount[$mount_title] ->
+    Filesystem[$lvm_device_path] ->
     Logical_volume[$name]
   }
 
@@ -60,7 +77,7 @@ define lvm::logical_volume (
   }
 
   if $createfs {
-    filesystem { "/dev/${volume_group}/${name}":
+    filesystem { $lvm_device_path:
       ensure  => $ensure,
       fs_type => $fs_type,
       options => $mkfs_options,
@@ -68,18 +85,38 @@ define lvm::logical_volume (
   }
 
   if $createfs or $ensure != 'present' {
-    exec { "ensure mountpoint '${mountpath}' exists":
-      path    => [ '/bin', '/usr/bin' ],
-      command => "mkdir -p ${mountpath}",
-      unless  => "test -d ${mountpath}",
-    } ->
-    mount { $mountpath:
+    if $fs_type == 'swap' {
+      if $ensure == 'present' {
+        exec { "swapon for '${mount_title}'":
+          path      => [ '/bin', '/usr/bin', '/sbin' ],
+          command   => "swapon ${lvm_device_path}",
+          unless    => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
+          subscribe => Mount[$mount_title],
+        }
+      } else {
+        exec { "swapoff for '${mount_title}'":
+          path      => [ '/bin', '/usr/bin', '/sbin' ],
+          command   => "swapoff ${lvm_device_path}",
+          onlyif    => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
+          subscribe => Mount[$mount_title],
+        }
+      }
+    } else {
+      exec { "ensure mountpoint '${fixed_mountpath}' exists":
+        path    => [ '/bin', '/usr/bin' ],
+        command => "mkdir -p ${fixed_mountpath}",
+        unless  => "test -d ${fixed_mountpath}",
+        before  => Mount[$mount_title],
+      }
+    }
+    mount { $mount_title:
       ensure  => $mount_ensure,
-      device  => "/dev/${volume_group}/${name}",
+      name    => $fixed_mountpath,
+      device  => $lvm_device_path,
       fstype  => $fs_type,
       options => $options,
-      pass    => $pass,
-      dump    => $dump,
+      pass    => $fixed_pass,
+      dump    => $fixed_dump,
       atboot  => true,
     }
   }

@@ -20,4 +20,9 @@ Puppet::Type.newtype(:physical_volume) do
             end
         end
     end
+    newparam(:force) do
+      desc "Force the creation of the physical volume."
+      defaultto :false
+      newvalues(:true, :false)
+    end
 end

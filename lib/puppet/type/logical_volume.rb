@@ -38,9 +38,9 @@ Puppet::Type.newtype(:logical_volume) do
   end
 
   newparam(:extents) do
-    desc "The  number of logical extents to allocate for the new logical volume. Set to undef to use all available space"
+    desc "The number of logical extents to allocate for the new logical volume. Set to undef to use all available space"
     validate do |value|
-      unless value =~ /^[0-9]+[%(vg|VG|pvs|PVS|free|FREE|origin|ORIGIN)]?/i
+      unless value =~ /^\d+(%(?:vg|pvs|free|origin)?)?$/i
         raise ArgumentError , "#{value} is not a valid logical volume extent"
       end
     end
@@ -87,7 +87,7 @@ Puppet::Type.newtype(:logical_volume) do
   end
 
   newparam(:size_is_minsize) do
-    desc "Set to true if the 'size' parameter specified, is just the 
+    desc "Set to true if the 'size' parameter specified, is just the
             minimum size you need (if the LV found is larger then the size requests
             this is just logged not causing a FAIL)"
     validate do |value|

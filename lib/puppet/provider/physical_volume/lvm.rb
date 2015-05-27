@@ -3,8 +3,12 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
 
     commands :pvcreate  => 'pvcreate', :pvremove => 'pvremove', :pvs => 'pvs', :vgs => 'vgs'
 
+    def force
+      @resource[:force] == :true ? '--force' : nil
+    end
+
     def create
-        pvcreate(@resource[:name])
+        pvcreate([force, @resource[:name]].compact)
     end
 
     def destroy

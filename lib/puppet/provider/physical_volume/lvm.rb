@@ -3,6 +3,13 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
 
     commands :pvcreate  => 'pvcreate', :pvremove => 'pvremove', :pvs => 'pvs', :vgs => 'vgs'
 
+    def self.instances
+      get_physical_volumes.collect do |physical_volumes_line|
+        physical_volumes_properties = get_physical_volume_properties(physical_volumes_line)
+        new(physical_volumes_properties)
+      end
+    end
+
     def create
         pvcreate(@resource[:name])
     end
@@ -36,6 +43,32 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
        # If the VG exists return true
        true
       end
+    end
+
+    def self.get_physical_volumes
+      full_pvs_output = pvs.split("\n")
+
+      # Remove first line
+      physical_volumes = full_pvs_output.drop(1)
+
+      physical_volumes
+    end
+
+    def self.get_physical_volume_properties(physical_volumes_line)
+      physical_volumes_properties = {}
+
+      # pvs output formats thus:
+      # PV         VG       Fmt  Attr PSize  PFree
+
+      # Split on spaces
+      output_array = physical_volumes_line.gsub(/\s+/m, ' ').strip.split(" ")
+
+      # Assign properties based on headers
+      # Just doing name for now...
+      physical_volumes_properties[:ensure]     = :present
+      physical_volumes_properties[:name]       = output_array[0]
+
+      physical_volumes_properties
     end
 
 end

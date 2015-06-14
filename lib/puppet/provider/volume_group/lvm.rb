@@ -8,6 +8,39 @@ Puppet::Type.type(:volume_group).provide :lvm do
              :vgreduce => 'vgreduce',
              :pvs      => 'pvs'
 
+    def self.instances
+      get_volume_groups.collect do |volume_groups_line|
+        volume_groups_properties = get_logical_volume_properties(volume_groups_line)
+        new(volume_groups_properties)
+      end
+    end
+
+    def self.get_volume_groups
+      full_vgs_output = vgs.split("\n")
+
+      # Remove first line
+      volume_groups = full_vgs_output.drop(1)
+
+      volume_groups
+    end
+
+    def self.get_logical_volume_properties(volume_groups_line)
+      volume_groups_properties = {}
+
+      # vgs output formats thus:
+      # VG       #PV #LV #SN Attr   VSize  VFree
+
+      # Split on spaces
+      output_array = volume_groups_line.gsub(/\s+/m, ' ').strip.split(" ")
+
+      # Assign properties based on headers
+      # Just doing name for now...
+      volume_groups_properties[:ensure]     = :present
+      volume_groups_properties[:name]       = output_array[0]
+
+      volume_groups_properties
+    end
+
     def create
         vgcreate(@resource[:name], *@resource.should(:physical_volumes))
     end

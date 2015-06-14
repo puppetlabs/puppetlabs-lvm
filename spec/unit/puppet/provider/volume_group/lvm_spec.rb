@@ -8,6 +8,23 @@ describe provider_class do
     @provider = provider_class.new(@resource)
   end
 
+  vgs_output = <<-EOS
+  VG       #PV #LV #SN Attr   VSize  VFree
+  VolGroup   1   2   0 wz--n- 19.51g    0
+  EOS
+
+  describe 'self.instances' do
+    before :each do
+      @provider.class.stubs(:vgs).returns(vgs_output)
+    end
+
+    it 'returns an array of volume groups' do
+      volume_groups = @provider.class.instances.collect {|x| x.name }
+
+      expect(volume_groups).to include('VolGroup')
+    end
+  end
+
   describe 'when creating' do
     it "should execute 'vgcreate'" do
       @resource.expects(:[]).with(:name).returns('myvg')

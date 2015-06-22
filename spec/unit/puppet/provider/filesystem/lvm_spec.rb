@@ -30,6 +30,13 @@ describe provider_class do
       @provider.expects(:execute).with(['mkfs.reiserfs', '/dev/myvg/mylv', '-q', ['-b', '4096', '-E', 'stride=32,stripe-width=64']])
       @provider.create
     end
+    it "should call mkswap for filesystem type swap" do
+      @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
+      @resource.expects(:[]).with(:fs_type).returns('swap')
+      @resource.expects(:[]).with(:options)
+      @provider.expects(:execute).with(['mkswap', '/dev/myvg/mylv'])
+      @provider.create
+    end
   end
 
 end

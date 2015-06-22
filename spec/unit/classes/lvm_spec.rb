@@ -51,4 +51,46 @@ describe 'lvm', :type => :class do
     it { should contain_mount('/var/backups') }
   end
 
+  describe 'with a swap volume' do
+    let(:params) do
+      {
+        :volume_groups => {
+          'myvg' => {
+            'physical_volumes' => [ '/dev/sda2', '/dev/sda3', ],
+            'logical_volumes'  => {
+              'swap'  => {
+                'size'    => '20G',
+                'fs_type' => 'swap'
+              },
+              'swap2' => {
+                'ensure'  => 'absent',
+                'size'    => '20G',
+                'fs_type' => 'swap'
+              }
+            }
+          }
+        }
+      }
+    end
+
+    it { should contain_logical_volume('swap').with({
+      :volume_group => 'myvg',
+      :size         => '20G'
+    }) }
+    it { should contain_filesystem('/dev/myvg/swap').with({
+      :fs_type => 'swap'
+    }) }
+    it { should contain_mount('/dev/myvg/swap').with({
+      :name   => 'swap_/dev/myvg/swap',
+      :ensure => 'present',
+      :fstype => 'swap',
+      :pass   => 0,
+      :dump   => 0
+    }) }
+    it { should contain_exec("swapon for '/dev/myvg/swap'") }
+    it { should_not contain_exec("ensure mountpoint 'swap_/dev/myvg/swap' exists") }
+
+    it { should contain_exec("swapoff for '/dev/myvg/swap2'") }
+    it { should_not contain_exec("ensure mountpoint 'swap_/dev/myvg/swap2' exists") }
+  end
 end

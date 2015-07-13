@@ -41,6 +41,14 @@ describe provider_class do
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
+    it "should create an ext4 journal correctly" do
+      @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
+      @resource.expects(:[]).with(:fs_type).returns('jbd')
+      @resource.expects(:[]).with(:options).returns('-O journal_dev').twice
+      @provider.expects(:execute).with(['mkfs.ext4', '/dev/myvg/mylv', ['-O', 'journal_dev']])
+      @resource.expects(:[]).with(:mkfs_cmd).returns('mkfs.ext4').twice
+      @provider.create
+    end
   end
 
 end

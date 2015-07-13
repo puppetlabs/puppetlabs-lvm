@@ -19,6 +19,10 @@ Puppet::Type.newtype(:filesystem) do
     end
   end
 
+  newparam(:mkfs_cmd) do
+    desc "Command to use to create the file system. Defaults to mkswap for fs_type=swap, otherwise mkfs.{{fs_type}}"
+  end
+
   newparam(:options) do
     desc "Params for the mkfs command. eg. -l internal,agcount=x"
   end

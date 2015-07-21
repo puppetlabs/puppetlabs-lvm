@@ -23,6 +23,7 @@ Puppet::Type.type(:filesystem).provide :lvm do
 
     def mkfs(fs_type)
         mkfs_params = { "reiserfs" => "-q" }
+
         mkfs_cmd = @resource[:mkfs_cmd] != nil ?
                      [@resource[:mkfs_cmd]] :
                    case fs_type

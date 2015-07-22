@@ -46,6 +46,24 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
+  newparam(:persistent) do
+    desc "Set to y to make the minor number specified persistent"
+    validate do |value|
+      unless value =~ /^[yn]$/i
+        raise ArgumentError , "#{value} is not a valid value for persistence"
+      end
+    end
+  end
+
+  newparam(:minor) do
+    desc "Set the minor number"
+    validate do |value|
+      unless value =~ /^(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$/
+        raise ArgumentError , "#{value} is not a valid value for minor"
+      end
+    end
+  end
+
   newparam(:type) do
     desc "Configures the logical volume type. AIX only"
   end

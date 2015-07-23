@@ -47,7 +47,7 @@ Puppet::Type.newtype(:logical_volume) do
   end
 
   newparam(:type) do
-    desc "Configures the logical volume type. AIX only"
+    desc "Configures the logical volume type."
   end
 
   newparam(:range) do

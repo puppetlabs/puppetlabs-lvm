@@ -11,6 +11,7 @@ Puppet::Type.newtype(:physical_volume) do
             end
         end
     end
+
     newparam(:unless_vg) do
         desc "Do not do anything if the VG already exists.  The value should be the
                   name of the volume group to check for."
@@ -19,5 +20,11 @@ Puppet::Type.newtype(:physical_volume) do
                 raise ArgumentError , "#{value} is not a valid volume group name"
             end
         end
+    end
+
+    newparam(:force) do
+        desc "Force the creation without any confirmation."
+        defaultto :false
+        newvalues(:true, :false)
     end
 end

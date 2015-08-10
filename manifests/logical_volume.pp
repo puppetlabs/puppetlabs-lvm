@@ -66,15 +66,15 @@ define lvm::logical_volume (
   }
 
   logical_volume { $name:
-    ensure       => $ensure,
-    volume_group => $volume_group,
-    size         => $size,
-    initial_size => $initial_size,
-    stripes      => $stripes,
-    stripesize   => $stripesize,
-    readahead    => $readahead,
-    extents      => $extents,
-    range        => $range,
+    ensure          => $ensure,
+    volume_group    => $volume_group,
+    size            => $size,
+    initial_size    => $initial_size,
+    stripes         => $stripes,
+    stripesize      => $stripesize,
+    readahead       => $readahead,
+    extents         => $extents,
+    range           => $range,
     size_is_minsize => $size_is_minsize
   }
 

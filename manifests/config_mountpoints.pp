@@ -1,4 +1,4 @@
-class lvm::config (
+class lvm::config_mountpoints (
   $mountpoints        = $::lvm::mountpoints,
 ) {
 

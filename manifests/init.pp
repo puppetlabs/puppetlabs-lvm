@@ -14,5 +14,5 @@ class lvm (
   class { '::lvm::install':             } ->
   class { '::lvm::config_mountpoints':  } ->
   class { '::lvm::config_volumes':      } ->
-  Class['Lvm']
+  Class['lvm']
 }

@@ -11,8 +11,11 @@ class lvm (
   validate_bool($manage_package)
   validate_string($package_name)
 
-  class { '::lvm::install':             } ->
-  class { '::lvm::config_mountpoints':  } ->
-  class { '::lvm::config_volumes':      } ->
-  Class['lvm']
+  contain '::lvm::install'
+  contain '::lvm::config_mountpoints'
+  contain '::lvm::config_volumes'
+
+  Class ['::lvm::install'] ->
+  Class ['::lvm::config_mountpoints'] ->
+  Class ['::lvm::config_volumes']
 }

@@ -132,12 +132,12 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         current_size = size()
 
         if current_size =~ /(\d+\.{0,1}\d{0,2})(#{lvm_size_units_match})/i
-            current_size_bytes = $1.to_i
+            current_size_bytes = $1.to_f
             current_size_unit  = $2.upcase
         end
 
-        if new_size =~ /(\d+)(#{lvm_size_units_match})/i
-            new_size_bytes = $1.to_i
+        if new_size =~ /(\d+\.{0,1}\d{0,2})(#{lvm_size_units_match})/i
+            new_size_bytes = $1.to_f
             new_size_unit  = $2.upcase
         end
 

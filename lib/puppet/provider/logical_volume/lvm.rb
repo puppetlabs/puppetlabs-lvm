@@ -94,6 +94,15 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--readahead', @resource[:readahead])
         end
 
+        if @resource[:persistent]
+            # if persistent param is true, set arg to "y", otherwise set to "n"
+            args.push('--persistent', [:true, true, "true"].include?(@resource[:persistent]) ? 'y' : 'n')
+        end
+
+        if @resource[:minor]
+            args.push('--minor', @resource[:minor])
+        end
+
         args << @resource[:volume_group]
         lvcreate(*args)
     end

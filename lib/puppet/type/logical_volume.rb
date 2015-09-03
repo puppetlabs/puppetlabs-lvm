@@ -46,6 +46,24 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
+  newparam(:persistent) do
+    desc "Set to true to make the block device persistent"
+    validate do |value|
+      unless [:true, true, "true", :false, false, "false"].include?(value)
+        raise ArgumentError , "persistent must be either be true or false"
+      end
+    end
+  end
+
+  newparam(:minor) do
+    desc "Set the minor number"
+    validate do |value|
+      if value.to_i > 255 or value.to_i < 0
+        raise ArgumentError , "#{value} is not a valid value for minor. It must be an integer between 0 and 255"
+      end
+    end
+  end
+
   newparam(:type) do
     desc "Configures the logical volume type. AIX only"
   end

@@ -10,6 +10,8 @@ describe Puppet::Type.type(:logical_volume) do
       :extents => '80%vg',
       :ensure => :present,
       :size_is_minsize => :false,
+      :persistent => :false,
+      :minor => 100,
     }
     stub_default_provider!
       end

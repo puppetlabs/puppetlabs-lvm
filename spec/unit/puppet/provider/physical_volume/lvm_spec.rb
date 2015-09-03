@@ -29,7 +29,17 @@ describe provider_class do
   describe 'when creating' do
     it "should execute the 'pvcreate'" do
       @resource.expects(:[]).with(:name).returns('/dev/hdx')
-      @provider.expects(:pvcreate).with('/dev/hdx')
+      @resource.expects(:[]).with(:force)
+      @provider.expects(:pvcreate).with(nil, '/dev/hdx')
+      @provider.create
+    end
+  end
+
+  describe 'when creating with force' do
+    it "should execute the 'pvcreate' with force option" do
+      @resource.expects(:[]).with(:name).returns('/dev/hdx')
+      @resource.expects(:[]).with(:force).returns(:true)
+      @provider.expects(:pvcreate).with('--force', '/dev/hdx')
       @provider.create
     end
   end

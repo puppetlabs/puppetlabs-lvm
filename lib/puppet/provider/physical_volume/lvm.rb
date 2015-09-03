@@ -11,7 +11,7 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     end
 
     def create
-        pvcreate(@resource[:name])
+        pvcreate(force, @resource[:name])
     end
 
     def destroy
@@ -69,6 +69,11 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
       physical_volumes_properties[:name]       = output_array[0]
 
       physical_volumes_properties
+    end
+
+    def force
+      return '--force' if @resource[:force] == :true
+      nil
     end
 
 end

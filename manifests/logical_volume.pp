@@ -18,6 +18,7 @@ define lvm::logical_volume (
   $stripesize        = undef,
   $readahead         = undef,
   $range             = undef,
+  $size_is_minsize   = undef,
 ) {
 
   validate_bool($mountpath_require)
@@ -65,15 +66,16 @@ define lvm::logical_volume (
   }
 
   logical_volume { $name:
-    ensure       => $ensure,
-    volume_group => $volume_group,
-    size         => $size,
-    initial_size => $initial_size,
-    stripes      => $stripes,
-    stripesize   => $stripesize,
-    readahead    => $readahead,
-    extents      => $extents,
-    range        => $range,
+    ensure          => $ensure,
+    volume_group    => $volume_group,
+    size            => $size,
+    initial_size    => $initial_size,
+    stripes         => $stripes,
+    stripesize      => $stripesize,
+    readahead       => $readahead,
+    extents         => $extents,
+    range           => $range,
+    size_is_minsize => $size_is_minsize
   }
 
   if $createfs {

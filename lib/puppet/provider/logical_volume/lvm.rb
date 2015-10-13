@@ -137,50 +137,46 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         lvm_size_units = { "K" => 1, "M" => 1024, "G" => 1048576, "T" => 1073741824, "P" => 1099511627776, "E" => 1125899906842624 }
         lvm_size_units_match = lvm_size_units.keys().join('|')
 
-        resizeable = false
         current_size = size()
-
-        if current_size =~ /(\d+\.{0,1}\d{0,2})(#{lvm_size_units_match})/i
-            current_size_bytes = $1.to_f
-            current_size_unit  = $2.upcase
-        end
-
-        if new_size =~ /(\d+\.{0,1}\d{0,2})(#{lvm_size_units_match})/i
-            new_size_bytes = $1.to_f
-            new_size_unit  = $2.upcase
-        end
-
+        
         ## Get the extend size
         if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ /\s+(\d+)\.\d+k/i
             vg_extent_size = $1.to_i
         end
 
-        ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
-        if lvm_size_units[current_size_unit] < lvm_size_units[new_size_unit]
-            resizeable = true
-        elsif lvm_size_units[current_size_unit] > lvm_size_units[new_size_unit]
-            if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
-                resizeable = true
-            end
-        elsif lvm_size_units[current_size_unit] == lvm_size_units[new_size_unit]
-            if new_size_bytes > current_size_bytes
-                resizeable = true
+        # Get the current size and convert it to Kb
+        if current_size =~ /(\d+\.{0,1}\d{0,2})(#{lvm_size_units_match})/i
+            current_size_value = $1.to_f
+            current_size_unit  = $2.upcase
+            current_size_kb = current_size_value * lvm_size_units[current_size_unit]
+        end
+
+        # Get the new size, convert it to Kb and round according to vg_extent_size
+        # so the values current_size and new_size are comparable
+        if new_size =~ /(\d+\.{0,1}\d{0,2})(#{lvm_size_units_match})/i
+            new_size_value = $1.to_f
+            new_size_unit  = $2.upcase
+            new_size_kb = new_size_value * lvm_size_units[new_size_unit]
+
+            if new_size_kb % vg_extent_size == 0 then
+                new_rounded_size_kb = new_size_kb
+            else
+                new_rounded_size_kb = vg_extent_size * (1 + (new_size_kb / vg_extent_size).floor)
+                debug("New LV size including VG Extent size rounding was calculated to: #{ sprintf('%.2f', new_rounded_size_kb/lvm_size_units[new_size_unit]) }#{new_size_unit}")
             end
         end
 
-        if not resizeable
+        ## Verify that it's an extension: Reduce is potentially dangerous and should be done manually
+        if current_size_kb > new_rounded_size_kb then
             if @resource[:size_is_minsize] == :true or @resource[:size_is_minsize] == true or @resource[:size_is_minsize] == 'true'
                 info( "Logical volume already has minimum size of #{new_size} (currently #{current_size})" )
             else
                 fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
             end
-        else
-            ## Check if new size fits the extend blocks
-            if new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size != 0
-                fail( "Cannot extend to size #{new_size} because VG extent size is #{vg_extent_size} KB" )
-            end
-
-            lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
+        elsif current_size_kb < new_rounded_size_kb then
+            # LV is going to be extended
+            info( "Changing logical volume size to #{ sprintf('%.2f', new_rounded_size_kb/lvm_size_units[new_size_unit]) }#{new_size_unit}" )
+            lvextend( '-L', "#{new_rounded_size_kb}K", path) || fail( "lvextend command failed." )
 
             blkid_type = blkid(path)
             if command(:resize4fs) and blkid_type =~ /\bTYPE=\"(ext4)\"/
@@ -190,7 +186,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
               xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
             end
-
+        else
+            # LV doesn't change
+            debug( "The size of logical volume doesn't change." )
         end
     end
 

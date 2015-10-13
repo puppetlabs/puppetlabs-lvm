@@ -187,6 +187,14 @@ Logical volume size can be extended, but not reduced -- this is for
 safety, as manual intervention is probably required for data
 migration, etc.
 
+### Size of the Logical Volumes
+
+Desired size of the partition set in parameter size may be altered by 
+calculation that incorporates volume group extent size. If it is altered it is 
+altered towards the higher value. The change may be greater where VG extent 
+size is larger compared to size of the partition. It is not an invention of 
+the module, it is caused by the design of LVM.
+
 Contributors
 =======
 Bruce Williams <bruce@codefluency.com>

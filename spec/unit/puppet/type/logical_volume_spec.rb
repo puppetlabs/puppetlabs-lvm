@@ -67,6 +67,27 @@ describe Puppet::Type.type(:logical_volume) do
     it "should not support other values" do
       specifying(valid_params.merge(:size_is_minsize => :moep)).should raise_error(Puppet::Error)
       end
+    it "should be insync if current size is greater but size_is_minsize is true" do
+      with(valid_params.merge(:size_is_minsize => :true)) do |resource|
+        expect(resource.parameters[:size].insync?("10g")).to eq(true)
+      end
+    end
+    it "should not be insync if current size is smaller but size_is_minsize is true" do
+      with(valid_params.merge(:size_is_minsize => :true)) do |resource|
+        expect(resource.parameters[:size].insync?("500m")).to eq(false)
+      end
+    end
+    it "should be insync if current size is equal to wanted size and size_is_minsize is true" do
+      with(valid_params.merge(:size_is_minsize => :true)) do |resource|
+        expect(resource.parameters[:size].insync?("1g")).to eq(true)
+      end
+    end
+    it "should not be insync if current size is greater but size_is_minsize is false" do
+      with(valid_params.merge(:size_is_minsize => :false)) do |resource|
+        expect(resource.parameters[:size].insync?("10g")).to eq(false)
+      end
+    end
+
   end
 
   describe "when specifying the 'extents' parameter" do

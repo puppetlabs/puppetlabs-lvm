@@ -22,7 +22,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:initial_size) do
     desc "The initial size of the logical volume. This will only apply to newly-created volumes"
     validate do |value|
-      unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPEL]/i
+      unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPE]/i
         raise ArgumentError , "#{value} is not a valid logical volume size"
       end
     end
@@ -31,8 +31,27 @@ Puppet::Type.newtype(:logical_volume) do
   newproperty(:size) do
     desc "The size of the logical volume. Set to undef to use all available space"
     validate do |value|
-      unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPEL]/i
+      unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPE]/i
         raise ArgumentError , "#{value} is not a valid logical volume size"
+      end
+    end
+    def insync?(is)
+      lvm_size_units = { "K" => 1, "M" => 1024, "G" => 1024**2, "T" => 1024**3, "P" => 1024**4, "E" => 1024**5 }
+      if is =~ /^([0-9]+(\.[0-9]+)?)([KMGTPE])/i
+        current_size_bytes = $1.to_f
+        current_size_unit  = $3.upcase
+        current_size = current_size_bytes * lvm_size_units[current_size_unit]
+      end
+
+      if should =~ /^([0-9]+(\.[0-9]+)?)([KMGTPE])/i
+        new_size_bytes = $1.to_f
+        new_size_unit  = $3.upcase
+        new_size = new_size_bytes * lvm_size_units[new_size_unit]
+      end
+      if [:true, true, "true"].include?(@resource[:size_is_minsize])
+        new_size <= current_size
+      else
+        new_size == current_size
       end
     end
   end

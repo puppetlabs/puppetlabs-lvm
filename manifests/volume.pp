@@ -1,25 +1,25 @@
 # == Define: lvm::volume
 #
-# This defined type will create a <code>logical_volume</code> with the name of the define and ensure a <code>physical_volume</code>,
-# <code>volume_group</code>, and <code>filesystem</code> resource have been created on the block device supplied.
+# This defined type will create a <code>logical_volume</code> with the name of
+# the define and ensure a <code>physical_volume</code>,
+# <code>volume_group</code>, and <code>filesystem</code> resource have been
+# created on the block device supplied.
 #
 # === Parameters
 #
-# [*ensure*]
-#   Can only be set to <code>cleaned</code>, <code>absent</code> or <code>present</code>. A value of <code>present</code> will
-#   ensure that the <code>physical_volume</code>, <code>volume_group</code>, <code>logical_volume</code>, and
-#   <code>filesystem</code> resources are present for the volume. A value of <code>cleaned</code> will ensure that all of the
-#   resources are <code>absent</code> <b>Warning this has a high potential for unexpected harm</b> use it with caution. A value of
-#   <code>absent</code> will remove only the <code>logical_volume</code> resource from the system.
-# [*pv*]
-#   The block device to ensure a <code>physical_volume</code> has been created on.
-# [*vg*]
-#   The <code>volume_group</code> to ensure is created on the <code>physical_volume</code> provided by the <code>pv</code>
-#   parameter.
-# [*fstype*]
-#   The type of <code>filesystem</code> to create on the logical volume.
-# [*size*]
-#   The size the <code>logical_voluem</code> should be.
+# [*ensure*] Can only be set to <code>cleaned</code>, <code>absent</code> or
+# <code>present</code>. A value of <code>present</code> will ensure that the
+# <code>physical_volume</code>, <code>volume_group</code>,
+# <code>logical_volume</code>, and <code>filesystem</code> resources are
+# present for the volume. A value of <code>cleaned</code> will ensure that all
+# of the resources are <code>absent</code> <b>Warning this has a high potential
+# for unexpected harm</b> use it with caution. A value of <code>absent</code>
+# will remove only the <code>logical_volume</code> resource from the system.
+# [*pv*] The block device to ensure a <code>physical_volume</code> has been
+# created on.  [*vg*] The <code>volume_group</code> to ensure is created on the
+# <code>physical_volume</code> provided by the <code>pv</code> parameter.
+# [*fstype*] The type of <code>filesystem</code> to create on the logical
+# volume.  [*size*] The size the <code>logical_voluem</code> should be.
 #
 # === Examples
 #
@@ -137,7 +137,8 @@ define lvm::volume (
 
     }
     default: {
-      fail ( 'puppet-lvm::volume: ensure parameter can only be set to cleaned, absent or present' )
+      fail ( 'puppet-lvm::volume: ensure parameter can only be set to ' +
+        'cleaned, absent or present' )
     }
   }
 }

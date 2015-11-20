@@ -99,7 +99,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:stripes) do
     desc "The number of stripes to allocate for the new logical volume."
     validate do |value|
-      unless value =~ /^[0-9]+/i
+      unless value.to_s =~ /^[0-9]+$/i
         raise ArgumentError , "#{value} is not a valid stripe count"
       end
     end
@@ -108,7 +108,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:stripesize) do
     desc "The stripesize to use for the new logical volume."
     validate do |value|
-      unless value =~ /^[0-9]+/i
+      unless value.to_s =~ /^[0-9]+$/i
         raise ArgumentError , "#{value} is not a valid stripesize"
       end
     end
@@ -117,7 +117,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:readahead) do
     desc "The readahead count to use for the new logical volume."
     validate do |value|
-      unless value =~ /^([0-9]+|Auto|None)/i
+      unless value.to_s =~ /^([0-9]+|Auto|None)/i
         raise ArgumentError , "#{value} is not a valid readahead count"
       end
     end
@@ -158,7 +158,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:region_size) do
       desc "A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are in sync. CAN NOT BE CHANGED on already mirrored volume. Take your mirror size in terabytes and round up that number to the next power of 2, using that number as the -R argument."
       validate do |value|
-          unless value =~ /^[0-9]+/i
+          unless value.to_s =~ /^[0-9]+$/i
               raise ArgumentError , "#{value} is not a valid region size in MB."
           end
       end

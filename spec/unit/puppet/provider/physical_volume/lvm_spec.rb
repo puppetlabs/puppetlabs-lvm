@@ -27,10 +27,9 @@ describe provider_class do
   end
 
   describe 'when creating' do
-    it "should execute the 'pvcreate'" do
+    it "should execute the 'create_physical_volume'" do
       @resource.expects(:[]).with(:name).returns('/dev/hdx')
-      @resource.expects(:[]).with(:force)
-      @provider.expects(:pvcreate).with(nil, '/dev/hdx')
+      @provider.expects(:create_physical_volume).with('/dev/hdx')
       @provider.create
     end
   end

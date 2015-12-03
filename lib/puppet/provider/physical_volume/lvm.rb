@@ -11,11 +11,11 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     end
 
     def create
-        pvcreate(force, @resource[:name])
+      create_physical_volume(@resource[:name])
     end
 
     def destroy
-        pvremove(@resource[:name])
+      pvremove(@resource[:name])
     end
 
     def exists?
@@ -71,9 +71,15 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
       physical_volumes_properties
     end
 
-    def force
-      return '--force' if @resource[:force] == :true
-      nil
+    private
+
+    def create_physical_volume(path)
+      args = []
+      if @resource[:force] == :true
+        args.push('--force')
+      end
+      args << path
+        pvcreate(*args)
     end
 
 end

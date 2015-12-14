@@ -8,12 +8,15 @@ This release includes support for new parameters, lots of unit tests, and tweaks
 - Add RAL to types
 - List all PVs in a VG
 - Unit tests for types
+- Adds `type` parameter for logical volume creation
+- Adds support to the resize of a logical volume with swap
 
 ####Bugfixes
 - Filesystem type can create journal devices
 - Add persistent and minor parameters to logical volume type
 - Make size_is_minsize usable
 - Add support for older lvm versions
+- Fixes an error in `pvcreate` produced when `force => false`
 
 ##2015-04-28 - Release 0.5.0
 ###Summary

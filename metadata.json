@@ -10,6 +10,7 @@
   "dependencies": [
     {"name":"puppetlabs/stdlib","version_requirement":">=4.1.0 < 5.0.0"}
   ],
+  "data_provider": null,
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat"

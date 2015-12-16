@@ -72,6 +72,18 @@ describe 'lvm_vgs facts' do
         Facter.value(:lvm_vg_vg0_pvs).should == '/dev/pv2,/dev/pv3'
         Facter.value(:lvm_vg_vg1_pvs).should == '/dev/pv0'
       end
+      it 'should sanitize vg names' do
+        Facter::Util::Resolution.stubs('exec') # All other calls
+        Facter::Util::Resolution.expects('exec').at_least(1).with('vgs -o name --noheadings 2>/dev/null').returns("vg0\nvg-1")
+        Facter::Util::Resolution.expects('exec').at_least(1).with('vgs -o pv_name vg0 2>/dev/null').returns("  PV\n  /dev/pv3\n  /dev/pv2")
+        Facter::Util::Resolution.expects('exec').at_least(1).with('vgs -o pv_name vg-1 2>/dev/null').returns("  PV\n  /dev/pv0")
+        Facter.fact(:lvm_support).expects(:value).at_least(1).returns(true)
+        Facter.value(:lvm_vgs).should == 2
+        Facter.value(:lvm_vg_0).should == 'vg0'
+        Facter.value(:lvm_vg_1).should == 'vg-1'
+        Facter.value(:lvm_vg_vg0_pvs).should == '/dev/pv2,/dev/pv3'
+        Facter.value(:lvm_vg_vg_1_pvs).should == '/dev/pv0'
+      end
     end
   end
 end

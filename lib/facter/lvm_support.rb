@@ -30,8 +30,9 @@ end
 # lvm_vg_[0-9]+
 #   VG name by index
 vg_list.each_with_index do |vg, i|
+  vgn = vg.gsub('-','_')
   Facter.add("lvm_vg_#{i}") { setcode { vg } }
-  Facter.add("lvm_vg_#{vg}_pvs") do
+  Facter.add("lvm_vg_#{vgn}_pvs") do
     setcode do
       pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
       res = nil

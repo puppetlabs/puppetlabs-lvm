@@ -6,7 +6,7 @@ class lvm (
   $volume_groups  = {},
 ) {
 
-  if $::manage_pkg {
+  if $manage_pkg {
     package { 'lvm2':
       ensure   => $package_ensure
     }

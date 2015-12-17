@@ -164,6 +164,7 @@ resources out yourself.
    -  `:core`
    -  `:disk`
    -  `:mirrored`
+* mounted - If puppet should mount the volume. This only affects what puppet will do, and not what will be mounted at boot-time.
 * no_sync (Parameter) - An optimization in lvcreate, at least on Linux.
 * persistent (Parameter) - Set to true to make the block device persistent
 * readahead (Parameter) - The readahead count to use for the new logical volume.

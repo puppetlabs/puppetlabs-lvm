@@ -51,6 +51,30 @@ describe 'lvm', :type => :class do
     it { should contain_mount('/var/backups') }
   end
 
+  describe 'without mount' do
+    let(:params) do
+      {
+        :volume_groups => {
+          'myvg' => {
+            'physical_volumes' => [ '/dev/sda2', ],
+            'logical_volumes'  => {
+              'not_mounted' => {
+                'size'              => '5G',
+                'mounted'           => false,
+                'mountpath'         => '/mnt/not_mounted',
+                'mountpath_require' => true
+              }
+            }
+          }
+        }
+      }
+    end
+
+    it { should contain_mount('/mnt/not_mounted').with({
+        :ensure       => 'present'
+    }) }
+  end
+
   describe 'with a swap volume' do
     let(:params) do
       {

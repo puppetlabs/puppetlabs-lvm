@@ -12,6 +12,7 @@ define lvm::logical_volume (
   $mkfs_options      = undef,
   $mountpath         = "/${name}",
   $mountpath_require = false,
+  $mounted           = true,
   $createfs          = true,
   $extents           = undef,
   $stripes           = undef,
@@ -52,7 +53,10 @@ define lvm::logical_volume (
     $fixed_dump      = $dump
     $mount_ensure    = $ensure ? {
       'absent' => absent,
-      default  => mounted,
+      default  => $mounted ? {
+        true      => mounted,
+        false     => present,
+      }
     }
   }
 

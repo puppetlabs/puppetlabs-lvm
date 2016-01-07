@@ -1,3 +1,10 @@
+##Release 0.7.0
+###Features
+- Add a flag `mounted` to tell puppet not to mount a volume itself.
+
+###Bugfixes
+- #139: fix errors under strict_variables with `manage_pkg`.
+
 ##Release 0.6.0
 ###Summary
 This release includes support for new parameters, lots of unit tests, and tweaks to make sure everything works on different versions of puppet and lvm

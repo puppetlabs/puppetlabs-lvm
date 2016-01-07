@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-lvm",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": "Puppet Labs",
   "summary": "Provides Puppet types and providers to manage Logical Resource Management (LVM) features.",
   "license": "GPLv2",

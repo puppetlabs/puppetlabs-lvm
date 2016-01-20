@@ -7,7 +7,7 @@ define lvm::logical_volume (
   $ensure            = present,
   $options           = 'defaults',
   $pass              = '2',
-  $dump              = '1',
+  $dump              = '0',
   $fs_type           = 'ext4',
   $mkfs_options      = undef,
   $mountpath         = "/${name}",

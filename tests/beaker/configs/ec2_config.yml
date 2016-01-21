@@ -1,0 +1,30 @@
+
+HOSTS:
+  pemaster:
+    roles:
+      - master
+      - dashboard
+      - database
+      - agent
+    vmname: centos-7-x86-64-west
+    user: ec2-user
+    platform: el-7-x86_64
+    hypervisor: ec2
+    amisize: m3.large
+    snapshot: pe
+  peagent:
+    roles:
+      - agent
+      - frictionless
+    vmname: centos-7-x86-64-west
+    user: ec2-user
+    platform: el-7-x86_64
+    hypervisor: ec2
+    amisize: m3.large
+    volume_size: 50
+    snapshot: pe
+CONFIG:
+  nfs_server: none
+  consoleport: 443
+  pe_dir: puppetlabs-websphere_application_server/beaker/files
+  pe_ver: 2015.2.3

@@ -6,17 +6,16 @@ test_name "FM-4579 - C96585 - create logical volume with parameter 'size'"
 test_name "FM-4579 - C96586 - create logical volume with parameter 'size_is_minsize'"
 
 #initilize
-pv = '/dev/sdd'
-vg = ("VG_" + SecureRandom.hex(2))
-lv = ("LV_" + SecureRandom.hex(3))
+pv = '/dev/sdc'
+vg = ("VolumeGroup_" + SecureRandom.hex(2))
+lv = ("LogicalVolume_" + SecureRandom.hex(3))
 
 # Teardown
 teardown do
   confine_block(:except, :roles => %w{master dashboard database}) do
-    on(agent, "umount /dev/#{vg}/#{lv}", :acceptable_exit_codes => [0,1])
-    on(agent, "lvremove /dev/#{vg}/#{lv} --force")
-    on(agent, "vgremove #{vg}")
-    on(agent, "pvremove #{pv}")
+    agents.each do |agent|
+      remove_all(agent, pv, vg, lv)
+    end
   end
 end
 
@@ -34,7 +33,7 @@ logical_volume{'Create Logical Volume with parameter name':
   ensure          => present,
   name            => '#{lv}',
   volume_group    => '#{vg}',
-  size            => '1G',
+  size            => '900M',
   size_is_minsize => true,
 }
 MANIFEST

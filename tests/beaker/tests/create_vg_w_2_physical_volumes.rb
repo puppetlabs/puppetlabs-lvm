@@ -6,14 +6,13 @@ test_name "FM-4579 - C96632 - create volume group with more than one physical vo
 
 #initilize
 pv = ['/dev/sdc', '/dev/sdd']
-vg = ("VG_" + SecureRandom.hex(3))
+vg = ("VolumeGroup_" + SecureRandom.hex(3))
 
 # Teardown
 teardown do
   confine_block(:except, :roles => %w{master dashboard database}) do
-    on(agent, "vgremove #{vg}")
-    pv.each do |physical_vol|
-      on(agent, "pvremove #{physical_vol}")
+    agents.each do |agent|
+      remove_all(agent, pv, vg)
     end
   end
 end

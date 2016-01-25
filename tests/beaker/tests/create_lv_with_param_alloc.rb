@@ -5,20 +5,17 @@ require 'securerandom'
 test_name "FM-4579 - C96574 - create logical volume without parameter 'alloc'"
 
 #initilize
-pv = '/dev/sdd'
-vg = ("VG_" + SecureRandom.hex(2))
-lv = [("LV_" + SecureRandom.hex(3)), ("LV_" + SecureRandom.hex(3)), \
-("LV_" + SecureRandom.hex(3)), ("LV_" + SecureRandom.hex(3)), ("LV_" + SecureRandom.hex(3))]
+pv = '/dev/sdc'
+vg = ("VolumeGroup_" + SecureRandom.hex(2))
+lv = [("LogicalVolume_" + SecureRandom.hex(3)), ("LogicalVolume_" + SecureRandom.hex(3)), \
+("LogicalVolume_" + SecureRandom.hex(3)), ("LogicalVolume_" + SecureRandom.hex(3)), ("LogicalVolume_" + SecureRandom.hex(3))]
 
 # Teardown
 teardown do
   confine_block(:except, :roles => %w{master dashboard database}) do
-    lv.each do |logical_volume|
-      on(agent, "umount /dev/#{vg}/#{logical_volume}", :acceptable_exit_codes => [0,1])
-      on(agent, "lvremove /dev/#{vg}/#{logical_volume} --force")
+    agents.each do |agent|
+      remove_all(agent, pv, vg, lv)
     end
-    on(agent, "vgremove #{vg}")
-    on(agent, "pvremove #{pv}")
   end
 end
 

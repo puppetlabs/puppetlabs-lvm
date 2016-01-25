@@ -3,12 +3,14 @@ require 'lvm_helper'
 test_name "FM-4579 - C96646 - create physical volume without parameter 'name'"
 
 #initilize
-pv = '/dev/sdd'
+pv = '/dev/sdc'
 
 # Teardown
 teardown do
   confine_block(:except, :roles => %w{master dashboard database}) do
-    on(agent, "pvremove #{pv}")
+    agents.each do |agent|
+      remove_all(agent, pv)
+    end
   end
 end
 

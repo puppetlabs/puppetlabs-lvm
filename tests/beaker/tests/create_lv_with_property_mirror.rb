@@ -6,17 +6,14 @@ test_name "FM-4579 - C96578 - create logical volume with property 'mirror'"
 
 #initilize
 pv = ['/dev/sdc', '/dev/sdd']
-vg = ("VG_" + SecureRandom.hex(2))
-lv = ("LV_" + SecureRandom.hex(3))
+vg = ("VolumeGroup_" + SecureRandom.hex(2))
+lv = ("LogicalVolume_" + SecureRandom.hex(3))
 
 # Teardown
 teardown do
   confine_block(:except, :roles => %w{master dashboard database}) do
-    on(agent, "umount /dev/#{vg}/#{lv}", :acceptable_exit_codes => [0,1])
-    on(agent, "lvremove /dev/#{vg}/#{lv} --force")
-    on(agent, "vgremove #{vg}")
-    pv.each do |physical_volume|
-      on(agent, "pvremove #{physical_volume}")
+    agents.each do |agent|
+      remove_all(agent, pv, vg, lv)
     end
   end
 end
@@ -30,7 +27,7 @@ volume_group {'#{vg}':
 logical_volume{'#{lv}':
   ensure        => present,
   volume_group  => '#{vg}',
-  size          => '1G',
+  size          => '400M',
   mirror        => '1',
 }
 MANIFEST

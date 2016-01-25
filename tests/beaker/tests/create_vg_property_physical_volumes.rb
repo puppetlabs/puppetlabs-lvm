@@ -3,17 +3,17 @@ require 'lvm_helper'
 require 'securerandom'
 
 test_name "FM-4579 - C96597 - create volume group with property 'physical_volumes'"
-test_name "FM-4579"
 
 #initilize
-pv = '/dev/sdd'
-vg = ("VG_" + SecureRandom.hex(3))
+pv = '/dev/sdc'
+vg = ("VolumeGroup_" + SecureRandom.hex(3))
 
 # Teardown
 teardown do
   confine_block(:except, :roles => %w{master dashboard database}) do
-    on(agent, "vgremove #{vg}")
-    on(agent, "pvremove #{pv}")
+    agents.each do |agent|
+      remove_all(agent, pv, vg)
+    end
   end
 end
 

@@ -5,14 +5,7 @@ require 'securerandom'
 test_name "FM-4579 - C96613 - remove physical volume"
 
 #initilize
-pv = '/dev/sdd'
-
-# Teardown
-teardown do
-  confine_block(:except, :roles => %w{master dashboard database}) do
-    #on(agent, "pvremove #{pv}")
-  end
-end
+pv = '/dev/sdc'
 
 pp = <<-MANIFEST
 physical_volume {'#{pv}':

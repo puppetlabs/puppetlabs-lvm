@@ -19,4 +19,12 @@ gem 'puppet-lint-unquoted_string-check', :require => false
 if RUBY_VERSION < '2.0'
       gem 'mime-types', '<3.0', :require => false
 end
+
+group :system_tests do
+  if beaker_version = ENV['BEAKER_VERSION']
+    gem 'beaker', *location_for(beaker_version)
+  end
+  gem 'beaker-puppet_install_helper', :require => false
+  gem 'master_manipulator', '~> 1.2',  :require => false
+end
 # vim:ft=ruby

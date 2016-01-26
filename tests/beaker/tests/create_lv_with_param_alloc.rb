@@ -73,7 +73,7 @@ inject_site_pp(master, get_site_pp_path(master), site_pp)
 step 'Run Puppet Agent to create logical volumes'
 confine_block(:except, :roles => %w{master dashboard database}) do
   agents.each do |agent|
-    on(agent, puppet('agent -t  --environment production'), :acceptable_exit_codes => [0,2]) do |result|
+    on(agent, puppet('agent -t --environment production'), :acceptable_exit_codes => [0,2]) do |result|
       assert_no_match(/Error:/, result.stderr, 'Unexpected error was detected!')
     end
 

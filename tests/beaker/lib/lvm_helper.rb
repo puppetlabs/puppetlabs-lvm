@@ -4,7 +4,8 @@
 #
 # * +resource_type+ - resorce type, i.e 'physical_volume', 'volume_group', 'logical_volume', or 'filesystem'
 # * +resource_name+ - The name of resource type, i.e '/dev/sdb' for physical volume, vg_1234 for volume group
-#
+# * +vg+ - volume group name associated with logical volume (if any)
+# * +properties+ - a matching string or regular expression in logical volume properties
 # ==== Returns
 #
 # +nil+
@@ -13,7 +14,7 @@
 # assert_match failure message
 # ==== Examples
 #
-# verify_if_created?(agent, 'physical_volume', /dev/sdb')
+# verify_if_created?(agent, 'physical_volume', /dev/sdb', VolumeGroup_123, "Size     7GB")
 def verify_if_created?(agent, resource_type, resource_name, vg=nil, properties=nil)
   case resource_type
     when 'physical_volume'
@@ -25,6 +26,7 @@ def verify_if_created?(agent, resource_type, resource_name, vg=nil, properties=n
         assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
       end
     when 'logical_volume'
+      fail_test "Error: missing volume group that the logical volume is associated with" unless vg
       on(agent, "lvdisplay /dev/#{vg}/#{resource_name}") do |result|
         assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
         if properties

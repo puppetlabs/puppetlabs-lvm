@@ -49,7 +49,7 @@ confine_block(:except, :roles => %w{master dashboard database}) do
   agents.each do |agent|
     #Run Puppet Agent with manifest pp
     step "Run Puppet Agent to create volume group '#{vg}' on physical volume '#{pv[0]}'"
-    on(agent, puppet('agent -t --graph  --environment production'), :acceptable_exit_codes => [0,2]) do |result|
+    on(agent, puppet('agent -t --environment production'), :acceptable_exit_codes => [0,2]) do |result|
       assert_no_match(/Error:/, result.stderr, 'Unexpected error was detected!')
     end
 
@@ -71,7 +71,7 @@ inject_site_pp(master, get_site_pp_path(master), site_pp)
 confine_block(:except, :roles => %w{master dashboard database}) do
   agents.each do |agent|
     step "Run Puppet Agent to create the physical volume '#{pv[1]}':"
-    on(agent, puppet('agent -t --graph  --environment production'), :acceptable_exit_codes => [0,2]) do |result|
+    on(agent, puppet('agent -t --environment production'), :acceptable_exit_codes => [0,2]) do |result|
       assert_no_match(/Error:/, result.stderr, 'Unexpected error was detected!')
     end
 

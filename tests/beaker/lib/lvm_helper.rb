@@ -36,6 +36,29 @@ def verify_if_created?(agent, resource_type, resource_name, vg=nil, properties=n
   end
 end
 
+# Verify if a filesystem resource type is successfully created
+#
+# ==== Attributes
+#
+# * +volume_group+ - resorce type name, i.e 'VolumeGroup_1234'
+# * +logical_volume+ - resorce type name, i.e 'LogicalVolume_a2b3'
+# * +fromat_type+ - type of the format of the logical volume, i.e 'ext3'
+#
+# ==== Returns
+#
+# +nil+
+#
+# ==== Raises
+# assert_match failure message
+# ==== Examples
+#
+# is_correct_format?(agent, VolumeGroup_1234, LogicalVolume_a2b3, ext3)
+def is_correct_format?(agent, volume_group, logical_volume, format_type)
+  on(agent, "file -sL /dev/#{volume_group}/#{logical_volume}") do |result|
+    assert_match(/#{format_type}/, result.stdout, "Unexpected error was detected")
+  end
+end
+
 # Clean the box after each test, make sure the newly created logical volumes, volume groups,
 # and physical volumes are removed at the end of each test to make the server ready for the
 # next test case.

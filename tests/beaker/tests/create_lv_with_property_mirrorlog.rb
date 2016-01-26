@@ -2,12 +2,14 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4579 - C96579 - create logical volume with property 'mirrorlog'"
+test_name "FM-4614 - C96579 - create logical volume with property 'mirrorlog'"
 
 #initilize
 pv = '/dev/sdc'
-vg = ("VolumeGroup_" + SecureRandom.hex(2))
-lv = [("LogicalVolume_" + SecureRandom.hex(3)), ("LogicalVolume_" + SecureRandom.hex(3)), ("LogicalVolume_" + SecureRandom.hex(3))]
+vg = "VolumeGroup_" + SecureRandom.hex(2)
+lv = ["LogicalVolume_" + SecureRandom.hex(3), \
+      "LogicalVolume_" + SecureRandom.hex(3), \
+      "LogicalVolume_" + SecureRandom.hex(3)]
 
 # Teardown
 teardown do
@@ -57,7 +59,9 @@ confine_block(:except, :roles => %w{master dashboard database}) do
       assert_no_match(/Error:/, result.stderr, 'Unexpected error was detected!')
     end
 
-    step "Verify the logical volume  is created: #{lv}"
-    verify_if_created?(agent, 'logical_volume', lv)
+    step "Verify the logical volumes  are successfuly created: #{lv}"
+    verify_if_created?(agent, 'logical_volume', lv[0], vg)
+    verify_if_created?(agent, 'logical_volume', lv[1], vg)
+    verify_if_created?(agent, 'logical_volume', lv[2], vg)
   end
 end

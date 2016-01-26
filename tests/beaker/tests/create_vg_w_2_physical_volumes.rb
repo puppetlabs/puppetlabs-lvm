@@ -2,11 +2,11 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4579 - C96632 - create volume group with more than one physical volumes"
+test_name "FM-4614 - C96632 - create volume group with more than one physical volumes"
 
 #initilize
 pv = ['/dev/sdc', '/dev/sdd']
-vg = ("VolumeGroup_" + SecureRandom.hex(3))
+vg = "VolumeGroup_" + SecureRandom.hex(3)
 
 # Teardown
 teardown do

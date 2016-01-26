@@ -2,7 +2,7 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4579 - C96613 - remove physical volume"
+test_name "FM-4614 - C96613 - remove physical volume"
 
 #initilize
 pv = '/dev/sdc'

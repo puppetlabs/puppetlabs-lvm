@@ -2,13 +2,14 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4579 - C96574 - create logical volume without parameter 'alloc'"
+test_name "FM-4614 - C96574 - create logical volume  parameter 'alloc'"
 
 #initilize
 pv = '/dev/sdc'
-vg = ("VolumeGroup_" + SecureRandom.hex(2))
-lv = [("LogicalVolume_" + SecureRandom.hex(3)), ("LogicalVolume_" + SecureRandom.hex(3)), \
-("LogicalVolume_" + SecureRandom.hex(3)), ("LogicalVolume_" + SecureRandom.hex(3)), ("LogicalVolume_" + SecureRandom.hex(3))]
+vg = "VolumeGroup_" + SecureRandom.hex(2)
+lv = ["LogicalVolume_" + SecureRandom.hex(3), "LogicalVolume_" + SecureRandom.hex(3), \
+      "LogicalVolume_" + SecureRandom.hex(3), "LogicalVolume_" + SecureRandom.hex(3), \
+      "LogicalVolume_" + SecureRandom.hex(3)]
 
 # Teardown
 teardown do
@@ -72,11 +73,15 @@ inject_site_pp(master, get_site_pp_path(master), site_pp)
 step 'Run Puppet Agent to create logical volumes'
 confine_block(:except, :roles => %w{master dashboard database}) do
   agents.each do |agent|
-    on(agent, puppet('agent -t --graph  --environment production'), :acceptable_exit_codes => [0,2]) do |result|
+    on(agent, puppet('agent -t  --environment production'), :acceptable_exit_codes => [0,2]) do |result|
       assert_no_match(/Error:/, result.stderr, 'Unexpected error was detected!')
     end
 
-    step "Verify the logical volume  is created: #{lv}"
-    verify_if_created?(agent, 'logical_volume', lv)
+    step "Verify the logical volumes  are successfully created: #{lv}"
+    verify_if_created?(agent, 'logical_volume', lv[0], vg, "Allocation\s+anywhere")
+    verify_if_created?(agent, 'logical_volume', lv[1], vg, "Allocation\s+contiguous")
+    verify_if_created?(agent, 'logical_volume', lv[2], vg, "Allocation\s+cling")
+    verify_if_created?(agent, 'logical_volume', lv[3], vg, "Allocation\s+inherit")
+    verify_if_created?(agent, 'logical_volume', lv[4], vg, "Allocation\s+normal")
   end
 end

@@ -1,6 +1,6 @@
 require 'master_manipulator'
 require 'lvm_helper'
-test_name "FM-4579 - C96646 - create physical volume without parameter 'name'"
+test_name "FM-4614 - C96646 - create physical volume without parameter 'name'"
 
 #initilize
 pv = '/dev/sdc'

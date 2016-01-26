@@ -2,12 +2,12 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4579 - C97138 - create volume group with property 'logical_volumes'"
+test_name "FM-4614 - C97138 - create volume group with property 'logical_volumes'"
 
 #initilize
 pv = '/dev/sdc'
-vg = ("VolumeGroup_" + SecureRandom.hex(3))
-lv = ("LogicalVolume_" + SecureRandom.hex(2))
+vg = "VolumeGroup_" + SecureRandom.hex(3)
+lv = "LogicalVolume_" + SecureRandom.hex(2)
 
 # Teardown
 teardown do

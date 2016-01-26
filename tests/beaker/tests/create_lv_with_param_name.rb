@@ -2,12 +2,12 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4579 - C96572 - create logical volume with parameter 'name'"
+test_name "FM-4614 - C96572 - create logical volume with parameter 'name'"
 
 #initilize
 pv = '/dev/sdc'
-vg = ("VolumeGroup_" + SecureRandom.hex(2))
-lv = ("LogicalVolume_" + SecureRandom.hex(3))
+vg = "VolumeGroup_" + SecureRandom.hex(2)
+lv = "LogicalVolume_" + SecureRandom.hex(3)
 
 # Teardown
 teardown do
@@ -48,6 +48,6 @@ confine_block(:except, :roles => %w{master dashboard database}) do
     end
 
     step "Verify the logical volume  is created: #{lv}"
-    verify_if_created?(agent, 'logical_volume', lv)
+    verify_if_created?(agent, 'logical_volume', lv, vg)
   end
 end

@@ -14,7 +14,7 @@
 # ==== Examples
 #
 # verify_if_created?(agent, 'physical_volume', /dev/sdb')
-def verify_if_created?(agent, resource_type, resource_name)
+def verify_if_created?(agent, resource_type, resource_name, vg=nil, properties=nil)
   case resource_type
     when 'physical_volume'
       on(agent, "pvdisplay") do |result|
@@ -25,12 +25,14 @@ def verify_if_created?(agent, resource_type, resource_name)
         assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
       end
     when 'logical_volume'
-      on(agent, "lvdisplay") do |result|
+      on(agent, "lvdisplay /dev/#{vg}/#{resource_name}") do |result|
         assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
+        if properties
+          assert_match(/#{properties}/, result.stdout, 'Unexpected error was detected')
+        end
       end
   end
 end
-
 
 # Clean the box after each test, make sure the newly created logical volumes, volume groups,
 # and physical volumes are removed at the end of each test to make the server ready for the

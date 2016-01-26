@@ -1,5 +1,5 @@
 require 'master_manipulator'
-test_name 'FM-3808 - Cxx - Install Puppet Enterprise'
+test_name 'FM-4614 - Cxx - Install Puppet Enterprise'
 
 # Init
 step 'Install PE'

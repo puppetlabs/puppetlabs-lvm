@@ -5,7 +5,7 @@ require 'securerandom'
 test_name "FM-4614 - C96579 - create logical volume with property 'mirrorlog'"
 
 #initilize
-pv = '/dev/sdc'
+pv = ['/dev/sdc', '/dev/sdd']
 vg = "VolumeGroup_" + SecureRandom.hex(2)
 lv = ["LogicalVolume_" + SecureRandom.hex(3), \
       "LogicalVolume_" + SecureRandom.hex(3), \
@@ -23,13 +23,14 @@ end
 pp = <<-MANIFEST
 volume_group {'#{vg}':
   ensure            => present,
-  physical_volumes  => '#{pv}'
+  physical_volumes  => #{pv}
 }
 ->
 logical_volume{'#{lv[0]}':
   ensure        => present,
   volume_group  => '#{vg}',
   size          => '20M',
+  mirror        => '1',
   mirrorlog     => 'core',
 }
 ->
@@ -37,6 +38,7 @@ logical_volume{'#{lv[1]}':
   ensure        => present,
   volume_group  => '#{vg}',
   size          => '40M',
+  mirror        => '1',
   mirrorlog     => 'disk',
 }
 ->
@@ -44,6 +46,7 @@ logical_volume{'#{lv[2]}':
   ensure        => present,
   volume_group  => '#{vg}',
   size          => '100M',
+  mirror        => '1',
   mirrorlog     => 'mirrored',
 }
 MANIFEST
@@ -63,5 +66,20 @@ confine_block(:except, :roles => %w{master dashboard database}) do
     verify_if_created?(agent, 'logical_volume', lv[0], vg)
     verify_if_created?(agent, 'logical_volume', lv[1], vg)
     verify_if_created?(agent, 'logical_volume', lv[2], vg)
+
+    step 'verify mirrorlog core (stored in mem):'
+    on(agent, "lvs -a -o mirror_log /dev/#{vg}/#{lv[0]}") do |result|
+      assert_match(/\s+/, result.stdout, "Unexpected error was detected")
+    end
+
+    step 'verify mirrorlog disk (stored in disk):'
+    on(agent, "lvs -a -o mirror_log /dev/#{vg}/#{lv[1]}") do |result|
+      assert_match(/#{lv}_mlog/, result.stdout, "Unexpected error was detected")
+    end
+
+    step 'verify mirrorlog mirrored (stored in disk):'
+    on(agent, "lvs -a -o mirror_log /dev/#{vg}/#{lv[2]}") do |result|
+      assert_match(/#{lv}_mlog/, result.stdout, "Unexpected error was detected")
+    end
   end
 end

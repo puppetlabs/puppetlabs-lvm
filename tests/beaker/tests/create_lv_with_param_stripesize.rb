@@ -46,5 +46,10 @@ confine_block(:except, :roles => %w{master dashboard database}) do
 
     step "Verify the logical volume  is created: #{lv}"
     verify_if_created?(agent, 'logical_volume', lv, vg)
+
+    step "Verify the stripesize is 256 KB"
+    on(agent, "lvdisplay -vm /dev/#{vg}/#{lv}") do |result|
+      assert_match(/Stripe size\s+256.00 KiB/, result.stdout, "Unexpected error was detected")
+    end
   end
 end

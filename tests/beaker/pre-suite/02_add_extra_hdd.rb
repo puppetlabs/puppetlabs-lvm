@@ -1,4 +1,4 @@
-test_name 'FM-4614 - Cxx - Add extra hard drive for LVM testing'
+test_name 'FM-4614 - C97274 - add extra hard drives for LVM testing'
 
 # Get the auth_token from ENV
 auth_tok = ENV['AUTH_TOKEN']

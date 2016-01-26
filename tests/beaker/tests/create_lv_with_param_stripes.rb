@@ -45,5 +45,10 @@ confine_block(:except, :roles => %w{master dashboard database}) do
 
     step "Verify the logical volume  is created: #{lv}"
     verify_if_created?(agent, 'logical_volume', lv, vg)
+
+    step "Verify the logical volume is striped on #{pv[0]} and #{pv[1]}"
+    on(agent, "lvs -a -o segtype,devices,vg_name,lv_name") do |result|
+      assert_match(/striped\s+#{pv[0]}.\d.,#{pv[1]}.\d.\s+#{vg}\s+#{lv}/, result.stdout, "Unexpected error was detected")
+    end
   end
 end

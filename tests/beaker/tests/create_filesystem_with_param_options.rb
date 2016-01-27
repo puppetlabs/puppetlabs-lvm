@@ -2,7 +2,7 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4615 - C96568 - create filesystem with parameter 'fs_type' and ext4 format"
+test_name "FM-4615 - C96570 - create filesystem with parameter 'options' and ext4 format"
 
 #initilize
 pv = '/dev/sdc'
@@ -37,7 +37,7 @@ logical_volume{'#{lv}':
 filesystem {'Create_filesystem':
   name    => '/dev/#{vg}/#{lv}',
   ensure  => present,
-  fs_type => 'ext2',
+  fs_type => 'ext4',
   options => '-b 4096 -E stride=32,stripe-width=64',
 }
 MANIFEST
@@ -49,11 +49,11 @@ inject_site_pp(master, get_site_pp_path(master), site_pp)
 step 'Run Puppet Agent to create logical volumes'
 confine_block(:except, :roles => %w{master dashboard database}) do
   agents.each do |agent|
-    on(agent, puppet('agent -t --graph  --environment production'), :acceptable_exit_codes => [0,2]) do |result|
+    on(agent, puppet('agent -t --environment production'), :acceptable_exit_codes => [0,2]) do |result|
       assert_no_match(/Error:/, result.stderr, 'Unexpected error was detected!')
     end
 
     step "Verify the logical volume has correct format type: #{lv}"
-    is_correct_format?(agent, vg, lv, 'ext2')
+    is_correct_format?(agent, vg, lv, 'ext4')
   end
 end

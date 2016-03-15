@@ -163,6 +163,9 @@ Puppet::Type.newtype(:logical_volume) do
           end
       end
   end
+  newparam(:mounted) do
+      desc "Specifies if puppet should mount the volume. This only affects what puppet will do, and not what will be mounted at boot-time"
+  end
 
 
   autorequire(:volume_group) do

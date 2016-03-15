@@ -430,4 +430,19 @@ describe Puppet::Type.type(:logical_volume) do
       )
     }.to_not raise_error
   end
+  
+  it 'mounted passed as a parameter does not throw an error' do
+    expect {
+      resource = Puppet::Type.type(:logical_volume).new(
+				{
+        :name             => 'fred',
+        :ensure           => :present,
+        :volume_group     => 'daphne',
+        :size             => '10M',
+        :region_size      => '910',
+        :mounted          => false
+				}
+      )
+    }.to_not raise_error
+  end
 end

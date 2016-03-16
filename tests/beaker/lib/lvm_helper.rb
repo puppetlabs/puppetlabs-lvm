@@ -33,6 +33,23 @@ def verify_if_created?(agent, resource_type, resource_name, vg=nil, properties=n
           assert_match(/#{properties}/, result.stdout, 'Unexpected error was detected')
         end
       end
+    when 'aix_physical_volume'
+      on(agent, "lspv #{resource_name}") do |result|
+        assert_match(/Physical volume #{resource_name} is not assigned to/, result.stdout, 'Unexpected error was detected')
+      end
+    when 'aix_volume_group'
+      on(agent, "lsvg") do |result|
+        #assert_match(/#{resource_name}\s+^a-z0-9$\s+#{vg}/, result.stdout, 'Unexpected error was detected')
+        assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
+      end
+    when 'aix_logical_volume'
+      fail_test "Error: missing volume group that the logical volume is associated with" unless vg
+      on(agent, "lslv #{resource_name}") do |result|
+        assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
+        if properties
+          assert_match(/#{properties}/, result.stdout, 'Unexpected error was detected')
+        end
+      end
   end
 end
 
@@ -68,6 +85,7 @@ end
 # * +pv+ - physical volume, can be one volume or an array of multiple volumes
 # * +vg+ - volume group, can be one group or an array of multiple volume groups
 # * +lv+ - logical volume, can be one volume or an array of multiple volumes
+# * +aix+ - if the agent is an AIX server.
 #
 # ==== Returns
 #
@@ -78,41 +96,47 @@ end
 # ==== Examples
 #
 # remove_all(agent, '/dev/sdb', 'VolumeGroup_1234', 'LogicalVolume_fa13')
-def remove_all(agent, pv=nil, vg=nil, lv=nil)
-  step 'remove logical volume if any:'
-  if lv
-    if lv.kind_of?(Array)
-      lv.each do |logical_volume|
-        on(agent, "umount /dev/#{vg}/#{logical_volume}", :acceptable_exit_codes => [0,1])
-        on(agent, "lvremove /dev/#{vg}/#{logical_volume} --force")
+def remove_all(agent, pv=nil, vg=nil, lv=nil, aix=nil)
+  if aix
+    step 'remove aix volume group, physical/logical volume '
+    on(agent, "reducevg -d -f #{vg} #{pv}")
+    on(agent, "rm -rf /dev/#{vg} /dev/#{lv}")
+  else
+    step 'remove logical volume if any:'
+    if lv
+      if lv.kind_of?(Array)
+        lv.each do |logical_volume|
+          on(agent, "umount /dev/#{vg}/#{logical_volume}", :acceptable_exit_codes => [0,1])
+          on(agent, "lvremove /dev/#{vg}/#{logical_volume} --force")
+        end
+      else
+        #note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
+        # the logical volume must be unmount before being able to delete it
+        on(agent, "umount /dev/#{vg}/#{lv}", :acceptable_exit_codes => [0,1])
+        on(agent, "lvremove /dev/#{vg}/#{lv} --force")
       end
-    else
-      #note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
-      # the logical volume must be unmount before being able to delete it
-      on(agent, "umount /dev/#{vg}/#{lv}", :acceptable_exit_codes => [0,1])
-      on(agent, "lvremove /dev/#{vg}/#{lv} --force")
     end
-  end
 
-  step 'remove volume group if any:'
-  if vg
-    if vg.kind_of?(Array)
-      vg.each do |volume_group|
-        on(agent, "vgremove /dev/#{volume_group}")
+    step 'remove volume group if any:'
+    if vg
+      if vg.kind_of?(Array)
+        vg.each do |volume_group|
+          on(agent, "vgremove /dev/#{volume_group}")
+        end
+      else
+        on(agent, "vgremove /dev/#{vg}")
       end
-    else
-      on(agent, "vgremove /dev/#{vg}")
     end
-  end
 
-  step 'remove logical volume if any:'
-  if pv
-    if pv.kind_of?(Array)
-      pv.each do |physical_volume|
-        on(agent, "pvremove #{physical_volume}")
+    step 'remove logical volume if any:'
+    if pv
+      if pv.kind_of?(Array)
+        pv.each do |physical_volume|
+          on(agent, "pvremove #{physical_volume}")
+        end
+      else
+        on(agent, "pvremove #{pv}")
       end
-    else
-      on(agent, "pvremove #{pv}")
     end
   end
 end

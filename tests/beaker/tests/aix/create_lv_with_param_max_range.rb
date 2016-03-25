@@ -2,7 +2,7 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4969 - C97367 - create logical volume with parameter min 'range' aix"
+test_name "FM-4969 - C97367 - create logical volume with parameter max 'range'"
 
 #initilize
 pv = 'hdisk1'
@@ -13,7 +13,7 @@ lv = "LV_" + SecureRandom.hex(3)
 teardown do
   confine_block(:except, :roles => %w{master dashboard database}) do
     agents.each do |agent|
-      remove_all(agent, pv, vg, lv, 'aix')
+      remove_all(agent, pv, vg, lv, aix = true)
     end
   end
 end

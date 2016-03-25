@@ -2,7 +2,8 @@
 #
 # ==== Attributes
 #
-# * +resource_type+ - resorce type, i.e 'physical_volume', 'volume_group', 'logical_volume', or 'filesystem'
+# * +resource_type+ - resorce type, i.e 'physical_volume', 'volume_group', 'logical_volume', 'filesystem',
+# *                   'aix_physical_volume', 'aix_volume_group', or 'aix_logical_volume'.
 # * +resource_name+ - The name of resource type, i.e '/dev/sdb' for physical volume, vg_1234 for volume group
 # * +vg+ - volume group name associated with logical volume (if any)
 # * +properties+ - a matching string or regular expression in logical volume properties
@@ -26,7 +27,7 @@ def verify_if_created?(agent, resource_type, resource_name, vg=nil, properties=n
         assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
       end
     when 'logical_volume'
-      fail_test "Error: missing volume group that the logical volume is associated with" unless vg
+      raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
       on(agent, "lvdisplay /dev/#{vg}/#{resource_name}") do |result|
         assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
         if properties
@@ -39,11 +40,10 @@ def verify_if_created?(agent, resource_type, resource_name, vg=nil, properties=n
       end
     when 'aix_volume_group'
       on(agent, "lsvg") do |result|
-        #assert_match(/#{resource_name}\s+^a-z0-9$\s+#{vg}/, result.stdout, 'Unexpected error was detected')
         assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
       end
     when 'aix_logical_volume'
-      fail_test "Error: missing volume group that the logical volume is associated with" unless vg
+      raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
       on(agent, "lslv #{resource_name}") do |result|
         assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
         if properties
@@ -96,7 +96,7 @@ end
 # ==== Examples
 #
 # remove_all(agent, '/dev/sdb', 'VolumeGroup_1234', 'LogicalVolume_fa13')
-def remove_all(agent, pv=nil, vg=nil, lv=nil, aix=nil)
+def remove_all(agent, pv=nil, vg=nil, lv=nil, aix=false)
   if aix
     step 'remove aix volume group, physical/logical volume '
     on(agent, "reducevg -d -f #{vg} #{pv}")

@@ -2,7 +2,7 @@ require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'
 
-test_name "FM-4969 - C97368 - create logical volume with param 'type' aix"
+test_name "FM-4969 - C97368 - create logical volume with param 'type'"
 
 #initilize
 pv = 'hdisk1'
@@ -13,7 +13,7 @@ lv = "LV_" + SecureRandom.hex(3)
 teardown do
   confine_block(:except, :roles => %w{master dashboard database}) do
     agents.each do |agent|
-      remove_all(agent, pv, vg, lv, 'aix')
+      remove_all(agent, pv, vg, lv, aix = true)
     end
   end
 end
@@ -28,7 +28,7 @@ logical_volume{'#{lv}':
   ensure        => present,
   volume_group  => '#{vg}',
   initial_size  => '5M',
-  type         => 'jfs',
+  type          => 'jfs',
 }
 MANIFEST
 

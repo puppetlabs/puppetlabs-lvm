@@ -135,6 +135,16 @@ Puppet::Type.newtype(:logical_volume) do
     defaultto :false
   end
 
+  newparam(:resize_fs) do
+    desc "Whether or not to resize the underlying filesystem when resizing the logical volume."
+    validate do |value|
+      unless [:true, true, "true", :false, false, "false"].include?(value)
+        raise ArgumentError , "resize_fs must either be true or false"
+      end
+    end
+    defaultto :true
+  end
+
 
   newproperty(:mirror) do
       desc "The number of mirrors of the volume."

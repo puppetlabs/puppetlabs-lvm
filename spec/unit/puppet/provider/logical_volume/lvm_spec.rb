@@ -126,6 +126,34 @@ describe provider_class do
           @provider.expects(:blkid).with('/dev/myvg/mylv')
           @provider.size = '2000000k'
         end
+        context "with resize_fs flag" do
+          it "should execute 'blkid' if resize_fs is set to true" do
+            @resource.expects(:[]).with(:name).returns('mylv').at_least_once
+            @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
+            @resource.expects(:[]).with(:size).returns('1g').at_least_once
+            @resource.expects(:[]).with(:resize_fs).returns('true').at_least_once
+            @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
+            @provider.create
+            @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
+            @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
+            @provider.expects(:lvextend).with('-L', '2000000k', '/dev/myvg/mylv').returns(true)
+            @provider.expects(:blkid).with('/dev/myvg/mylv')
+            @provider.size = '2000000k'
+          end
+          it "should not execute 'blkid' if resize_fs is set to false" do
+            @resource.expects(:[]).with(:name).returns('mylv').at_least_once
+            @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
+            @resource.expects(:[]).with(:size).returns('1g').at_least_once
+            @resource.expects(:[]).with(:resize_fs).returns('false').at_least_once
+            @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
+            @provider.create
+            @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
+            @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
+            @provider.expects(:lvextend).with('-L', '2000000k', '/dev/myvg/mylv').returns(true)
+            @provider.expects(:blkid).with('/dev/myvg/mylv').never
+            @provider.size = '2000000k'
+          end
+        end
       end
       context "not in extent portions" do
         it "should raise an exception" do

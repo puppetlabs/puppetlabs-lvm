@@ -11,6 +11,7 @@ define lvm::logical_volume (
   $fs_type           = 'ext4',
   $mkfs_options      = undef,
   $mountpath         = "/${name}",
+  $lvm_device_path   = "/dev/${volume_group}/${name}",
   $mountpath_require = false,
   $mounted           = true,
   $createfs          = true,
@@ -28,8 +29,6 @@ define lvm::logical_volume (
   if ($name == undef) {
     fail("lvm::logical_volume \$name can't be undefined")
   }
-
-  $lvm_device_path = "/dev/${volume_group}/${name}"
 
   if $mountpath_require and $fs_type != 'swap' {
     Mount {

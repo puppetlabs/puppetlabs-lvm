@@ -74,6 +74,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--stripesize', @resource[:stripesize])
         end
 
+	
+
+	if @resource[:poolmetadatasize]
+            args.push('--poolmetadatasize', @resource[:poolmetadatasize])
+        end
 
         if @resource[:mirror]
             args.push('--mirrors', @resource[:mirror])
@@ -110,7 +115,14 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--type', @resource[:type])
         end
 
-        args << @resource[:volume_group]
+	if @resource[:thin]
+            args.push('--thin')
+            # With thin-provisioned volumes, we can't use the name parameter
+            args = args.drop(2)
+            args << @resource[:volume_group] + "/" + @resource[:name]
+	else
+            args << @resource[:volume_group]
+        end
         lvcreate(*args)
     end
 

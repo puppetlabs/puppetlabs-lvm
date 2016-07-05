@@ -98,7 +98,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
 
         if @resource[:persistent]
-            # if persistent param is true, set arg to "y", otherwise set to "n"
+            # if persistent param is true, set arg to "y", otherwise set to "n"
             args.push('--persistent', [:true, true, "true"].include?(@resource[:persistent]) ? 'y' : 'n')
         end
 

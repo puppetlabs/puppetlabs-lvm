@@ -1,7 +1,7 @@
 # lvm_support: true/nil
 #   Whether there is LVM support (based on the presence of the "vgs" command)
 Facter.add('lvm_support') do
-  confine :kernel => :linux
+  confine :kernel => :Linux
 
   setcode do
     vgdisplay = Facter::Util::Resolution.which('vgs')
@@ -14,7 +14,7 @@ end
 vg_list = []
 Facter.add('lvm_vgs') do
   confine :lvm_support => true
-  vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', options = {:timeout => 30})
+  vgs = Facter::Util::Resolution.exec('vgs -o name --noheadings 2>/dev/null', options = {:timeout => 30})
   if vgs.nil?
     setcode { 0 }
   else

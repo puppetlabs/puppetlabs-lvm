@@ -5,7 +5,7 @@ Facter.add('lvm_support') do
 
   setcode do
     vgdisplay = Facter::Util::Resolution.which('vgs')
-    vgdisplay.nil? ? nil : true
+    vgdisplay.nil? ? nil : nil
   end
 end
 

@@ -103,10 +103,10 @@ define lvm::logical_volume (
         }
       } else {
         exec { "swapoff for '${mount_title}'":
-          path      => [ '/bin', '/usr/bin', '/sbin' ],
-          command   => "swapoff ${lvm_device_path}",
-          onlyif    => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
-          subscribe => Mount[$mount_title],
+          path    => [ '/bin', '/usr/bin', '/sbin' ],
+          command => "swapoff ${lvm_device_path}",
+          onlyif  => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
+          notify  => Mount[$mount_title],
         }
       }
     } else {

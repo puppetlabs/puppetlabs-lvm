@@ -21,6 +21,11 @@ define lvm::logical_volume (
   $range             = undef,
   $size_is_minsize   = undef,
   $type              = undef,
+  $mirror            = undef,
+  $mirrorlog         = undef,
+  $no_sync           = undef,
+  $region_size       = undef,
+  $alloc             = undef,
 ) {
 
   validate_bool($mountpath_require)
@@ -81,7 +86,12 @@ define lvm::logical_volume (
     extents         => $extents,
     range           => $range,
     size_is_minsize => $size_is_minsize,
-    type            => $type
+    type            => $type,
+    mirror          => $mirror,
+    mirrorlog       => $mirrorlog,
+    no_sync         => $no_sync,
+    region_size     => $region_size,
+    alloc           => $alloc
   }
 
   if $createfs {

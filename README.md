@@ -261,6 +261,32 @@ parameters documented above also apply to AIX systems.
 * range (Parameter) - Sets the inter-physical volume allocation policy. AIX only
 * type (Parameter) - Configures the logical volume type. AIX only
 
+## Defined resource types
+
+### lvm::profile
+
+The `lvm::profile` manages an LVM profile in `/etc/lvm/profile/` and runs the `lvchange` command to make changes.
+
+#### Parameters
+
+* `volume`: Name of the LVM volume this profile is assicuated with
+* `group`: LVM volume group name
+* `filename`: The filename to use, defaults to `<title>.profile`
+* `allocation`: A hash containing the entries for the `allocation` section of the profile
+* `activation`: A hash containing the entries for the `activation` section of the profile
+
+#### Usage example:
+
+```puppet
+lvm::profile { 'docker':
+  volume => 'dockerpool',
+  group  => 'data',
+  activation => {
+    'thin_pool_autoextend_threshold' => '80',
+    'thin_pool_autoextend_percent' => '20',
+  }
+}
+```
 
 ## Limitations
 

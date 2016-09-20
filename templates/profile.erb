@@ -1,0 +1,16 @@
+# Managed by Puppet
+#
+<% unless @allocation.empty? -%>
+allocation {
+<% @allocation.each do |key, val| -%>
+  <%= key %>=<%= val %>
+<% end -%>
+}
+<% end -%>
+<% unless @activation.empty? -%>
+activation {
+<% @activation.each do |key, val| -%>
+  <%= key %>=<%= val %>
+<% end -%>
+}
+<% end -%>

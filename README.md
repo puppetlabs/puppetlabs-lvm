@@ -167,12 +167,14 @@ resources out yourself.
 * mounted - If puppet should mount the volume. This only affects what puppet will do, and not what will be mounted at boot-time.
 * no_sync (Parameter) - An optimization in lvcreate, at least on Linux.
 * persistent (Parameter) - Set to true to make the block device persistent
+* poolmetadatasize (Parameter) - Change the size of the logical volume pool metadata
 * readahead (Parameter) - The readahead count to use for the new logical volume.
 * region_size (Parameter) - A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are in sync. CAN NOT BE CHANGED on already mirrored volume. Take your mirror size in terabytes and round up that number to the next power of 2, using that number as the -R argument.
 * size (Property) - The size of the logical volume. Set to undef to use all available space
 * size_is_minsize (Parameter) Default value: `:false` - Set to true if the ‘size’ parameter specified, is just the minimum size you need (if the LV found is larger then the size requests this is just logged not causing a FAIL)
 * stripes (Parameter) - The number of stripes to allocate for the new logical volume.
 * stripesize (Parameter) - The stripesize to use for the new logical volume.
+* thin (Parameter) - Default value: `:false` - Set to true to create a thin provisioned logical volume
 * volume_group (Parameter) - The volume group name associated with this logical volume. This will automatically set this volume group as a dependency, but it must be defined elsewhere using the volume_group resource type.
 
 ### physical_volume

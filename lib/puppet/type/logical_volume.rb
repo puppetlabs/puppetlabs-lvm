@@ -1,3 +1,5 @@
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:logical_volume) do
 
   ensurable
@@ -74,13 +76,9 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
-  newparam(:thin) do
+  newparam(:thin, :boolean => true, :parent => Puppet::Parameter::Boolean) do
     desc "Set to true to create a thin provisioned logical volume"
-    validate do |value|
-      unless [:true, true, "true", :false, false, "false"].include?(value)
-        raise ArgumentError , "thin must be either be true or false"
-      end
-    end
+    defaultto false 
   end
 
   newparam(:poolmetadatasize) do

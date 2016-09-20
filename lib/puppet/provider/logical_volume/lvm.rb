@@ -52,7 +52,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     def create
-        args = ['-n', @resource[:name]]
+        args = []
+
+        args.push('-n', @resource[:name]) unless @resource[:thin]
+
         if @resource[:size]
             args.push('--size', @resource[:size])
         elsif @resource[:initial_size]
@@ -76,7 +79,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
 	
 
-	if @resource[:poolmetadatasize]
+        if @resource[:poolmetadatasize]
             args.push('--poolmetadatasize', @resource[:poolmetadatasize])
         end
 
@@ -115,12 +118,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--type', @resource[:type])
         end
 
-	if @resource[:thin]
+        if @resource[:thin]
             args.push('--thin')
-            # With thin-provisioned volumes, we can't use the name parameter
-            args = args.drop(2)
             args << @resource[:volume_group] + "/" + @resource[:name]
-	else
+        else
             args << @resource[:volume_group]
         end
         lvcreate(*args)

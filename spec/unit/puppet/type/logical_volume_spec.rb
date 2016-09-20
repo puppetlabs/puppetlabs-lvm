@@ -12,6 +12,8 @@ describe Puppet::Type.type(:logical_volume) do
       :size_is_minsize => :false,
       :persistent => :false,
       :minor => 100,
+      :thin => false,
+      :poolmetadatasize => '10M',
     }
     stub_default_provider!
       end
@@ -46,6 +48,7 @@ describe Puppet::Type.type(:logical_volume) do
       with(valid_params)[:size].should == valid_params[:size]
     end
   end
+
 
   describe "when specifying the 'size_is_minsize' parameter" do
     it "should exist" do
@@ -88,6 +91,49 @@ describe Puppet::Type.type(:logical_volume) do
       end
     end
 
+  end
+
+  describe "when specifying the 'thin' parameter" do
+    it "should exist" do
+      @type.attrclass(:thin).should_not be_nil
+    end
+    it 'should support setting a value' do
+      with(valid_params)[:thin].should == valid_params[:thin]
+    end
+    it "should support 'true' as a value" do
+      with(valid_params.merge(:thin => :true)) do |resource|
+        resource[:thin].should == true
+        end
+      end
+    it "should support 'false' as a value" do
+      with(valid_params.merge(:thin => :false)) do |resource|
+        resource[:thin].should == false
+        end
+      end
+    it "should not support other values" do
+      specifying(valid_params.merge(:thin => :moep)).should raise_error(Puppet::Error)
+    end
+  end
+
+  describe "when specifying the 'poolmetadatasize' parameter" do
+    it "should exist" do
+      @type.attrclass(:poolmetadatasize).should_not be_nil
+    end
+    it 'should support setting a value' do
+      with(valid_params)[:poolmetadatasize].should == valid_params[:poolmetadatasize]
+    end
+
+    it 'should support K, M, G, T, P and E as extensions' do
+      ['K', 'M', 'G', 'T', 'P', 'E'].each do |ext|
+        with(valid_params.merge(:poolmetadatasize => "10#{ext}")) do |resource|
+          resource[:poolmetadatasize].should == "10#{ext}"
+        end
+      end
+    end
+
+    it "should not support other values" do
+      specifying(valid_params.merge(:poolmetadatasize => "100X")).should raise_error(Puppet::Error)
+    end
   end
 
   describe "when specifying the 'extents' parameter" do

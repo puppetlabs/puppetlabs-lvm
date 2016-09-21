@@ -23,6 +23,11 @@ define lvm::logical_volume (
   $type              = undef,
   $thinpool          = undef,
   $poolmetadatasize  = undef,
+  $mirror            = undef,
+  $mirrorlog         = undef,
+  $no_sync           = undef,
+  $region_size       = undef,
+  $alloc             = undef,
 ) {
 
   validate_bool($mountpath_require)
@@ -86,6 +91,11 @@ define lvm::logical_volume (
     type             => $type,
     thinpool         => $thin,
     poolmetadatasize => $poolmetadatasize,
+    mirror           => $mirror,
+    mirrorlog        => $mirrorlog,
+    no_sync          => $no_sync,
+    region_size      => $region_size,
+    alloc            => $alloc
   }
 
   if $createfs {
@@ -107,10 +117,10 @@ define lvm::logical_volume (
         }
       } else {
         exec { "swapoff for '${mount_title}'":
-          path      => [ '/bin', '/usr/bin', '/sbin' ],
-          command   => "swapoff ${lvm_device_path}",
-          onlyif    => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
-          subscribe => Mount[$mount_title],
+          path    => [ '/bin', '/usr/bin', '/sbin' ],
+          command => "swapoff ${lvm_device_path}",
+          onlyif  => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
+          notify  => Mount[$mount_title],
         }
       }
     } else {

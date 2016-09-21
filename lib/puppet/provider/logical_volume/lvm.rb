@@ -52,9 +52,24 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     def create
-        args = ['-n', @resource[:name]]
+        args = Array.new
+
+        if @resource[:thin]
+            args.push('--thin')
+        end
+
+        if @resource[:thinpool]
+          args.push('--thinpool', @resource[:name])
+        else
+          args.push('-n', @resource[:name])
+        end
+
         if @resource[:size]
-            args.push('--size', @resource[:size])
+            if @resource[:thin]
+                args.push('--virtualsize', @resource[:size])
+            else
+                args.push('--size', @resource[:size])
+            end
         elsif @resource[:initial_size]
             args.push('--size', @resource[:initial_size])
         end
@@ -62,7 +77,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--extents', @resource[:extents])
         end
 
-        if !@resource[:extents] and !@resource[:size] and !@resource[:initial_size]
+        if !@resource[:extents] and !@resource[:size] and !@resource[:initial_size] and !@resource[:thin]
             args.push('--extents', '100%FREE')
         end
 
@@ -73,7 +88,6 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         if @resource[:stripesize]
             args.push('--stripesize', @resource[:stripesize])
         end
-
 
         if @resource[:mirror]
             args.push('--mirrors', @resource[:mirror])
@@ -110,7 +124,12 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--type', @resource[:type])
         end
 
-        args << @resource[:volume_group]
+
+        if @resource[:pool]
+          args << @resource[:volume_group] + "/" + @resource[:pool]
+        else
+          args << @resource[:volume_group]
+        end
         lvcreate(*args)
     end
 
@@ -122,6 +141,14 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     def exists?
         lvs(@resource[:volume_group]) =~ lvs_pattern
+    end
+
+    def pool
+        lvs("--noheadings", "--options", "pool_lv", path).gsub(/\s+/, "")
+    end
+
+    def pool=(pool_name)
+        raise Puppet::Error, "Pool attribute is create-only. Can't be changed after creation."
     end
 
     def size

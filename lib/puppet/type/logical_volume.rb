@@ -85,7 +85,7 @@ Puppet::Type.newtype(:logical_volume) do
     desc "Change the size of logical volume pool metadata"
     validate do |value|
       unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPE]/i
-        raise ArgumentError , "#{value} is not a valid logical volume size"
+        raise ArgumentError , "#{value} is not a valid size for pool metadata"
       end
     end
   end

@@ -76,8 +76,8 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
-  newparam(:thin, :boolean => true, :parent => Puppet::Parameter::Boolean) do
-    desc "Set to true to create a thin provisioned logical volume"
+  newparam(:thinpool, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc "Set to true to create a thin pool"
     defaultto false 
   end
 
@@ -85,7 +85,7 @@ Puppet::Type.newtype(:logical_volume) do
     desc "Change the size of logical volume pool metadata"
     validate do |value|
       unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPE]/i
-        raise ArgumentError , "#{value} is not a valid logical volume size"
+        raise ArgumentError , "#{value} is not a valid size for pool metadata"
       end
     end
   end

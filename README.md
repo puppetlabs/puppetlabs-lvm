@@ -51,6 +51,25 @@ lvm::volume { 'mylv':
 }
 ```
 
+Example how to create a thinpool and a thin-provisioned lv:
+
+```puppet
+logical_volume { 'thinpool':
+  ensure       => 'present',
+  thinpool     => true,
+  volume_group => 'vg_system',
+} ->
+
+logical_volume { 'thinlv1':
+  ensure       => 'present',
+  thin         => true,
+  pool         => 'thinpool',
+  volume_group => 'vg_system',
+  size         => '20G',
+}
+
+```
+
 You can also describe your Volume Group like this:
 
 ```puppet
@@ -174,6 +193,9 @@ resources out yourself.
 * stripes (Parameter) - The number of stripes to allocate for the new logical volume.
 * stripesize (Parameter) - The stripesize to use for the new logical volume.
 * volume_group (Parameter) - The volume group name associated with this logical volume. This will automatically set this volume group as a dependency, but it must be defined elsewhere using the volume_group resource type.
+* thinpool (Parameter) - create a thinpool lv
+* thin (Property) - create a thin provisioned lv. requires the pool property
+* pool (Property) - defines the pool to use when creating a thin provisioned lv. Can't be changed after creation.
 
 ### physical_volume
 

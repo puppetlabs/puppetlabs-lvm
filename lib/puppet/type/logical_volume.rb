@@ -74,6 +74,28 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
+  newparam(:thinpool) do
+    desc "Set to true to make the lv a thinpool"
+    validate do |value|
+      unless [:true, true, "true", :false, false, "false"].include?(value)
+        raise ArgumentError , "thinpool must be either be true or false"
+      end
+    end
+  end
+
+  newparam(:thin) do
+    desc "Set to true to make a thin lv (requires pool)"
+    validate do |value|
+      unless [:true, true, "true", :false, false, "false"].include?(value)
+        raise ArgumentError , "thin must be either be true or false"
+      end
+    end
+  end
+
+  newproperty(:pool) do
+      desc "Pool this lv is linked to"
+  end
+
   newparam(:minor) do
     desc "Set the minor number"
     validate do |value|

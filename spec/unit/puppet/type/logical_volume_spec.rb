@@ -12,7 +12,7 @@ describe Puppet::Type.type(:logical_volume) do
       :size_is_minsize => :false,
       :persistent => :false,
       :minor => 100,
-      :thin => false,
+      :thinpool => false,
       :poolmetadatasize => '10M',
     }
     stub_default_provider!
@@ -93,25 +93,25 @@ describe Puppet::Type.type(:logical_volume) do
 
   end
 
-  describe "when specifying the 'thin' parameter" do
+  describe "when specifying the 'thinpool' parameter" do
     it "should exist" do
-      @type.attrclass(:thin).should_not be_nil
+      @type.attrclass(:thinpool).should_not be_nil
     end
     it 'should support setting a value' do
-      with(valid_params)[:thin].should == valid_params[:thin]
+      with(valid_params)[:thinpool].should == valid_params[:thinpool]
     end
     it "should support 'true' as a value" do
-      with(valid_params.merge(:thin => :true)) do |resource|
-        resource[:thin].should == true
+      with(valid_params.merge(:thinpool => :true)) do |resource|
+        resource[:thinpool].should == true
         end
       end
     it "should support 'false' as a value" do
-      with(valid_params.merge(:thin => :false)) do |resource|
-        resource[:thin].should == false
+      with(valid_params.merge(:thinpool => :false)) do |resource|
+        resource[:thinpool].should == false
         end
       end
     it "should not support other values" do
-      specifying(valid_params.merge(:thin => :moep)).should raise_error(Puppet::Error)
+      specifying(valid_params.merge(:thinpool => :moep)).should raise_error(Puppet::Error)
     end
   end
 

@@ -76,8 +76,8 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
-  newparam(:thin, :boolean => true, :parent => Puppet::Parameter::Boolean) do
-    desc "Set to true to create a thin provisioned logical volume"
+  newparam(:thinpool, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc "Set to true to create a thin pool"
     defaultto false 
   end
 

@@ -21,7 +21,7 @@ define lvm::logical_volume (
   $range             = undef,
   $size_is_minsize   = undef,
   $type              = undef,
-  $thin              = undef,
+  $thinpool          = undef,
   $poolmetadatasize  = undef,
 ) {
 
@@ -84,7 +84,7 @@ define lvm::logical_volume (
     range            => $range,
     size_is_minsize  => $size_is_minsize,
     type             => $type,
-    thin             => $thin,
+    thinpool         => $thin,
     poolmetadatasize => $poolmetadatasize,
   }
 

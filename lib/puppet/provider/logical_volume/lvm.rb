@@ -54,7 +54,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     def create
         args = []
 
-        args.push('-n', @resource[:name]) unless @resource[:thin]
+        args.push('-n', @resource[:name]) unless @resource[:thinpool]
 
         if @resource[:size]
             args.push('--size', @resource[:size])
@@ -118,7 +118,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--type', @resource[:type])
         end
 
-        if @resource[:thin]
+        if @resource[:thinpool]
             args.push('--thin')
             args << @resource[:volume_group] + "/" + @resource[:name]
         else

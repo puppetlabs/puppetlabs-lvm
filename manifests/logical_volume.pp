@@ -89,7 +89,7 @@ define lvm::logical_volume (
     range            => $range,
     size_is_minsize  => $size_is_minsize,
     type             => $type,
-    thinpool         => $thin,
+    thinpool         => $thinpool,
     poolmetadatasize => $poolmetadatasize,
     mirror           => $mirror,
     mirrorlog        => $mirrorlog,

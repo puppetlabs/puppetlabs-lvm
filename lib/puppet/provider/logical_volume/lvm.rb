@@ -52,7 +52,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     def create
-        args = ['-n', @resource[:name]]
+        args = []
+
+        args.push('-n', @resource[:name]) unless @resource[:thinpool]
+
         if @resource[:size]
             args.push('--size', @resource[:size])
         elsif @resource[:initial_size]
@@ -74,6 +77,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--stripesize', @resource[:stripesize])
         end
 
+	
+
+        if @resource[:poolmetadatasize]
+            args.push('--poolmetadatasize', @resource[:poolmetadatasize])
+        end
 
         if @resource[:mirror]
             args.push('--mirrors', @resource[:mirror])
@@ -110,7 +118,12 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--type', @resource[:type])
         end
 
-        args << @resource[:volume_group]
+        if @resource[:thinpool]
+            args.push('--thin')
+            args << @resource[:volume_group] + "/" + @resource[:name]
+        else
+            args << @resource[:volume_group]
+        end
         lvcreate(*args)
     end
 

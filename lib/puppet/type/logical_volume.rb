@@ -1,3 +1,5 @@
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:logical_volume) do
 
   ensurable
@@ -70,6 +72,20 @@ Puppet::Type.newtype(:logical_volume) do
     validate do |value|
       unless [:true, true, "true", :false, false, "false"].include?(value)
         raise ArgumentError , "persistent must be either be true or false"
+      end
+    end
+  end
+
+  newparam(:thinpool, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc "Set to true to create a thin pool"
+    defaultto false 
+  end
+
+  newparam(:poolmetadatasize) do
+    desc "Change the size of logical volume pool metadata"
+    validate do |value|
+      unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPE]/i
+        raise ArgumentError , "#{value} is not a valid size for pool metadata"
       end
     end
   end

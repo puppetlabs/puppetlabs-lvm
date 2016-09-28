@@ -21,6 +21,8 @@ define lvm::logical_volume (
   $range             = undef,
   $size_is_minsize   = undef,
   $type              = undef,
+  $thinpool          = undef,
+  $poolmetadatasize  = undef,
   $mirror            = undef,
   $mirrorlog         = undef,
   $no_sync           = undef,
@@ -76,22 +78,24 @@ define lvm::logical_volume (
   }
 
   logical_volume { $name:
-    ensure          => $ensure,
-    volume_group    => $volume_group,
-    size            => $size,
-    initial_size    => $initial_size,
-    stripes         => $stripes,
-    stripesize      => $stripesize,
-    readahead       => $readahead,
-    extents         => $extents,
-    range           => $range,
-    size_is_minsize => $size_is_minsize,
-    type            => $type,
-    mirror          => $mirror,
-    mirrorlog       => $mirrorlog,
-    no_sync         => $no_sync,
-    region_size     => $region_size,
-    alloc           => $alloc
+    ensure           => $ensure,
+    volume_group     => $volume_group,
+    size             => $size,
+    initial_size     => $initial_size,
+    stripes          => $stripes,
+    stripesize       => $stripesize,
+    readahead        => $readahead,
+    extents          => $extents,
+    range            => $range,
+    size_is_minsize  => $size_is_minsize,
+    type             => $type,
+    thinpool         => $thinpool,
+    poolmetadatasize => $poolmetadatasize,
+    mirror           => $mirror,
+    mirrorlog        => $mirrorlog,
+    no_sync          => $no_sync,
+    region_size      => $region_size,
+    alloc            => $alloc
   }
 
   if $createfs {

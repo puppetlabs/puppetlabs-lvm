@@ -61,9 +61,9 @@ Puppet::Type.type(:volume_group).provide :lvm do
         #  if something goes wrong in physical_volumes
         if @resource[:createonly].to_s == "false"
           existing_volumes = physical_volumes
-          extraneous = existing_volumes - new_volumes
+          extraneous = existing_volumes - canonical_devices(new_volumes)
           extraneous.each { |volume| reduce_with(volume) }
-          missing = new_volumes - existing_volumes
+          missing = canonical_devices(new_volumes) - existing_volumes
           missing.each { |volume| extend_with(volume) }
         end
     end
@@ -82,6 +82,20 @@ Puppet::Type.type(:volume_group).provide :lvm do
     end
 
     private
+
+    # Given a list of device paths, resolve any symbolic links
+    def canonical_devices(pvlist)
+      res = []
+      pvlist.each do |pv|
+        if File.symlink?(pv)
+          res.push File.expand_path(File.readlink(pv), File.dirname(pv))
+        else
+          res.push pv
+        end
+      end
+      res
+    end
+
 
     def reduce_with(volume)
         vgreduce(@resource[:name], volume)

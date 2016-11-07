@@ -28,47 +28,58 @@ define lvm::logical_volume (
   $no_sync                          = undef,
   $region_size                      = undef,
   $alloc                            = undef,
+  $owner                            = undef,
+  $group                            = undef,
+  $mode                             = undef,
 ) {
 
   $lvm_device_path = "/dev/${volume_group}/${name}"
 
   if $mountpath_require and $fs_type != 'swap' {
+
+    file { $mountpath:
+      ensure => directory,
+      group  => $group,
+      owner  => $owner,
+      mode   => $mode,
+    }
+
     Mount {
       require => File[$mountpath],
     }
   }
 
   if $fs_type == 'swap' {
-    $mount_title     = $lvm_device_path
+    $mount_title = $lvm_device_path
     $fixed_mountpath = "swap_${lvm_device_path}"
-    $fixed_pass      = 0
-    $fixed_dump      = 0
-    $mount_ensure    = $ensure ? {
+    $fixed_pass = 0
+    $fixed_dump = 0
+    $mount_ensure = $ensure ? {
       'absent' => absent,
       default  => present,
     }
   } else {
-    $mount_title     = $mountpath
+    $mount_title = $mountpath
     $fixed_mountpath = $mountpath
-    $fixed_pass      = $pass
-    $fixed_dump      = $dump
-    $mount_ensure    = $ensure ? {
+    $fixed_pass = $pass
+    $fixed_dump = $dump
+    $mount_ensure = $ensure ? {
       'absent' => absent,
       default  => $mounted ? {
-        true      => mounted,
-        false     => present,
+        true  => mounted,
+        false => present,
       }
     }
   }
 
   if $ensure == 'present' and $createfs {
-    Logical_volume[$name] ->
-    Filesystem[$lvm_device_path] ->
-    Mount[$mount_title]
-  } elsif $ensure != 'present' and $createfs {
-    Mount[$mount_title] ->
-    Filesystem[$lvm_device_path] ->
     Logical_volume[$name]
+    -> Filesystem[$lvm_device_path]
+    -> Mount[$mount_title]
+  } elsif $ensure != 'present' and $createfs {
+    Mount[$mount_title]
+    -> Filesystem[$lvm_device_path]
+    -> Logical_volume[$name]
   }
 
   logical_volume { $name:

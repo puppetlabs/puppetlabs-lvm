@@ -5,7 +5,7 @@ branches:
 
 language: ruby
 
-bundler_args: --without development
+bundler_args: '--without development system_tests'
 
 before_install:
   - 'gem update --system'

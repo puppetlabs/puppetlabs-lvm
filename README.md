@@ -207,9 +207,9 @@ parameters documented above also apply to AIX systems.
 * accounting (Parameter) - Specify accounting subsystem support, Allowed Values:
     * `true`
     * `false`
-* ag_size (Parameter) - Specify the allocation group size in megabytes,   Allowed Values:
+* ag_size (Parameter) - Specify the allocation group size in megabytes, Allowed Values:
     * `/\d+/`
-* agblksize (Parameter) - JFS2 block size in bytes,   Allowed Values: 
+* agblksize (Parameter) - JFS2 block size in bytes, Allowed Values:
     * `/\d+/`
 * atboot (Parameter) - Specify whether the file system is mounted at boot time, Allowed Values:
     * `true`

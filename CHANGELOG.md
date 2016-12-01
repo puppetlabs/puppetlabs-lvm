@@ -1,3 +1,18 @@
+##Release 0.8.0
+###Summary
+This release includes more testing, support for ruby 2.3.1, thin provisioning and manage mirrors.
+
+###Features
+- Lots of test maintenance, tests updated and improved
+- Add flag to Logical_volume to not resize filesystem
+- Add support for thin provisioning and setting poolmetadatasize
+
+###Bugfixes
+- Add missing parameters to manage mirrors for lvm::logical_volume
+- Executed command `swapoff` before unmount swap partion
+- Fix parsing size from lvs output
+- Numerous documentation fixes
+
 ##Release 0.7.0
 ###Features
 - Add a flag `mounted` to tell puppet not to mount a volume itself.

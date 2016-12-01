@@ -148,7 +148,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             if $2.to_i == 00
                 return $1 + unit.capitalize
             else
-                return $1 + '.' + $2 + unit.capitalize
+                return $1 + '.' + $2.sub(/0+$/, '') + unit.capitalize
             end
         end
     end

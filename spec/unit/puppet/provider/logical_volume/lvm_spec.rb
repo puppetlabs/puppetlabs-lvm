@@ -27,6 +27,15 @@ describe provider_class do
     end
   end
 
+  describe 'when inspecting' do
+    it "strips zeros from lvs output" do
+      @resource.expects(:[]).with(:name).returns('mylv').at_least_once
+      @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
+      @resource.expects(:[]).with(:size).returns('2.5g').at_least_once
+      @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 2.50g').at_least_once
+      expect(@provider.size).to eq('2.5G')
+    end
+  end
   describe 'when creating' do
     context 'with size' do
       it "should execute 'lvcreate' with a '--size' option" do

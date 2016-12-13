@@ -137,7 +137,7 @@ define lvm::volume (
 
     }
     default: {
-      fail ( sprintf("%s%s", 'puppet-lvm::volume: ensure parameter can only ',
+      fail ( sprintf('%s%s', 'puppet-lvm::volume: ensure parameter can only ',
         'be set to cleaned, absent or present') )
     }
   }

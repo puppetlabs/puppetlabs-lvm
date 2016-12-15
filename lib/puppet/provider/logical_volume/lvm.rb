@@ -77,7 +77,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--stripesize', @resource[:stripesize])
         end
 
-	
+
 
         if @resource[:poolmetadatasize]
             args.push('--poolmetadatasize', @resource[:poolmetadatasize])

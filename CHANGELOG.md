@@ -1,3 +1,10 @@
+##Release 0.9.0
+###Summary
+Small release that bumps up rspec version and adds a new parameter
+
+###Features
+- Adds `followsymlinks` parameter
+
 ##Release 0.8.0
 ###Summary
 This release includes more testing, support for ruby 2.3.1, thin provisioning and manage mirrors.

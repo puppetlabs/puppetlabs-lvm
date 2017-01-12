@@ -104,8 +104,33 @@ lvm::volume_groups:
         mountpath: /var/backups
         mountpath_require: true
 ```
-
-
+or to just build the VG if it does not exists
+```yaml
+---
+lvm::volume_groups:
+  myvg:
+    createonly: true
+    physical_volumes:
+      /dev/sda2:
+        unless_vg: 'myvg'
+      /dev/sda3:
+        unless_vg: 'myvg'
+    logical_volumes:
+      opt:
+        size: 20G
+      tmp:
+        size: 1G
+      usr:
+        size: 3G
+      var:
+        size: 15G
+      home:
+        size: 5G
+      backup:
+        size: 5G
+        mountpath: /var/backups
+        mountpath_require: true
+```
 
 Except that in the latter case you cannot specify create options.
 If you want to omit the file system type, but still specify the size of the

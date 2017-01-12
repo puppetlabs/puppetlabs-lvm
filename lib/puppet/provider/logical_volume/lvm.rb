@@ -293,7 +293,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     private
 
     def lvs_pattern
-        /\s+#{Regexp.quote @resource[:name]}\s+/
+        # lvs output format:
+        # LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+        /\s+#{Regexp.quote @resource[:name]}\s+#{Regexp.quote @resource[:volume_group]}\s+/
     end
 
     def path

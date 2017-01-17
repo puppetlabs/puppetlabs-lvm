@@ -16,7 +16,8 @@ Puppet::Type.type(:filesystem).provide :lvm do
     end
 
     def fstype
-        /\bTYPE=\"(\S+)\"/.match(blkid(@resource[:name]))[1]
+        fstype_match = /\bTYPE=\"(\S+)\"/.match(blkid(@resource[:name]))
+        if fs_type_match then fstype_match[1] else nil end
     rescue Puppet::ExecutionFailure
         nil
     end

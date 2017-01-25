@@ -126,6 +126,7 @@ lvm::volume_groups:
         size: 15G
       home:
         size: 5G
+        createfsonly: true
       backup:
         size: 5G
         mountpath: /var/backups
@@ -142,22 +143,35 @@ If you need a more complex configuration, you'll need to build the
 resources out yourself.
 
 ## Optional Values
-  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check 
-  to see if "myvg" exists.  If "myvg" does exist then they will not modify
-  the physical volume or volume_group.  This is useful if your environment
-  is built with certain disks but they change while the server grows, shrinks
+  The `unless_vg` (physical_volume) and `createonly` (volume_group) options check
+  to see if "myvg" exists.  If "myvg" does exist, then they will not modify
+  the physical volume or volume group.  This is useful if your environment
+  is built with certain disks that may change when the server grows, shrinks
   or moves.
- 
+
   Example:
 ```puppet
-    physical_volume { "/dev/hdc":
-        ensure => present,
-        unless_vg => "myvg"
+    physical_volume { '/dev/hdc':
+        ensure => 'present',
+        unless_vg => 'myvg',
     }
-    volume_group { "myvg":
-        ensure => present,
-        physical_volumes => "/dev/hdc",
-        createonly => true
+    volume_group { 'myvg':
+        ensure => 'present',
+        physical_volumes => '/dev/hdc',
+        createonly => true,
+    }
+```
+
+  The `createfsonly` (logical_volume) option checks to see if any filesystem exists.
+  If it does, it will not modify the existing filesystem.  This is useful for cases
+  such as ext3 filesystems temporarily mounted as ext4. This boolean defaults to false.
+
+  Example:
+```puppet
+    logical_volume { 'LVnew':
+      mountpath => '/new',
+      size => '10G',
+      createfsonly => true,
     }
 ```
 

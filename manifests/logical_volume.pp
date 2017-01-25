@@ -14,6 +14,7 @@ define lvm::logical_volume (
   Boolean $mountpath_require         = false,
   Boolean $mounted                   = true,
   Boolean $createfs                  = true,
+  Boolean $createfsonly              = false,
   $extents                           = undef,
   $stripes                           = undef,
   $stripesize                        = undef,
@@ -94,9 +95,10 @@ define lvm::logical_volume (
 
   if $createfs {
     filesystem { $lvm_device_path:
-      ensure  => $ensure,
-      fs_type => $fs_type,
-      options => $mkfs_options,
+      ensure       => $ensure,
+      fs_type      => $fs_type,
+      options      => $mkfs_options,
+      createfsonly => $createfsonly,
     }
   }
 

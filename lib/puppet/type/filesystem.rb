@@ -27,6 +27,10 @@ Puppet::Type.newtype(:filesystem) do
     desc "Params for the mkfs command. eg. -l internal,agcount=x"
   end
 
+  newparam(:createfsonly) do
+    desc "Only create the filesystem if it does not exist - do not modify an existing filesystem. Defaults to false."
+  end
+
   newparam(:initial_size) do
     desc "Initial size of the filesystem, Used only for resource creation, when using this option Puppet will not manage or maintain the size. To resize filesystems see the size property. AIX only."
   end

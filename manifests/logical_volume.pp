@@ -21,7 +21,7 @@ define lvm::logical_volume (
   $range             = undef,
   $size_is_minsize   = undef,
   $type              = undef,
-  $thinpool          = undef,
+  $thinpool          = false,
   $poolmetadatasize  = undef,
   $mirror            = undef,
   $mirrorlog         = undef,

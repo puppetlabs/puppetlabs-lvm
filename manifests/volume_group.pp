@@ -5,6 +5,7 @@ define lvm::volume_group (
   $createonly       = false,
   $ensure           = present,
   $logical_volumes  = {},
+  $vg_name          = $name,
 ) {
 
   validate_hash($logical_volumes)
@@ -29,7 +30,7 @@ define lvm::volume_group (
   }
 
 
-  volume_group { $name:
+  volume_group { $vg_name:
     ensure           => $ensure,
     createonly       => $createonly,
     physical_volumes => $physical_volumes,
@@ -40,7 +41,7 @@ define lvm::volume_group (
     $logical_volumes,
     {
       ensure       => $ensure,
-      volume_group => $name,
+      volume_group => $vg_name,
     }
   )
 }

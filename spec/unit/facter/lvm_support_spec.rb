@@ -52,9 +52,9 @@ describe 'lvm_vgs facts' do
   context 'when there is lvm support' do
     context 'when there are no vgs' do
       it 'should be set to 0' do
-        Facter.fact(:lvm_support).expects(:value).at_least(1).returns(true)
         Facter::Core::Execution.stubs(:execute) # All other calls
         Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o name --noheadings 2>/dev/null', timeout: 30).returns(nil)
+        Facter.fact(:lvm_support).expects(:value).at_least(1).returns(true)
         Facter.value(:lvm_vgs).should == 0
       end
     end

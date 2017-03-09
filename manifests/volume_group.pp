@@ -5,6 +5,7 @@ define lvm::volume_group (
   $createonly       = false,
   $ensure           = present,
   $logical_volumes  = {},
+  $followsymlinks   = false,
 ) {
 
   validate_hash($logical_volumes)
@@ -33,6 +34,7 @@ define lvm::volume_group (
     ensure           => $ensure,
     createonly       => $createonly,
     physical_volumes => $physical_volumes,
+    followsymlinks   => $followsymlinks,
   }
 
   create_resources(

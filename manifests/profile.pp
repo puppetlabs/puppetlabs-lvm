@@ -1,7 +1,7 @@
 define lvm::profile (
   $volume,
   $group,
-  $filename   ="${name}.profile",
+  $filename   = "${name}.profile",
   $allocation = {},
   $activation = {},
 ) {
@@ -11,7 +11,7 @@ define lvm::profile (
     content => template('lvm/profile.erb'),
   }
 
-  exec { 'lvm::profile::lvchange':
+  exec { "lvm::profile::lvchange::${name}":
     path        => '/sbin:/usr/sbin',
     command     => "lvchange --profile ${name} ${group}/${volume}",
     refreshonly => true,

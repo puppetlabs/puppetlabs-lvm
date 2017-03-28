@@ -24,7 +24,7 @@ describe 'lvm::profile', :type => :define do
     end
 
     it do
-      is_expected.to contain_exec('lvm::profile::lvchange').with(
+      is_expected.to contain_exec('lvm::profile::lvchange::dockerpool').with(
         :command => 'lvchange --profile dockerpool data/dockerpool',
         :refreshonly => true
       ).that_subscribes_to('File[/etc/lvm/profile/dockerpool.profile]')

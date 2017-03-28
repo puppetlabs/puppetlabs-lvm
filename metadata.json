@@ -8,7 +8,10 @@
   "project_page": "https://github.com/puppetlabs/puppetlabs-lvm",
   "issues_url": "https://tickets.puppetlabs.com/browse/MODULES/component/11456/",
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">=4.1.0 < 5.0.0"}
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.13.1 < 5.0.0"
+    }
   ],
   "data_provider": null,
   "operatingsystem_support": [
@@ -32,12 +35,15 @@
     },
     {
       "operatingsystem": "AIX"
+    },
+    {
+      "operatingsystem": "Archlinux"
     }
   ],
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 3.0.0 < 5.0.0"
+      "version_requirement": ">= 4.6.1 < 5.0.0"
     }
   ]
 }

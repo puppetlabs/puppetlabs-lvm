@@ -80,7 +80,7 @@ describe 'lvm', :type => :class do
       {
         :volume_groups => {
           'myvg' => {
-            'physical_volumes' => [ '/dev/sda2', '/dev/sda3', ],
+            'physical_volumes' => [ '/dev/sda2', '/dev/sda3' ],
             'logical_volumes'  => {
               'swap'  => {
                 'size'    => '20G',

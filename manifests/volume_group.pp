@@ -1,18 +1,12 @@
 # == Define: lvm::volume_group
 #
 define lvm::volume_group (
-  $physical_volumes,
-  $createonly       = false,
-  $ensure           = present,
-  $logical_volumes  = {},
-  $followsymlinks   = false,
+  Variant[Array, String] $physical_volumes,
+  Boolean $createonly               = false,
+  Enum['present', 'absent'] $ensure = present,
+  Hash $logical_volumes             = {},
+  Boolean $followsymlinks           = false,
 ) {
-
-  validate_hash($logical_volumes)
-
-  if ($name == undef) {
-    fail("lvm::volume_group \$name can't be undefined")
-  }
 
   if is_hash($physical_volumes) {
     create_resources(

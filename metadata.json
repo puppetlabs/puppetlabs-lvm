@@ -32,6 +32,9 @@
     },
     {
       "operatingsystem": "AIX"
+    },
+    {
+      "operatingsystem": "Archlinux"
     }
   ],
   "requirements": [

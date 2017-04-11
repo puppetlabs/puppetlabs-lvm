@@ -1,9 +1,11 @@
 # == Define: lvm::physical_volume
 #
+# @api public
+# Note: Param defaults have been moved to lvm/data using hiera data in modules pattern
 define lvm::physical_volume (
-  $ensure     = present,
-  $force      = false,
-  $unless_vg  = undef,
+  Enum['present', 'absent'] $ensure,
+  Boolean $force,
+  String $unless_vg,
 ) {
 
   if ($name == undef) {

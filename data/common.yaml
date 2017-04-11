@@ -1,0 +1,50 @@
+---
+# Note that ~ in yaml is equivalent to Puppet's undef
+# lvm param defaults
+lvm::package_ensure: installed
+lvm::manage_pkg: false
+lvm::volume_groups: {}
+# lvm/logical_volume param defaults
+lvm::logical_volume::alloc: ~
+lvm::logical_volume::createfs: true
+lvm::logical_volume::dump: '0'
+lvm::logical_volume::ensure: present
+lvm::logical_volume::extents: ~
+lvm::logical_volume::fs_type: 'ext4'
+lvm::logical_volume::group: ~
+lvm::logical_volume::initial_size: ~
+lvm::logical_volume::mirror: ~
+lvm::logical_volume::mirrorlog: ~
+lvm::logical_volume::mkfs_options: ~
+lvm::logical_volume::mode: ~
+lvm::logical_volume::mounted: true
+lvm::logical_volume::mountpath_require: false
+lvm::logical_volume::no_sync: ~
+lvm::logical_volume::options: 'defaults'
+lvm::logical_volume::owner: ~
+lvm::logical_volume::pass: '2'
+lvm::logical_volume::poolmetadatasize: ~
+lvm::logical_volume::range: ~
+lvm::logical_volume::readahead: ~
+lvm::logical_volume::region_size: ~
+lvm::logical_volume::size: ~
+lvm::logical_volume::size_is_minsize: ~
+lvm::logical_volume::stripes: ~
+lvm::logical_volume::stripesize: ~
+lvm::logical_volume::thinpool: false
+lvm::logical_volume::type: ~
+# lvm/physical_volume param defaults
+lvm::physical_volume::ensure: present
+lvm::physical_volume::force: false
+lvm::physical_volume::unless_vg: ~
+# lvm/volume param defaults
+lvm::volume::fstype: ~
+lvm::volume::size: ~
+lvm::volume::extents: ~
+lvm::volume::initial_size: ~
+# lvm/volume_group param defaults
+lvm::volume_group::createonly: ~
+lvm::volume_group::ensure: present
+lvm::volume_group::logical_volumes: { }
+lvm::volume_group::followsymlinks: ~
+

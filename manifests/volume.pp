@@ -52,14 +52,16 @@
 # You should have received a copy of the GNU General Public License along
 # with puppetlabs/lvm. If not, see http://www.gnu.org/licenses/.
 #
+# @api public
+# Note: Param defaults have been moved to lvm/data using hiera data in modules pattern
 define lvm::volume (
-  $ensure,
-  $pv,
-  $vg,
-  $fstype  = undef,
-  $size    = undef,
-  $extents = undef,
-  $initial_size = undef
+  Enum['present', 'cleaned', 'absent'] $ensure,
+  String $pv,
+  String $vg,
+  String $fstype  = undef,
+  String $size    = undef,
+  String $extents = undef,
+  String $initial_size = undef,
 ) {
 
   if ($name == undef) {
@@ -141,4 +143,5 @@ define lvm::volume (
         'be set to cleaned, absent or present') )
     }
   }
+
 }

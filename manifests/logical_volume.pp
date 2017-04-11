@@ -1,36 +1,38 @@
 # == Define: lvm::logical_volume
 #
+# @api public
+# Note: Param defaults have been moved to lvm/data using hiera data in modules pattern
 define lvm::logical_volume (
-  $volume_group,
-  $size                                               = undef,
-  $initial_size                                       = undef,
-  Enum['absent', 'present'] $ensure                   = present,
-  $options                                            = 'defaults',
-  $pass                                               = '2',
-  $dump                                               = '0',
-  $fs_type                                            = 'ext4',
-  $mkfs_options                                       = undef,
+  Hash $volume_group,
+  String $size,
+  String $initial_size,
+  Enum['absent', 'present'] $ensure,
+  String $options,
+  String $pass,
+  String $dump,
+  String $fs_type,
+  String $mkfs_options,
+  Boolean $mountpath_require,
+  Boolean $mounted,
+  Boolean $createfs,
+  String $extents,
+  Integer $stripes,
+  Integer $stripesize,
+  String $readahead,
+  String $range,
+  Boolean $size_is_minsize,
+  String $type,
+  Boolean $thinpool,
+  String $poolmetadatasize,
+  Integer $mirror,
+  Enum['core', 'disk', 'mirrored'] $mirrorlog,
+  Boolean $no_sync,
+  String $region_size,
+  Enum['anywhere', 'contiguous', 'cling', 'inherit', 'normal'] $alloc,
+  String $owner,
+  String $group,
+  String $mode,
   Variant[Enum['/'], Stdlib::Absolutepath] $mountpath = "/${name}",
-  Boolean $mountpath_require                          = false,
-  Boolean $mounted                                    = true,
-  Boolean $createfs                                   = true,
-  $extents                                            = undef,
-  $stripes                                            = undef,
-  $stripesize                                         = undef,
-  $readahead                                          = undef,
-  $range                                              = undef,
-  $size_is_minsize                                    = undef,
-  $type                                               = undef,
-  $thinpool                                           = false,
-  $poolmetadatasize                                   = undef,
-  $mirror                                             = undef,
-  $mirrorlog                                          = undef,
-  $no_sync                                            = undef,
-  $region_size                                        = undef,
-  $alloc                                              = undef,
-  $owner                                              = undef,
-  $group                                              = undef,
-  $mode                                               = undef,
 ) {
 
   $lvm_device_path = "/dev/${volume_group}/${name}"
@@ -147,4 +149,5 @@ define lvm::logical_volume (
       atboot  => true,
     }
   }
+
 }

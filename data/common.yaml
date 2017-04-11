@@ -43,8 +43,8 @@ lvm::volume::size: ~
 lvm::volume::extents: ~
 lvm::volume::initial_size: ~
 # lvm/volume_group param defaults
-lvm::volume_group::createonly: ~
+lvm::volume_group::createonly: false
 lvm::volume_group::ensure: present
 lvm::volume_group::logical_volumes: { }
-lvm::volume_group::followsymlinks: ~
+lvm::volume_group::followsymlinks: false
 

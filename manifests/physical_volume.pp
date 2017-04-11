@@ -5,7 +5,7 @@
 define lvm::physical_volume (
   Enum['present', 'absent'] $ensure,
   Boolean $force,
-  String $unless_vg,
+  Optional[String] $unless_vg,
 ) {
 
   if ($name == undef) {

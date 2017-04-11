@@ -58,10 +58,10 @@ define lvm::volume (
   Enum['present', 'cleaned', 'absent'] $ensure,
   String $pv,
   String $vg,
-  String $fstype  = undef,
-  String $size    = undef,
-  String $extents = undef,
-  String $initial_size = undef,
+  Optional[String] $fstype,
+  Optional[String] $size,
+  Optional[String] $extents,
+  Optional[String] $initial_size,
 ) {
 
   if ($name == undef) {

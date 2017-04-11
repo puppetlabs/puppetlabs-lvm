@@ -1,74 +1,87 @@
 # == Define: lvm::logical_volume
 #
+# @api public
+# Note: Param defaults have been moved to lvm/data using hiera data in modules pattern
 define lvm::logical_volume (
-  $volume_group,
-  $size                             = undef,
-  $initial_size                     = undef,
-  Enum['absent', 'present'] $ensure = present,
-  $options                          = 'defaults',
-  $pass                             = '2',
-  $dump                             = '0',
-  $fs_type                          = 'ext4',
-  $mkfs_options                     = undef,
-  Stdlib::Absolutepath $mountpath   = "/${name}",
-  Boolean $mountpath_require        = false,
-  Boolean $mounted                  = true,
-  Boolean $createfs                 = true,
-  $extents                          = undef,
-  $stripes                          = undef,
-  $stripesize                       = undef,
-  $readahead                        = undef,
-  $range                            = undef,
-  $size_is_minsize                  = undef,
-  $type                             = undef,
-  $thinpool                         = false,
-  $poolmetadatasize                 = undef,
-  $mirror                           = undef,
-  $mirrorlog                        = undef,
-  $no_sync                          = undef,
-  $region_size                      = undef,
-  $alloc                            = undef,
+  Variant[Enum['anywhere', 'contiguous', 'cling', 'inherit', 'normal'], Optional] $alloc,
+  Boolean $createfs,
+  String $dump,
+  Enum['absent', 'present'] $ensure,
+  Optional[String] $extents,
+  String $fs_type,
+  Optional[String] $group,
+  Optional[String] $initial_size,
+  Optional[Integer] $mirror,
+  Variant[Enum['core', 'disk', 'mirrored'], Optional] $mirrorlog,
+  Optional[String] $mkfs_options,
+  Optional[String] $mode,
+  Boolean $mounted,
+  Boolean $mountpath_require,
+  Optional[Boolean] $no_sync,
+  String $options,
+  Optional[String] $owner,
+  String $pass,
+  Optional[String] $poolmetadatasize,
+  Optional[String] $range,
+  Optional[String] $readahead,
+  Optional[String] $region_size,
+  Optional[String] $size,
+  Optional[Boolean] $size_is_minsize,
+  Optional[Integer] $stripes,
+  Optional[Integer] $stripesize,
+  Boolean $thinpool,
+  Optional[String] $type,
+  String $volume_group,
+  Variant[Enum['/'], Stdlib::Absolutepath] $mountpath = "/${name}",
 ) {
 
   $lvm_device_path = "/dev/${volume_group}/${name}"
 
   if $mountpath_require and $fs_type != 'swap' {
+
+    file { $mountpath:
+      ensure => directory,
+      group  => $group,
+      owner  => $owner,
+      mode   => $mode,
+    }
+
     Mount {
       require => File[$mountpath],
     }
   }
 
   if $fs_type == 'swap' {
-    $mount_title     = $lvm_device_path
+    $mount_title = $lvm_device_path
     $fixed_mountpath = "swap_${lvm_device_path}"
-    $fixed_pass      = 0
-    $fixed_dump      = 0
-    $mount_ensure    = $ensure ? {
+    $fixed_pass = 0
+    $fixed_dump = 0
+    $mount_ensure = $ensure ? {
       'absent' => absent,
       default  => present,
     }
   } else {
-    $mount_title     = $mountpath
+    $mount_title = $mountpath
     $fixed_mountpath = $mountpath
-    $fixed_pass      = $pass
-    $fixed_dump      = $dump
-    $mount_ensure    = $ensure ? {
+    $fixed_pass = $pass
+    $fixed_dump = $dump
+    $mount_ensure = $ensure ? {
       'absent' => absent,
       default  => $mounted ? {
-        true      => mounted,
-        false     => present,
+        true  => mounted,
+        false => present,
       }
     }
   }
 
   if $ensure == 'present' and $createfs {
-    Logical_volume[$name] ->
-    Filesystem[$lvm_device_path] ->
-    Mount[$mount_title]
-  } elsif $ensure != 'present' and $createfs {
-    Mount[$mount_title] ->
-    Filesystem[$lvm_device_path] ->
     Logical_volume[$name]
+    -> Filesystem[$lvm_device_path]
+    -> Mount[$mount_title]
+  } elsif $ensure != 'present' and $createfs {
+    Mount[$mount_title]
+    -> Filesystem[$lvm_device_path]
+    -> Logical_volume[$name]
   }
 
   logical_volume { $name:
@@ -136,4 +149,5 @@ define lvm::logical_volume (
       atboot  => true,
     }
   }
+
 }

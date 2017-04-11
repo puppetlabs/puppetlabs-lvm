@@ -36,11 +36,9 @@ filesystem { '/dev/myvg/mylv':
   options => '-b 4096 -E stride=32,stripe-width=64',
 }
 ```
-
 This simple 1 physical volume, 1 volume group, 1 logical volume case
 is provided as a simple `volume` definition, as well.  The above could
 be shortened to be:
-
 ```puppet
 lvm::volume { 'mylv':
   ensure => present,
@@ -50,9 +48,12 @@ lvm::volume { 'mylv':
   size   => '20G',
 }
 ```
-
 You can also describe your Volume Group like this:
 
+**Note: `'mountpath_require' => true` will create the directory specified
+by `mountpath` attribute. If the directory in `mountpath` is already managed
+elsewhere in your Puppet catalog, you will want to set `mountpath_require`
+to false, otherwise Puppet runs will fail with duplicate resource errors**
 ```puppet
 class { 'lvm':
   volume_groups    => {
@@ -74,14 +75,13 @@ class { 'lvm':
   },
 }
 ```
-
 This could be really convenient when used with hiera:
-
 ```puppet
 include ::lvm
 ```
 and
 ```yaml
+
 ---
 lvm::volume_groups:
   myvg:
@@ -104,8 +104,11 @@ lvm::volume_groups:
         mountpath: /var/backups
         mountpath_require: true
 ```
+
 or to just build the VG if it does not exists
+
 ```yaml
+
 ---
 lvm::volume_groups:
   myvg:
@@ -141,24 +144,44 @@ need to use a hash to pass the parameters to the definition.
 If you need a more complex configuration, you'll need to build the
 resources out yourself.
 
+## Parameter Documentation
+
+Many of the defined type parameters are same as for the type, but there are some that are specific to the defined type. These are documented below:
+
+### lvm
+* package_ensure (Parameter) Default value: `'installed'` - Allowed values: 'installed', 'present', 'latest', 'absent'. Set this parameter as needed to control whether Puppet should install once and never again, always install latest or uninstall the package. `manage_pkg` must be set to `true` for this parameter to matter. 
+* manage_pkg (Parameter) Default value: `false` - Set to true if Puppet should manage the lvm package. 
+* volume_groups (Parameter) Default value: empty hash - See above. Hash used to set up LVM managed filesystems, logical volumes, volume groups and physical volumes. 
+
+### logical_volume
+
+* createfs (Parameter) Default value: `true` - When true, creates the filesystem at `/dev/${volume_group}/${name}` as filesystem type set with `fs_type`.
+* fs_type (Parameter) Default value: `ext4` - When createfs is true, the filesystem will be created with filesystem type specified for this parameter. 
+* group (Parameter) - If mountpath_require is set to `true`, a value should be set for group in order to control what group owns the directory.
+* mode (Parameter) - If mountpath_require is set to `true`, a value should be set for mode in order to set permissions for the directory. It must be a 4 digit numerical designation (for example: '0755').
+* mounted (Parameter) Default value: `true` - If puppet should mount the volume. This only affects what puppet will do, and not what will be mounted at boot-time.
+* mountpath (Parameter) Default value: `\${name}` - Directory where volume will be mounted.
+* mountpath_require (Parameter) Default value: `false` - If Puppet should create the directory specified for mountpath. Puppet will only set up the directory specified and not any required parent directories when this is set. Do not set this to true if Puppet is managing the mountpath directory elsewhere in the catalog.
+* user (Parameter) - If mountpath_require is set to `true`, a value should be set for user in order to control what user owns the directory.
+
 ## Optional Values
-  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check 
+  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check
   to see if "myvg" exists.  If "myvg" does exist then they will not modify
   the physical volume or volume_group.  This is usefull if you environment
   is build with certain disks but they change while the server grows, shrinks
   or moves.
- 
+
   Example:
-```puppet
-    physical_volume { "/dev/hdc":
-        ensure => present,
-        unless_vg => "myvg"
-    }
-    volume_group { "myvg":
-        ensure => present,
-        physical_volumes => "/dev/hdc",
-        createonly => true
-    }
+```puppet  
+  physical_volume { "/dev/hdc":
+    ensure => present,
+    unless_vg => "myvg"
+  }
+  volume_group { "myvg":
+    ensure => present,
+    physical_volumes => "/dev/hdc",
+    createonly => true
+  }
 ```
 
 ## Type Documentation
@@ -189,7 +212,6 @@ resources out yourself.
    -  `:core`
    -  `:disk`
    -  `:mirrored`
-* mounted - If puppet should mount the volume. This only affects what puppet will do, and not what will be mounted at boot-time.
 * no_sync (Parameter) - An optimization in lvcreate, at least on Linux.
 * persistent (Parameter) - Set to true to make the block device persistent
 * poolmetadatasize (Parameter) - Set the initial size of the logical volume pool metadata on creation

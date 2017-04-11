@@ -1,9 +1,10 @@
 # == Class: lvm
-#
+# @api public
+# Note: Param defaults have been moved to lvm/data using hiera data in modules pattern
 class lvm (
-  Enum['installed', 'present', 'latest', 'absent'] $package_ensure = 'installed',
-  Boolean $manage_pkg                                              = false,
-  Hash $volume_groups                                              = {},
+  Enum['installed', 'present', 'latest', 'absent'] $package_ensure,
+  Boolean $manage_pkg,
+  Hash $volume_groups,
 ) {
 
   if $manage_pkg {
@@ -13,4 +14,5 @@ class lvm (
   }
 
   create_resources('lvm::volume_group', $volume_groups)
+
 }

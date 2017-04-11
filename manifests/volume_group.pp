@@ -1,10 +1,12 @@
 # == Define: lvm::volume_group
 #
+# @api public
+# Note: Param defaults have been moved to lvm/data using hiera data in modules pattern
 define lvm::volume_group (
   Variant[Array, String] $physical_volumes,
   Boolean $createonly               = false,
   Enum['present', 'absent'] $ensure = present,
-  Hash $logical_volumes             = {},
+  Hash $logical_volumes             = { },
   Boolean $followsymlinks           = false,
 ) {
 
@@ -13,7 +15,7 @@ define lvm::volume_group (
       'lvm::physical_volume',
       $physical_volumes,
       {
-        ensure           => $ensure,
+        ensure => $ensure,
       }
     )
   }
@@ -39,4 +41,5 @@ define lvm::volume_group (
       volume_group => $name,
     }
   )
+
 }

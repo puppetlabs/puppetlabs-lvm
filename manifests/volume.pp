@@ -59,7 +59,9 @@ define lvm::volume (
   $fstype  = undef,
   $size    = undef,
   $extents = undef,
-  $initial_size = undef
+  $initial_size = undef,
+  $dir = undef,
+  $mountopts = undef
 ) {
 
   if ($name == undef) {
@@ -132,6 +134,28 @@ define lvm::volume (
           ensure  => present,
           fs_type => $fstype,
           require => Logical_volume[$name]
+        }
+      }
+
+      if $fstype != undef and $dir != undef {
+        file { "$dir":
+          ensure => directory
+          owner => 'root',
+          group => 'root',
+          mode => 755,
+        }
+
+        if $mountopts == undef {
+          $mountopts = "defaults"
+        }
+
+        mount { "$dir":
+          device  => "/dev/${vg}/${name}",
+          fstype  => "$fstype",
+          ensure  => "mounted",
+          options => "$mountopts",
+          atboot  => "true",
+          require => [ Filesystem["/dev/${vg}/${name}"], File["$dir"] ]
         }
       }
 

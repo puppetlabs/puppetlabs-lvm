@@ -62,13 +62,13 @@ define lvm::logical_volume (
   }
 
   if $ensure == 'present' and $createfs {
-    Logical_volume[$name] ->
-    Filesystem[$lvm_device_path] ->
-    Mount[$mount_title]
-  } elsif $ensure != 'present' and $createfs {
-    Mount[$mount_title] ->
-    Filesystem[$lvm_device_path] ->
     Logical_volume[$name]
+    -> Filesystem[$lvm_device_path]
+    -> Mount[$mount_title]
+  } elsif $ensure != 'present' and $createfs {
+    Mount[$mount_title]
+    -> Filesystem[$lvm_device_path]
+    -> Logical_volume[$name]
   }
 
   logical_volume { $name:
@@ -89,7 +89,7 @@ define lvm::logical_volume (
     mirrorlog        => $mirrorlog,
     no_sync          => $no_sync,
     region_size      => $region_size,
-    alloc            => $alloc
+    alloc            => $alloc,
   }
 
   if $createfs {

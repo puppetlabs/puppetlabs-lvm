@@ -101,30 +101,13 @@ define lvm::logical_volume (
   }
 
   if $createfs or $ensure != 'present' {
-    if $fs_type == 'swap' {
-      if $ensure == 'present' {
-        exec { "swapon for '${mount_title}'":
-          path      => [ '/bin', '/usr/bin', '/sbin' ],
-          command   => "swapon ${lvm_device_path}",
-          unless    => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
-          subscribe => Mount[$mount_title],
-        }
-      } else {
-        exec { "swapoff for '${mount_title}'":
-          path    => [ '/bin', '/usr/bin', '/sbin' ],
-          command => "swapoff ${lvm_device_path}",
-          onlyif  => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
-          notify  => Mount[$mount_title],
-        }
-      }
-    } else {
-      exec { "ensure mountpoint '${fixed_mountpath}' exists":
-        path    => [ '/bin', '/usr/bin' ],
-        command => "mkdir -p ${fixed_mountpath}",
-        unless  => "test -d ${fixed_mountpath}",
-        before  => Mount[$mount_title],
-      }
+    exec { "ensure mountpoint '${fixed_mountpath}' exists":
+      path    => [ '/bin', '/usr/bin' ],
+      command => "mkdir -p ${fixed_mountpath}",
+      unless  => "test -d ${fixed_mountpath}",
+      before  => Mount[$mount_title],
     }
+
     mount { $mount_title:
       ensure  => $mount_ensure,
       name    => $fixed_mountpath,

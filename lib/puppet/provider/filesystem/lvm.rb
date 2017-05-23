@@ -1,7 +1,7 @@
 Puppet::Type.type(:filesystem).provide :lvm do
     desc "Manages filesystem of a logical volume"
 
-    commands :blkid => 'blkid', :swapon => 'swapon'
+    commands :blkid => 'blkid'
 
     def create
         mkfs(@resource[:fs_type], @resource[:name])
@@ -46,7 +46,9 @@ Puppet::Type.type(:filesystem).provide :lvm do
 
         execute mkfs_cmd
         if fs_type == 'swap'
-            swapon(name)
+            swap_cmd = ["swapon"]
+            swap_cmd << name
+            execute swap_cmd
         end
     end
 

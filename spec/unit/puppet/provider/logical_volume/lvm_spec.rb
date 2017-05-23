@@ -228,17 +228,28 @@ describe provider_class do
 
   describe 'when destroying' do
     it "should execute 'dmsetup' and 'lvremove'" do
-      @resource.expects(:[]).with(:volume_group).returns('myvg').twice
-      @resource.expects(:[]).with(:name).returns('mylv').twice
+      @resource.expects(:[]).with(:volume_group).returns('myvg').times(3)
+      @resource.expects(:[]).with(:name).returns('mylv').times(3)
+      @provider.expects(:blkid).with('/dev/myvg/mylv')
       @provider.expects(:dmsetup).with('remove', 'myvg-mylv')
       @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
       @provider.destroy
     end
     it "should execute 'dmsetup' and 'lvremove' and properly escape names with dashes" do
-      @resource.expects(:[]).with(:volume_group).returns('my-vg').twice
-      @resource.expects(:[]).with(:name).returns('my-lv').twice
+      @resource.expects(:[]).with(:volume_group).returns('my-vg').times(3)
+      @resource.expects(:[]).with(:name).returns('my-lv').times(3)
+      @provider.expects(:blkid).with('/dev/my-vg/my-lv')
       @provider.expects(:dmsetup).with('remove', 'my--vg-my--lv')
       @provider.expects(:lvremove).with('-f', '/dev/my-vg/my-lv')
+      @provider.destroy
+    end
+    it "should execute 'swapoff', 'dmsetup', and 'lvremove' when lvm is of type swap" do
+      @resource.expects(:[]).with(:volume_group).returns('myvg').times(4)
+      @resource.expects(:[]).with(:name).returns('mylv').times(4)
+      @provider.expects(:blkid).with('/dev/myvg/mylv').returns('TYPE="swap"')
+      @provider.expects(:swapoff).with('/dev/myvg/mylv')
+      @provider.expects(:dmsetup).with('remove', 'myvg-mylv')
+      @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
       @provider.destroy
     end
   end

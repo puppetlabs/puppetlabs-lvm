@@ -2,3 +2,5 @@
 .*.swp
 Gemfile.lock
 .bundle/
+.fixtures/modules
+.fixtures/manifests

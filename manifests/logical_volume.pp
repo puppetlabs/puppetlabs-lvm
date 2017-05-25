@@ -62,13 +62,13 @@ define lvm::logical_volume (
   }
 
   if $ensure == 'present' and $createfs {
-    Logical_volume[$name] ->
-    Filesystem[$lvm_device_path] ->
-    Mount[$mount_title]
-  } elsif $ensure != 'present' and $createfs {
-    Mount[$mount_title] ->
-    Filesystem[$lvm_device_path] ->
     Logical_volume[$name]
+    -> Filesystem[$lvm_device_path]
+    -> Mount[$mount_title]
+  } elsif $ensure != 'present' and $createfs {
+    Mount[$mount_title]
+    -> Filesystem[$lvm_device_path]
+    -> Logical_volume[$name]
   }
 
   logical_volume { $name:
@@ -89,7 +89,7 @@ define lvm::logical_volume (
     mirrorlog        => $mirrorlog,
     no_sync          => $no_sync,
     region_size      => $region_size,
-    alloc            => $alloc
+    alloc            => $alloc,
   }
 
   if $createfs {
@@ -101,23 +101,7 @@ define lvm::logical_volume (
   }
 
   if $createfs or $ensure != 'present' {
-    if $fs_type == 'swap' {
-      if $ensure == 'present' {
-        exec { "swapon for '${mount_title}'":
-          path      => [ '/bin', '/usr/bin', '/sbin' ],
-          command   => "swapon ${lvm_device_path}",
-          unless    => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
-          subscribe => Mount[$mount_title],
-        }
-      } else {
-        exec { "swapoff for '${mount_title}'":
-          path    => [ '/bin', '/usr/bin', '/sbin' ],
-          command => "swapoff ${lvm_device_path}",
-          onlyif  => "grep `readlink -f ${lvm_device_path}` /proc/swaps",
-          notify  => Mount[$mount_title],
-        }
-      }
-    } else {
+    if $fs_type != 'swap' {
       exec { "ensure mountpoint '${fixed_mountpath}' exists":
         path    => [ '/bin', '/usr/bin' ],
         command => "mkdir -p ${fixed_mountpath}",
@@ -125,6 +109,7 @@ define lvm::logical_volume (
         before  => Mount[$mount_title],
       }
     }
+
     mount { $mount_title:
       ensure  => $mount_ensure,
       name    => $fixed_mountpath,

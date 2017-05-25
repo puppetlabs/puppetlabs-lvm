@@ -111,10 +111,5 @@ describe 'lvm', :type => :class do
       :pass   => 0,
       :dump   => 0
     }) }
-    it { should contain_exec("swapon for '/dev/myvg/swap'") }
-    it { should_not contain_exec("ensure mountpoint 'swap_/dev/myvg/swap' exists") }
-
-    it { should contain_exec("swapoff for '/dev/myvg/swap2'") }
-    it { should_not contain_exec("ensure mountpoint 'swap_/dev/myvg/swap2' exists") }
   end
 end

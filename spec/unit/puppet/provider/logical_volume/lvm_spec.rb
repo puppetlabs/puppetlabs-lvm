@@ -13,7 +13,7 @@ describe provider_class do
   LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
   lv_root VolGroup -wi-ao----  18.54g
   lv_swap VolGroup -wi-ao---- 992.00m
-  data    data     -wi-ao---- 992.00m  
+  data    data     -wi-ao---- 992.00m
   EOS
 
   describe 'self.instances' do
@@ -190,7 +190,7 @@ describe provider_class do
           @provider.create
           @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
           @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
-          proc { @provider.size = '1.15g' }.should raise_error(Puppet::Error, /extent/)
+          proc { @provider.size = '1.15g' }.should raise_error(Puppet::Error)
         end
       end
     end

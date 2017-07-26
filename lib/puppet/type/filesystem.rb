@@ -120,6 +120,10 @@ Puppet::Type.newtype(:filesystem) do
     newvalues(:true, :false)
   end
 
+  newparam(:mountpath) do
+    desc "Mount point for filesystem, AIX only"
+  end
+
   newparam(:mountgroup) do
     desc "Mount group for the filesystem, AIX only"
   end

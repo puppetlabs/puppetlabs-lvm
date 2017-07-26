@@ -39,14 +39,21 @@ Puppet::Type.type(:filesystem).provide :aix do
     args.push(*add_attributes(*attributes))
 
     args.push(*add_flag(:v, :fs_type))
-    args.push(*add_flag(:m, :name))
+    args.push(*add_flag(:m, :mountpath))
     args.push(*add_flag(:d, :device))
     args.push(*add_flag(:l, :log_partitions))
     args.push(*add_flag(:g, :volume_group))
     args.push(*add_flag(:A, :atboot))
     args.push(*add_flag(:p, :perms))
-    crfs(*args)
-
+    begin
+      crfs(*args)
+    rescue Puppet::ExecutionFailure => e
+      Puppet.debug("crfs of #{resource[:name]} had an error -> #{e.inspect}")
+      if e.inspect !~ /file system already exists/
+        raise Puppet::Error, "Could not create filesystem '#{@resource[:name]}' (#{e.inspect})"
+      end
+    end
+        
     # crfs on AIX will ignore -a size if the logical_volume already
     # has a size and is specified as -d. So to be sure we sync the
     # size property after creation

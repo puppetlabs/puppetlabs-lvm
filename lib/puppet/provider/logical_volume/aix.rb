@@ -5,7 +5,8 @@ Puppet::Type.type(:logical_volume).provide :aix do
   confine :operatingsystem => :AIX
 
 
-  commands :mklv => 'mklv'
+  commands :mklv => 'mklv',
+           :crfs => 'crfs'
 
   def create
     # Dont use auto-generated LG names as we need to know what resource

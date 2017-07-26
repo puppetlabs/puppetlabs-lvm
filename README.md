@@ -37,6 +37,47 @@ filesystem { '/dev/myvg/mylv':
 }
 ```
 
+AIX simple working example:
+
+```puppet
+physical_volume { 'hdisk1': #AIX does not use '/dev/hdisk1'
+  ensure => present,
+}
+
+volume_group { 'vg_apps':
+  ensure           => present,
+  physical_volumes => 'hdisk1',
+  unless_vg        => 'vg_apps',
+}
+
+logical_volume { 'lv_apps':
+  ensure       => present,
+  volume_group => 'vg_apps',
+  initial_size => '40G',
+  range        => 'minimum', #required for AIX
+  type         => 'jfs2', #required for AIX
+  require      => Volume_group['vg_apps'],
+}
+
+filesystem { '/apps': #AIX uses mount point to create fs
+  ensure       => present,
+  device       => '/dev/lv_apps', #required for AIX
+  fs_type      => 'jfs2',
+  initial_size => '40G',
+  mountpath    => '/apps', #required for AIX
+  options      => 'log=INLINE,mount=true', #required for jfs2
+  atboot       => true,
+  require      => Logical_volume['lv_apps'],
+}
+
+mount { '/apps':
+  ensure  => mounted,
+  require => Filesystem['/apps'],
+}
+```
+
+
+
 This simple 1 physical volume, 1 volume group, 1 logical volume case
 is provided as a simple `volume` definition, as well.  The above could
 be shortened to be:

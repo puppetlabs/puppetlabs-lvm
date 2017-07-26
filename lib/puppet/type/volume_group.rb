@@ -61,4 +61,14 @@ Puppet::Type.newtype(:volume_group) do
       defaultto :false
     end
 
+    newparam(:force_create, :boolean => true) do
+      desc "If set to true the volume group will be created if it does not exist. It will
+        use the '-f' flag on mkvg forcing the creation on a disk that 'appears to belong to
+        another volume group'. USE WITH CAUTION! AIX only param! Defaults to `false`."
+      newvalues(:true, :false)
+      aliasvalue(:yes, :true)
+      aliasvalue(:no, :false)
+      defaultto :false
+    end
+
 end

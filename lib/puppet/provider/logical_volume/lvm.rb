@@ -77,7 +77,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             args.push('--stripesize', @resource[:stripesize])
         end
 
-	
+
 
         if @resource[:poolmetadatasize]
             args.push('--poolmetadatasize', @resource[:poolmetadatasize])
@@ -129,6 +129,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     def destroy
         name_escaped = "#{@resource[:volume_group].gsub('-','--')}-#{@resource[:name].gsub('-','--')}"
+        if blkid(path) =~ /\bTYPE=\"(swap)\"/
+            swapoff(path)
+        end
         dmsetup('remove', name_escaped)
         lvremove('-f', path)
     end
@@ -194,11 +197,6 @@ Puppet::Type.type(:logical_volume).provide :lvm do
                 fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
             end
         else
-            ## Check if new size fits the extend blocks
-            if new_size_bytes * lvm_size_units[new_size_unit] % vg_extent_size != 0
-                fail( "Cannot extend to size #{new_size} because VG extent size is #{vg_extent_size} KB" )
-            end
-
             lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
 
             unless @resource[:resize_fs] == :false or @resource[:resize_fs] == false or @resource[:resize_fs] == 'false'
@@ -293,7 +291,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     private
 
     def lvs_pattern
-        /\s+#{Regexp.quote @resource[:name]}\s+/
+        # lvs output format:
+        # LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+        /\s+#{Regexp.quote @resource[:name]}\s+#{Regexp.quote @resource[:volume_group]}\s+/
     end
 
     def path

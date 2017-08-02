@@ -13,7 +13,7 @@ end
 #   Number of VGs
 vg_list = []
 Facter.add('lvm_vgs') do
-  confine :lvm_support => true
+  confine :kernel => :linux, :lvm_support => true
 
   vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', timeout: 30)
   if vgs.nil?

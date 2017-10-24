@@ -13,7 +13,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
              :blkid      => 'blkid',
              :dmsetup    => 'dmsetup',
              :lvconvert  => 'lvconvert',
-             :lvdisplay  => 'lvdisplay'
+             :lvdisplay  => 'lvdisplay',
+             :vgs        => 'vgs',
+             :pvs        => 'pvs'
 
     optional_commands :xfs_growfs => 'xfs_growfs',
                       :resize4fs  => 'resize4fs'
@@ -137,6 +139,85 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         lvs(@resource[:volume_group]) =~ lvs_pattern
     end
 
+    def extents
+        lvm_size_units = { "K" => 1, "M" => 1024, "G" => 1024**2, "T" => 1024**3, "P" => 1024**4, "E" => 1024**5 }
+        
+        if @resource[:extents] =~ /^(\d+)((%)?(vg))?$/i
+            extents_size = $1.to_f
+            extents_full_type = $2.downcase unless $2.nil?
+        end
+
+        raw_vgs = vgs('--noheading', '-o','name,vg_extent_count,seg_size,vg_extent_size', path)
+
+        # Calculate the total extents of the Volume Group and the total used extents of the Logical Volume.
+        vgs_size = Hash.new
+        total_vgs_extents = 0
+        raw_vgs.split("\n").each do |lvs|
+            
+            if lvs =~ /\s+(\w+)\s+(\d+)\s+(\d+(\.\d+)?)([KMGTPE])\s+(\d+(\.\d+)?)([KMGTPE])/i
+                vg_name = $1
+                vg_extents_count = $2.to_i
+
+                lv_size = $3.to_f
+                lv_unit = $5.upcase
+                
+                ex_size = $6.to_f
+                ex_unit = $8.upcase
+                
+                # Number of extents in use by LV
+                lv_extents_count = (lv_size / ex_size) * (lvm_size_units[lv_unit] / lvm_size_units[ex_unit])
+
+            end
+            total_vgs_extents += vg_extents_count unless vgs_size.keys.include?(vg_name)
+            vgs_size[vg_name] ||= 0
+            vgs_size[vg_name] += lv_extents_count
+        end
+
+        total_used_lvs_extents = vgs_size.values.inject(:+)
+        # End calculation
+
+        if !extents_full_type.nil? and extents_full_type.eql? '%vg'
+            current_perc = ((total_used_lvs_extents / total_vgs_extents) * 100).round(0).to_s
+            current_value = current_perc + extents_full_type
+            
+            return current_value
+        end
+
+        return total_used_lvs_extents.to_s
+    end
+
+    def extents=(new_extents)
+
+        current_extents = extents()
+
+        if current_extents =~ /^(\d+(\.\d+)?)(%vg)?$/i
+            current_extents_value = $1.to_f
+            current_extents_type = $3.upcase unless $3.nil?
+        end
+        
+        if new_extents =~ /^(\d+(%vg)?)?$/i
+            new_extents_value = $1.to_i
+            new_extents_type = $2.upcase unless $2.nil?
+            
+            new_extent_size = new_extents_value.to_s
+            new_extent_size += new_extents_type unless new_extents_type.nil?
+        end
+
+        # If types does not match, do not resize
+        unless current_extents_type.eql? new_extents_type
+            fail("Cannot resize with different types (current: #{current_extents_type} vs new: #{new_extents_type}")
+        end
+
+        # Reduce in size is not possible
+        if new_extents_value.to_f < current_extents_value
+            fail("Decreasing the size requires manual intervention (#{new_extents_value} < #{current_extents_value})")
+        end
+           
+        lvextend('--extents', new_extent_size, path)
+    
+        resizefs(path, new_extent_size)
+    end
+
     def size
         if @resource[:size] =~ /^\d+\.?\d{0,2}([KMGTPE])/i
             unit = $1.downcase
@@ -201,18 +282,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
             lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
 
-            unless @resource[:resize_fs] == :false or @resource[:resize_fs] == false or @resource[:resize_fs] == 'false'
-              blkid_type = blkid(path)
-              if command(:resize4fs) and blkid_type =~ /\bTYPE=\"(ext4)\"/
-                resize4fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
-              elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
-                resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
-              elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
-                xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
-              elsif blkid_type =~ /\bTYPE=\"(swap)\"/
-                swapoff( path) && mkswap( path) && swapon( path) || fail( "Cannot resize swap to size #{new_size} because mkswap failed." )
-              end
-            end
+            resizefs(path, new_size)
 
         end
     end
@@ -303,6 +373,21 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     # Device path of only the volume group (does not include the logical volume).
     def vgpath
         "/dev/#{@resource[:volume_group]}"
+    end
+
+    def resizefs(path, new_size)
+        unless @resource[:resize_fs] == :false or @resource[:resize_fs] == false or @resource[:resize_fs] == 'false'
+            blkid_type = blkid(path)
+            if command(:resize4fs) and blkid_type =~ /\bTYPE=\"(ext4)\"/
+                resize4fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+            elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
+                resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+            elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
+                xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
+            elsif blkid_type =~ /\bTYPE=\"(swap)\"/
+                swapoff( path) && mkswap( path) && swapon( path) || fail( "Cannot resize swap to size #{new_size} because mkswap failed." )
+            end
+        end
     end
 
 end

@@ -178,6 +178,16 @@ describe provider_class do
             @provider.expects(:blkid).with('/dev/myvg/mylv').never
             @provider.size = '2000000k'
           end
+          it "should not report an error from 'blkid' if resizing a filesystem with no filesystem present" do
+            @resource.expects(:[]).with(:name).returns('mylv').at_least_once
+            @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
+            @resource.expects(:[]).with(:size).returns('1g').at_least_once
+            @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
+            @provider.create
+            @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
+            @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
+            expect { @provider.size = '1100000k' }.not_to raise_error(Puppet::ExecutionFailure, /blkid/)
+          end
         end
       end
       context "not in extent portions" do

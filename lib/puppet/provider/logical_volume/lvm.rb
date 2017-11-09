@@ -200,15 +200,22 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
 
             unless @resource[:resize_fs] == :false or @resource[:resize_fs] == false or @resource[:resize_fs] == 'false'
-              blkid_type = blkid(path)
-              if command(:resize4fs) and blkid_type =~ /\bTYPE=\"(ext4)\"/
-                resize4fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
-              elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
-                resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
-              elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
-                xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
-              elsif blkid_type =~ /\bTYPE=\"(swap)\"/
-                swapoff( path) && mkswap( path) && swapon( path) || fail( "Cannot resize swap to size #{new_size} because mkswap failed." )
+              begin
+                blkid_type = blkid(path)
+                if command(:resize4fs) and blkid_type =~ /\bTYPE=\"(ext4)\"/
+                  resize4fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+                elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
+                  resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+                elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
+                  xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
+                elsif blkid_type =~ /\bTYPE=\"(swap)\"/
+                  swapoff( path) && mkswap( path) && swapon( path) || fail( "Cannot resize swap to size #{new_size} because mkswap failed." )
+                end
+              rescue Puppet::ExecutionFailure => detail
+                ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
+                if detail.message =~ / returned 2:/
+                  Puppet.debug(detail.message)
+                end
               end
             end
 

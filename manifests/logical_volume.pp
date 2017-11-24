@@ -28,9 +28,14 @@ define lvm::logical_volume (
   $no_sync                          = undef,
   $region_size                      = undef,
   $alloc                            = undef,
+  Boolean $use_mapper_device        = true,
 ) {
 
-  $lvm_device_path = "/dev/${volume_group}/${name}"
+  if $use_mapper_device {
+    $lvm_device_path = "/dev/mapper/${volume_group}-${name}"
+  } else {
+    $lvm_device_path = "/dev/${volume_group}/${name}"
+  }
 
   if $mountpath_require and $fs_type != 'swap' {
     Mount {

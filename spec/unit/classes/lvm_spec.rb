@@ -40,14 +40,14 @@ describe 'lvm', :type => :class do
       :volume_group => 'myvg',
       :size         => '20G'
     }) }
-    it { should contain_filesystem('/dev/myvg/opt') }
+    it { should contain_filesystem('/dev/mapper/myvg-opt') }
     it { should contain_mount('/opt') }
 
     it { should contain_logical_volume('backup').with({
       :volume_group => 'myvg',
       :size         => '5G'
     }) }
-    it { should contain_filesystem('/dev/myvg/backup') }
+    it { should contain_filesystem('/dev/mapper/myvg-backup') }
     it { should contain_mount('/var/backups') }
   end
 
@@ -101,11 +101,11 @@ describe 'lvm', :type => :class do
       :volume_group => 'myvg',
       :size         => '20G'
     }) }
-    it { should contain_filesystem('/dev/myvg/swap').with({
+    it { should contain_filesystem('/dev/mapper/myvg-swap').with({
       :fs_type => 'swap'
     }) }
-    it { should contain_mount('/dev/myvg/swap').with({
-      :name   => 'swap_/dev/myvg/swap',
+    it { should contain_mount('/dev/mapper/myvg-swap').with({
+      :name   => 'swap_/dev/mapper/myvg-swap',
       :ensure => 'present',
       :fstype => 'swap',
       :pass   => 0,

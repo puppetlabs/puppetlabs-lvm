@@ -22,7 +22,7 @@ Puppet::Type.type(:filesystem).provide :lvm do
     end
 
     def mkfs(fs_type, name)
-        mkfs_params = { "reiserfs" => "-q" }
+        mkfs_params = { "reiserfs" => "-q"  , "xfs" => "-f" }
 
         mkfs_cmd = @resource[:mkfs_cmd] != nil ?
                      [@resource[:mkfs_cmd]] :

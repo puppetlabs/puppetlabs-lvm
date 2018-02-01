@@ -28,9 +28,8 @@ define lvm::logical_volume (
   $no_sync                          = undef,
   $region_size                      = undef,
   $alloc                            = undef,
+  $lvm_device_path                  = "/dev/${volume_group}/${name}"
 ) {
-
-  $lvm_device_path = "/dev/${volume_group}/${name}"
 
   if $mountpath_require and $fs_type != 'swap' {
     Mount {
@@ -100,7 +99,7 @@ define lvm::logical_volume (
     }
   }
 
-  if $createfs or $ensure != 'present' {
+  if $createfs or $ensure != 'present' or $mount_ensure == 'mounted' {
     if $fs_type != 'swap' {
       exec { "ensure mountpoint '${fixed_mountpath}' exists":
         path    => [ '/bin', '/usr/bin' ],

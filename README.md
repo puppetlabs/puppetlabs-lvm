@@ -103,6 +103,12 @@ lvm::volume_groups:
         size: 5G
         mountpath: /var/backups
         mountpath_require: true
+      vartmp:
+        createfs: false
+        fs_type: none
+        mountpath: '/var/tmp'
+        options: 'bind'
+        lvm_device_path: '/tmp'
 ```
 or to just build the VG if it does not exist
 ```yaml

@@ -1,5 +1,7 @@
 Puppet::Type.type(:volume_group).provide :lvm do
-    desc "Manages LVM volume groups"
+    desc "Manages LVM volume groups on Linux"
+
+    confine :kernel => :Linux
 
     commands :vgcreate => 'vgcreate',
              :vgremove => 'vgremove',

@@ -1,5 +1,7 @@
 Puppet::Type.type(:filesystem).provide :lvm do
-    desc "Manages filesystem of a logical volume"
+    desc "Manages filesystem of a logical volume on Linux"
+
+    confine :kernel => :Linux
 
     commands :blkid => 'blkid'
 

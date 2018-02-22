@@ -1,5 +1,7 @@
 Puppet::Type.type(:logical_volume).provide :lvm do
-    desc "Manages LVM logical volumes"
+    desc "Manages LVM logical volumes on Linux"
+
+    confine :kernel => :Linux
 
     commands :lvcreate   => 'lvcreate',
              :lvremove   => 'lvremove',

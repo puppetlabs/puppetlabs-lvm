@@ -1,7 +1,7 @@
 Puppet::Type.type(:physical_volume).provide(:lvm) do
     desc "Manages LVM physical volumes on Linux"
 
-    confine :kernel => :Linux
+    confine :kernel => :linux
 
     commands :pvcreate  => 'pvcreate', :pvremove => 'pvremove', :pvs => 'pvs', :vgs => 'vgs'
 

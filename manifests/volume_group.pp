@@ -1,7 +1,7 @@
 # == Define: lvm::volume_group
 #
 define lvm::volume_group (
-  Variant[Array, String] $physical_volumes,
+  Variant[Hash, Array, String] $physical_volumes,
   Boolean $createonly               = false,
   Enum['present', 'absent'] $ensure = present,
   Hash $logical_volumes             = {},

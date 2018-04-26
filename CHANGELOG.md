@@ -1,3 +1,12 @@
+## Release 1.0.1
+### Summary
+This release is a roll up of minor bugfixes.
+
+### Fixed
+- Don't execute the lvm commands when not supported.
+- Fix error when creating XFS on top of another Filesystem.
+- Type `Hash` added as acceptable type for physical_volumes.
+
 ## Release 1.0.0
 ### Summary
 This release is a roll up of bug fixes and minor features. It also includes the introduction of Puppet 4 daya types. This release was prompted by the following issue: ([MODULES-4067](https://tickets.puppet.com/browse/MODULES-4067))

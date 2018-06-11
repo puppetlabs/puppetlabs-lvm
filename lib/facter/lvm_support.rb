@@ -15,23 +15,23 @@ vg_list = []
 Facter.add('lvm_vgs') do
   confine :lvm_support => true
 
-  if Facter.value(:lvm_support)
+  setcode do
     vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', timeout: 30)
-  end
-  if vgs.nil?
-    setcode { 0 }
-  else
-    vg_list = vgs.split
-    setcode { vg_list.length }
+    if vgs.nil?
+      0
+    else
+      vg_list = vgs.split
+      vg_list.length
+    end
   end
 end
 
 # lvm_vg_[0-9]+
 #   VG name by index
 vg_list.each_with_index do |vg, i|
-  Facter.add("lvm_vg_#{i}") { setcode { vg } }
-  Facter.add("lvm_vg_#{vg}_pvs") do
-    setcode do
+  setcode do
+    Facter.add("lvm_vg_#{i}") { vg }
+    Facter.add("lvm_vg_#{vg}_pvs") do
       pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
       res = nil
       unless pvs.nil?
@@ -48,14 +48,14 @@ pv_list = []
 Facter.add('lvm_pvs') do
   confine :lvm_support => true
 
-  if Facter.value(:lvm_support)
+  setcode do
     pvs = Facter::Core::Execution.execute('pvs -o name --noheadings 2>/dev/null', timeout: 30)
-  end
-  if pvs.nil?
-    setcode { 0 }
-  else
-    pv_list = pvs.split
-    setcode { pv_list.length }
+    if pvs.nil?
+      0
+    else
+      pv_list = pvs.split
+      pv_list.length
+	end
   end
 end
 

@@ -199,7 +199,7 @@ resources out yourself.
 * size_is_minsize (Parameter) Default value: `false` - Set to true if the ‘size’ parameter specified, is just the minimum size you need (if the LV found is larger then the size requests this is just logged not causing a FAIL)
 * stripes (Parameter) - The number of stripes to allocate for the new logical volume.
 * stripesize (Parameter) - The stripesize to use for the new logical volume.
-* thinpool (Parameter) - Default value: `false` - Set to true to create a thin pool
+* thinpool (Parameter) - Default value: `false` - Set to true to create a thin pool or to pool name to create thin volume
 * volume_group (Parameter) - The volume group name associated with this logical volume. This will automatically set this volume group as a dependency, but it must be defined elsewhere using the volume_group resource type.
 
 ### physical_volume

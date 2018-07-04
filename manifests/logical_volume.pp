@@ -36,6 +36,9 @@ define lvm::logical_volume (
     Mount {
       require => File[$mountpath],
     }
+    file { $mountpath:
+      ensure => 'directory'
+    }
   }
 
   if $fs_type == 'swap' {

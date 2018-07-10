@@ -110,6 +110,11 @@ describe Puppet::Type.type(:logical_volume) do
         resource[:thinpool].should == false
         end
       end
+    it "should support 'thinpool name' as a value" do
+      with(valid_params.merge(:thinpool => 'mythinpool')) do |resource|
+        resource[:thinpool].should == 'mythinpool'
+      end
+    end
     it "should not support other values" do
       specifying(valid_params.merge(:thinpool => :moep)).should raise_error(Puppet::Error)
     end

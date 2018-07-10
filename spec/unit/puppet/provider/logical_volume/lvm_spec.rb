@@ -134,6 +134,16 @@ describe provider_class do
         @provider.create
       end
     end
+    context 'with named thinpool option' do
+      it "should execute 'lvcreate' with '--virtualsize 1g' and '--thin myvg/mythinpool' options" do
+        @resource.expects(:[]).with(:name).returns('mylv')
+        @resource.expects(:[]).with(:volume_group).returns('myvg')
+        @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        @resource.expects(:[]).with(:thinpool).returns('mythinpool').at_least_once
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--virtualsize', '1g', '--thin', 'myvg/mythinpool')
+        @provider.create
+      end
+    end
   end
 
   describe "when modifying" do
@@ -187,6 +197,20 @@ describe provider_class do
             @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
             @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
             expect { @provider.size = '1100000k' }.not_to raise_error(Puppet::ExecutionFailure, /blkid/)
+          end
+        end
+        context "with defined thin pool" do
+          it "should execute 'lvextend' as with normal volume" do
+            @resource.expects(:[]).with(:name).returns('mylv').at_least_once
+            @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
+            @resource.expects(:[]).with(:size).returns('1g').at_least_once
+            @resource.expects(:[]).with(:thinpool).returns('mythinpool').at_least_once
+            @provider.expects(:lvcreate).with('-n', 'mylv', '--virtualsize', '1g', '--thin', 'myvg/mythinpool')
+            @provider.create
+            @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
+            @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
+            @provider.expects(:lvextend).with('-L', '2000000k', '/dev/myvg/mylv').returns(true)
+            @provider.size = '2000000k'
           end
         end
       end

@@ -54,12 +54,17 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     def create
         args = []
 
-        args.push('-n', @resource[:name]) unless @resource[:thinpool]
+        args.push('-n', @resource[:name]) unless @resource[:thinpool] == true
+
+        size_option = '--size'
+        if @resource[:thinpool].is_a? String
+          size_option = '--virtualsize'
+        end
 
         if @resource[:size]
-            args.push('--size', @resource[:size])
+            args.push(size_option, @resource[:size])
         elsif @resource[:initial_size]
-            args.push('--size', @resource[:initial_size])
+            args.push(size_option, @resource[:initial_size])
         end
         if @resource[:extents]
             args.push('--extents', @resource[:extents])
@@ -120,7 +125,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
         if @resource[:thinpool]
             args.push('--thin')
-            args << @resource[:volume_group] + "/" + @resource[:name]
+            if @resource[:thinpool].is_a? String
+              args << @resource[:volume_group] + "/" + @resource[:thinpool]
+            else
+              args << @resource[:volume_group] + "/" + @resource[:name]
+            end
         else
             args << @resource[:volume_group]
         end

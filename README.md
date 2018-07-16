@@ -192,6 +192,7 @@ resources out yourself.
 * mounted - If puppet should mount the volume. This only affects what puppet will do, and not what will be mounted at boot-time.
 * no_sync (Parameter) - An optimization in lvcreate, at least on Linux.
 * persistent (Parameter) - Set to true to make the block device persistent
+* physical_volume (Parameter) - Create this logical volume on the specified physical volume
 * poolmetadatasize (Parameter) - Set the initial size of the logical volume pool metadata on creation
 * readahead (Parameter) - The readahead count to use for the new logical volume.
 * region_size (Parameter) - A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are in sync. CAN NOT BE CHANGED on already mirrored volume. Take your mirror size in terabytes and round up that number to the next power of 2, using that number as the -R argument.

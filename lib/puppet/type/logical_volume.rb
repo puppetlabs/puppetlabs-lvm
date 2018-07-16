@@ -21,6 +21,10 @@ Puppet::Type.newtype(:logical_volume) do
             volume_group resource type."
   end
 
+  newparam(:physical_volume) do
+    desc "The physical volume name this logical volume will be created on."
+  end
+
   newparam(:initial_size) do
     desc "The initial size of the logical volume. This will only apply to newly-created volumes"
     validate do |value|

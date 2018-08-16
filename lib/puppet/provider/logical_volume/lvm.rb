@@ -50,8 +50,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
       # Assign properties based on headers
       logical_volumes_properties[:ensure]       = :present
-      logical_volumes_properties[:name]         = output_array[1]
-      logical_volumes_properties[:volume_group] = output_array[0]
+      logical_volumes_properties[:name]         = output_array[0]
+      logical_volumes_properties[:volume_group] = output_array[1]
 
       logical_volumes_properties
     end

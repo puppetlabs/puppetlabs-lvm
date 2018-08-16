@@ -13,6 +13,16 @@ Puppet::Type.newtype(:logical_volume) do
         raise ArgumentError, "Volume names must be entirely unqualified"
       end
     end
+
+    # This is a bit of a hack, drags the volume_group up from the provider if
+    # it was specified, allowing `puppet resource` and otrher things that rely
+    # on an indirector search to work
+    munge do |name|
+      if @resource.original_parameters[:provider].respond_to? :volume_group
+        @resource[:volume_group] = @resource.original_parameters[:provider].volume_group
+      end
+      name
+    end
   end
 
   newproperty(:volume_group) do

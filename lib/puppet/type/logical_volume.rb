@@ -15,7 +15,7 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
-  newparam(:volume_group) do
+  newproperty(:volume_group) do
     desc "The volume group name associated with this logical volume.  This will automatically
             set this volume group as a dependency, but it must be defined elsewhere using the
             volume_group resource type."

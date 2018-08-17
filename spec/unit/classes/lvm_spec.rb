@@ -21,7 +21,7 @@ describe 'lvm', :type => :class do
               'backup' => {
                 'size'              => '5G',
                 'mountpath'         => '/var/backups',
-                'mountpath_require' => true
+                'mountpath_require' => false
               }
             }
           }
@@ -62,7 +62,7 @@ describe 'lvm', :type => :class do
                 'size'              => '5G',
                 'mounted'           => false,
                 'mountpath'         => '/mnt/not_mounted',
-                'mountpath_require' => true
+                'mountpath_require' => false
               }
             }
           }

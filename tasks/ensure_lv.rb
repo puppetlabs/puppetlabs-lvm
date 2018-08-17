@@ -6,8 +6,8 @@ require 'pry'
 
 # Parse the parameters
 # params = JSON.parse(STDIN.read)
-params = JSON.parse(File.read('/home/vagrant/lv_params.json'))
-
+# params = JSON.parse(File.read('/home/vagrant/lv_create.json'))
+params = JSON.parse(File.read('/home/vagrant/lv_delete.json'))
 
 # Load all of Puppet's settings
 Puppet.initialize_settings
@@ -56,14 +56,21 @@ logical_volume[:region_size]      = params['region_size']      if params['region
 # Save the result
 _resource, report = Puppet::Resource.indirection.save(logical_volume)
 
-
-
 # Print the logs
 resource_status = report.resource_statuses.values[0]
-if resource_status.changed
+
+exit_code = if resource_status.failed
+              1
+            else
+              0
+            end
+
+if resource_status.events.empty?
+  puts 'unchanged'
+else
   report.logs.each do |log|
     puts log.to_report
   end
-else
-  puts 'unchanged'
 end
+
+exit exit_code

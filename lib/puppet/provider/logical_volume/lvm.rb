@@ -18,8 +18,6 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     optional_commands :xfs_growfs => 'xfs_growfs',
                       :resize4fs  => 'resize4fs'
 
-    attr_accessor :volume_group
-
     def self.instances
       get_logical_volumes.collect do |logical_volumes_line|
         logical_volumes_properties = get_logical_volume_properties(logical_volumes_line)
@@ -54,6 +52,14 @@ Puppet::Type.type(:logical_volume).provide :lvm do
       logical_volumes_properties[:volume_group] = output_array[1]
 
       logical_volumes_properties
+    end
+
+    # Just assume that the volume group is correct, we don't support changing
+    # it anyway.
+    attr_writer :volume_group
+
+    def volume_group
+        @resource ? @resource[:volume_group] : @volume_group
     end
 
     def create

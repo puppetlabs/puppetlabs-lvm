@@ -5,8 +5,7 @@ require 'puppet'
 require 'pry'
 
 # Parse the parameters
-# params = JSON.parse(STDIN.read)
-params = JSON.parse(File.read('/home/vagrant/pv_params.json'))
+params = JSON.parse(STDIN.read)
 
 defaults = {
   'force' => false,
@@ -48,10 +47,19 @@ _resource, report = Puppet::Resource.indirection.save(physical_volume)
 
 # Print the logs
 resource_status = report.resource_statuses.values[0]
-if resource_status.changed
+
+exit_code = if resource_status.failed
+              1
+            else
+              0
+            end
+
+if resource_status.events.empty?
+  puts 'unchanged'
+else
   report.logs.each do |log|
     puts log.to_report
   end
-else
-  puts 'unchanged'
 end
+
+exit exit_code

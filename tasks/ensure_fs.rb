@@ -1,8 +1,6 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 require 'json'
-require 'yaml'
 require 'puppet'
-require 'pry'
 
 # Parse the parameters
 params = JSON.parse(STDIN.read)

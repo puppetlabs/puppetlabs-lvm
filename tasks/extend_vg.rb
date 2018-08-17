@@ -6,10 +6,7 @@ require 'puppet'
 params = JSON.parse(STDIN.read)
 
 # Set parameters to local variables and resolve defaults if required
-name             = params['name']
-puppet_ensure    = params['ensure']
-createonly       = params['createonly'] || false
-followsymlinks   = params['followsymlinks'] || false
+name             = params['volume_group']
 physical_volumes = params['physical_volumes']
 
 # Load all of Puppet's settings
@@ -31,15 +28,15 @@ volume_group = Puppet::Resource.indirection.find(
   "volume_group/#{name}"
 )
 
+throw "Volume group #{name} not found" if volume_group[:ensure] == :absent
+
 # Prune parameters that we don't need
 volume_group.prune_parameters
 
 # Set the settings we need
 volume_group[:name]             = name
-volume_group[:ensure]           = puppet_ensure
-volume_group[:createonly]       = createonly
-volume_group[:followsymlinks]   = followsymlinks
-volume_group[:physical_volumes] = physical_volumes
+volume_group[:physical_volumes] << physical_volumes
+volume_group[:physical_volumes].flatten!
 
 # Save the result
 _resource, report = Puppet::Resource.indirection.save(volume_group)

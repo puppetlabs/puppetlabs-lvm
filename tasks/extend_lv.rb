@@ -6,11 +6,12 @@ require 'puppet'
 params = JSON.parse(STDIN.read)
 
 # Set parameters to local variables and resolve defaults if required
-name             = params['name']
-puppet_ensure    = params['ensure']
-createonly       = params['createonly'] || false
-followsymlinks   = params['followsymlinks'] || false
-physical_volumes = params['physical_volumes']
+size                = params['size']
+logical_volume_name = params['logical_volume']
+volume_group_name   = params['volume_group']
+
+# If size is set to full, pass nil
+size = '100%' if size == 'full'
 
 # Load all of Puppet's settings
 Puppet.initialize_settings
@@ -27,22 +28,21 @@ Puppet.settings[:group] = '0'
 #
 # This is exactly the same as the parameters you would pass to the
 # `puppet resource` command, except in Ruby.
-volume_group = Puppet::Resource.indirection.find(
-  "volume_group/#{name}"
+logical_volume = Puppet::Resource.indirection.find(
+  "logical_volume/#{logical_volume_name}"
 )
 
+throw "Logical volume #{logical_volume_name} not found" if logical_volume[:ensure] == :absent
+throw "Logical volume #{logical_volume_name} not in volume group #{volume_group_name}" if logical_volume[:volume_group] != volume_group_name
+
 # Prune parameters that we don't need
-volume_group.prune_parameters
+logical_volume.prune_parameters
 
 # Set the settings we need
-volume_group[:name]             = name
-volume_group[:ensure]           = puppet_ensure
-volume_group[:createonly]       = createonly
-volume_group[:followsymlinks]   = followsymlinks
-volume_group[:physical_volumes] = physical_volumes
+logical_volume[:size] = size
 
 # Save the result
-_resource, report = Puppet::Resource.indirection.save(volume_group)
+_resource, report = Puppet::Resource.indirection.save(logical_volume)
 
 # Print the logs
 resource_status = report.resource_statuses.values[0]

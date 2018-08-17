@@ -1,13 +1,9 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 require 'json'
-require 'yaml'
 require 'puppet'
-require 'pry'
 
 # Parse the parameters
-# params = JSON.parse(STDIN.read)
-# params = JSON.parse(File.read('/home/vagrant/lv_create.json'))
-params = JSON.parse(File.read('/home/vagrant/lv_delete.json'))
+params = JSON.parse(STDIN.read)
 
 # Load all of Puppet's settings
 Puppet.initialize_settings

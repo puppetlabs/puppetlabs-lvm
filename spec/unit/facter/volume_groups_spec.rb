@@ -35,10 +35,11 @@ describe 'volume_groups fact' do
       end
 
       it 'should be able to resolve vgs' do
-        vgs_output = <<~OUTPUT
+        vgs_output = <<-OUTPUT
           ZcFkEG-217a-nnc6-PvWx-oXou-7THt-XR6eci centos wz--n- writeable  normal     19.51g 44.00m
           tMqdQC-ukEx-bEft-bLk8-WoM1-jX0a-0p1rri tasks  wz--n- writeable  normal      3.99g  2.82g
         OUTPUT
+        vgs_output.lstrip!
         Facter::Core::Execution.expects(:exec).at_least(1).returns(vgs_output)
         Facter.value(:volume_groups).should include({
           "centos" => {

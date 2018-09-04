@@ -35,11 +35,12 @@ describe 'physical_volumes fact' do
       end
 
       it 'should be able to resolve PVs' do
-        pvs_output = <<~OUTPUT
+        pvs_output = <<-OUTPUT
           dPziSO-573Z-9WuH-q22X-cuyM-gHQx-ZeGbfK   2.00g /dev/sda     1.00m  2.00g 844.00m  1.17g a--   511   300     1        1        0       0
           09ksGm-Pt28-AR9H-NlgQ-QxtG-5uEH-Qzy1RR   2.00g /dev/sdc     1.00m  2.00g   2.00g      0 a--   511     0     1        1        0       0
           PpSFVZ-SS3P-n3a6-ctPF-sb9H-6M85-i0TqBv  19.51g /dev/sdd2    1.00m 19.51g  44.00m 19.46g a--  4994  4983     1        1        0       0
         OUTPUT
+        pvs_output.lstrip!
         Facter::Core::Execution.expects(:exec).at_least(1).returns(pvs_output)
         Facter.value(:physical_volumes).should include({
           "/dev/sda" => {

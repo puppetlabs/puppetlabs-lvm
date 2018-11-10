@@ -11,7 +11,6 @@ end
 
 # lvm_vgs: [0-9]+
 #   Number of VGs
-vg_list = []
 Facter.add('lvm_vgs') do
   confine :lvm_support => true
 
@@ -22,30 +21,30 @@ Facter.add('lvm_vgs') do
       0
     else
       vg_list = vgs.split
-      vg_list.length
-    end
-  end
-end
 
-# lvm_vg_[0-9]+
-#   VG name by index
-vg_list.each_with_index do |vg, i|
-  Facter.add("lvm_vg_#{i}") { setcode { vg } }
-  Facter.add("lvm_vg_#{vg}_pvs") do
-    setcode do
-      pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
-      res = nil
-      unless pvs.nil?
-        res = pvs.split("\n").select{|l| l =~ /^\s+\// }.collect(&:strip).sort.join(',')
+      # lvm_vg_[0-9]+
+      #   VG name by index
+      vg_list.each_with_index do |vg, i|
+        Facter.add("lvm_vg_#{i}") { setcode { vg } }
+        Facter.add("lvm_vg_#{vg}_pvs") do
+          setcode do
+            pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
+            res = nil
+            unless pvs.nil?
+              res = pvs.split("\n").select{|l| l =~ /^\s+\// }.collect(&:strip).sort.join(',')
+            end
+            res
+          end
+        end
       end
-      res
+
+      vg_list.length
     end
   end
 end
 
 # lvm_pvs: [0-9]+
 #   Number of PVs
-pv_list = []
 Facter.add('lvm_pvs') do
   confine :lvm_support => true
 
@@ -56,13 +55,14 @@ Facter.add('lvm_pvs') do
       0
     else
       pv_list = pvs.split
+
+      # lvm_pv_[0-9]+
+      #   PV name by index
+      pv_list.each_with_index do |pv, i|
+        Facter.add("lvm_pv_#{i}") { setcode { pv } }
+      end
+
       pv_list.length
     end
   end
-end
-
-# lvm_pv_[0-9]+
-#   PV name by index
-pv_list.each_with_index do |pv, i|
-  Facter.add("lvm_pv_#{i}") { setcode { pv } }
 end

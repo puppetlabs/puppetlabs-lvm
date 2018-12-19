@@ -15,8 +15,10 @@ vg_list = []
 Facter.add('lvm_vgs') do
   confine :lvm_support => true
 
-  vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', timeout: 30)
-
+  if Facter.value(:lvm_support)
+    vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', timeout: 30)
+  end
+  
   if vgs.nil?
     setcode { 0 }
   else
@@ -46,8 +48,9 @@ end
 pv_list = []
 Facter.add('lvm_pvs') do
   confine :lvm_support => true
-
-  pvs = Facter::Core::Execution.execute('pvs -o name --noheadings 2>/dev/null', timeout: 30)
+  if Facter.value(:lvm_support)
+    pvs = Facter::Core::Execution.execute('pvs -o name --noheadings 2>/dev/null', timeout: 30)
+  end
 
   if pvs.nil?
     setcode { 0 }

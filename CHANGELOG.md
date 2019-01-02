@@ -1,3 +1,17 @@
+## Release 1.2.0
+### Summary
+This release is a roll up of minor bugfixes.
+
+### Added
+- The upper bound for the stdlib dependency has been increased to 6.0.0
+- The module mount_core has been added as a dependency after having been removed from the puppet core.
+- Support added for Puppet 5 and 6.
+
+### Bugfixes
+- Test code left over from previous work has been removed.
+- Fix added so that attempts are no longer made to run lvm commands when they are not supported.
+- Rubygem version pinned on travis when ruby version less than 2.3.0.
+
 ## Release 1.1.0
 ### Summary
 This is a feature release in order to add facts, functions, tasks and plans alongside some smaller bugfixes and additions.

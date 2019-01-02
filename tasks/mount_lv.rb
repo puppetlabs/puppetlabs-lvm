@@ -4,7 +4,7 @@ require 'puppet'
 
 # Parse the parameters
 # params = JSON.parse(STDIN.read)
-params = JSON.parse(File.read('/home/vagrant/mount_lv.json'))
+params = JSON.parse(STDIN.read)
 
 # Set parameters to local variables and resolve defaults if required
 volume_group   = params['volume_group']

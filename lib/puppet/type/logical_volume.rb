@@ -43,7 +43,7 @@ Puppet::Type.newtype(:logical_volume) do
   newproperty(:size) do
     desc "The size of the logical volume. Set to undef to use all available space"
     validate do |value|
-      unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPE]/i
+      unless value =~ /^[0-9]+(\.[0-9]+)?[KMGTPE(\%FREE)]/i
         raise ArgumentError , "#{value} is not a valid logical volume size"
       end
     end
@@ -60,11 +60,17 @@ Puppet::Type.newtype(:logical_volume) do
         new_size_unit  = $3.upcase
         new_size = new_size_bytes * lvm_size_units[new_size_unit]
       end
+
       if [:true, true, "true"].include?(@resource[:size_is_minsize])
         new_size <= current_size
       else
         new_size == current_size
       end
+
+      if is =~ /^([0-9]+(\.[0-9]+)?)\%FREE/i
+        new_size == is
+      end
+
     end
   end
 

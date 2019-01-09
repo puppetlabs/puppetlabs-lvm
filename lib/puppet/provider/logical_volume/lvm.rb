@@ -192,7 +192,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     def size=(new_size)
         lvm_size_units = { "K" => 1, "M" => 1024, "G" => 1024**2, "T" => 1024**3, "P" => 1024**4, "E" => 1024**5 }
 
-        resizeable = false
+        resizeable   = false
+        lvextents    = false
         current_size = size()
 
         if current_size =~ /^([0-9]+(\.[0-9]+)?)([KMGTPE])/i
@@ -210,16 +211,21 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             vg_extent_size = $1.to_i
         end
 
-        ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
-        if lvm_size_units[current_size_unit] < lvm_size_units[new_size_unit]
+        if new_size =~ /^([0-9]+(\.[0-9]+)?)\%FREE/i
             resizeable = true
-        elsif lvm_size_units[current_size_unit] > lvm_size_units[new_size_unit]
-            if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
+            lvextents  = true
+        else
+            ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
+            if lvm_size_units[current_size_unit] < lvm_size_units[new_size_unit]
                 resizeable = true
-            end
-        elsif lvm_size_units[current_size_unit] == lvm_size_units[new_size_unit]
-            if new_size_bytes > current_size_bytes
-                resizeable = true
+            elsif lvm_size_units[current_size_unit] > lvm_size_units[new_size_unit]
+                if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
+                    resizeable = true
+                end
+            elsif lvm_size_units[current_size_unit] == lvm_size_units[new_size_unit]
+                if new_size_bytes > current_size_bytes
+                    resizeable = true
+                end
             end
         end
 
@@ -230,7 +236,14 @@ Puppet::Type.type(:logical_volume).provide :lvm do
                 fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
             end
         else
-            lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
+            if lvextents
+                param_1 = '-l'
+                param_2 = "+#{new_size}"
+            else
+                param_1 = '-L'
+                param_2 = new_size
+            end
+            lvextend( param_1, param_2, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
 
             unless @resource[:resize_fs] == :false or @resource[:resize_fs] == false or @resource[:resize_fs] == 'false'
               begin

@@ -224,9 +224,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
 
         if new_size =~ /^[0-9]+(\.[0-9]+)?\%FREE/i
+            lvextents = true
             if get_volume_group_free_space > 0
                 resizeable = true
-                lvextents  = true
             end
         else
             ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
@@ -244,10 +244,12 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         end
 
         if not resizeable
-            if @resource[:size_is_minsize] == :true or @resource[:size_is_minsize] == true or @resource[:size_is_minsize] == 'true'
-                info( "Logical volume already has minimum size of #{new_size} (currently #{current_size})" )
-            else
-                fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
+            if not lvextents
+                if @resource[:size_is_minsize] == :true or @resource[:size_is_minsize] == true or @resource[:size_is_minsize] == 'true'
+                    info( "Logical volume already has minimum size of #{new_size} (currently #{current_size})" )
+                else
+                    fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
+                end
             end
         else
             param_1 = '-L'

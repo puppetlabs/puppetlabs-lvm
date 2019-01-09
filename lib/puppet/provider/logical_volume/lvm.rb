@@ -254,6 +254,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             if lvextents
                 param_1 = '-l'
                 param_2 = "+#{new_size}"
+            end
 
             lvextend( param_1, param_2, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
 

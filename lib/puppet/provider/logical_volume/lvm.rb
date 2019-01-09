@@ -223,9 +223,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             vg_extent_size = $1.to_i
         end
 
-        if new_size =~ /^[0-9]+(\.[0-9]+)?\%FREE/i and get_volume_group_free_space > 0
-            resizeable = true
-            lvextents  = true
+        if new_size =~ /^[0-9]+(\.[0-9]+)?\%FREE/i
+            if get_volume_group_free_space > 0
+                resizeable = true
+                lvextents  = true
+            end
         else
             ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
             if lvm_size_units[current_size_unit] < lvm_size_units[new_size_unit]

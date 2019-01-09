@@ -82,6 +82,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         args.push('-n', @resource[:name]) unless @resource[:thinpool] == true
 
         size_option = '--size'
+        if @resource[:size] =~ /^[0-9]+(\.[0-9]+)?\%FREE/i
+            size_option = '--extents'
+        end
         if @resource[:thinpool].is_a? String
           size_option = '--virtualsize'
         end

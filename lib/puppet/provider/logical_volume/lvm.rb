@@ -223,7 +223,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             vg_extent_size = $1.to_i
         end
 
-        if new_size =~ /^[0-9]+(\.[0-9]+)?\%FREE/i
+        if new_size =~ /^[0-9]+(\.[0-9]+)?\%FREE/i and get_volume_group_free_space > 0
             resizeable = true
             lvextents  = true
         else
@@ -248,37 +248,34 @@ Puppet::Type.type(:logical_volume).provide :lvm do
                 fail( "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" )
             end
         else
-            if get_volume_group_free_space > 0
-                if lvextents
-                    param_1 = '-l'
-                    param_2 = "+#{new_size}"
-                else
-                    param_1 = '-L'
-                    param_2 = new_size
-                end
-                lvextend( param_1, param_2, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
+            param_1 = '-L'
+            param_2 = new_size
 
-                unless @resource[:resize_fs] == :false or @resource[:resize_fs] == false or @resource[:resize_fs] == 'false'
-                  begin
-                    blkid_type = blkid(path)
-                    if command(:resize4fs) and blkid_type =~ /\bTYPE=\"(ext4)\"/
-                      resize4fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
-                    elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
-                      resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
-                    elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
-                      xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
-                    elsif blkid_type =~ /\bTYPE=\"(swap)\"/
-                      swapoff( path) && mkswap( path) && swapon( path) || fail( "Cannot resize swap to size #{new_size} because mkswap failed." )
-                    end
-                  rescue Puppet::ExecutionFailure => detail
-                    ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
-                    if detail.message =~ / returned 2:/
-                      Puppet.debug(detail.message)
-                    end
-                  end
+            if lvextents
+                param_1 = '-l'
+                param_2 = "+#{new_size}"
+
+            lvextend( param_1, param_2, path) || fail( "Cannot extend to size #{new_size} because lvextend failed." )
+
+            unless @resource[:resize_fs] == :false or @resource[:resize_fs] == false or @resource[:resize_fs] == 'false'
+              begin
+                blkid_type = blkid(path)
+                if command(:resize4fs) and blkid_type =~ /\bTYPE=\"(ext4)\"/
+                  resize4fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+                elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
+                  resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
+                elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
+                  xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
+                elsif blkid_type =~ /\bTYPE=\"(swap)\"/
+                  swapoff( path) && mkswap( path) && swapon( path) || fail( "Cannot resize swap to size #{new_size} because mkswap failed." )
                 end
+              rescue Puppet::ExecutionFailure => detail
+                ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
+                if detail.message =~ / returned 2:/
+                  Puppet.debug(detail.message)
+                end
+              end
             end
-
         end
     end
 

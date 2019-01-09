@@ -14,7 +14,7 @@
     },
     {
       "name": "puppetlabs/mount_core",
-      "version_requirement": ">= 1.0.0 < 2.0.0"      
+      "version_requirement": ">= 1.0.0 < 2.0.0"
     }
   ],
   "data_provider": null,

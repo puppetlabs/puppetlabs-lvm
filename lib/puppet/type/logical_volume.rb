@@ -67,10 +67,6 @@ Puppet::Type.newtype(:logical_volume) do
         new_size == current_size
       end
 
-      if is =~ /^([0-9]+(\.[0-9]+)?)\%FREE/i
-        new_size == is
-      end
-
     end
   end
 

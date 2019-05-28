@@ -15,7 +15,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
              :blkid      => 'blkid',
              :dmsetup    => 'dmsetup',
              :lvconvert  => 'lvconvert',
-             :lvdisplay  => 'lvdisplay'
+             :lvdisplay  => 'lvdisplay',
+             :lsblk      => 'lsblk'
 
     optional_commands :xfs_growfs => 'xfs_growfs',
                       :resize4fs  => 'resize4fs'
@@ -240,7 +241,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
                 elsif blkid_type =~ /\bTYPE=\"(ext[34])\"/
                   resize2fs( path) || fail( "Cannot resize file system to size #{new_size} because resize2fs failed." )
                 elsif blkid_type =~ /\bTYPE=\"(xfs)\"/
-                  xfs_growfs( path) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
+                  # New versions of xfs_growfs only support resizing by mount point, not by volume (e.g. under RHEL8)
+                  # * https://tickets.puppetlabs.com/browse/MODULES-9004
+                  mount_point = lsblk( '-o', 'MOUNTPOINT', '-nr', path).chomp
+                  xfs_growfs( mount_point) || fail( "Cannot resize filesystem to size #{new_size} because xfs_growfs failed." )
                 elsif blkid_type =~ /\bTYPE=\"(swap)\"/
                   swapoff( path) && mkswap( path) && swapon( path) || fail( "Cannot resize swap to size #{new_size} because mkswap failed." )
                 end

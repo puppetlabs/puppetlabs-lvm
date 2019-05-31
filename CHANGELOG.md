@@ -1,3 +1,13 @@
+## Release 1.3.0
+### Summary
+This release is a roll up of minor bugfixes.
+
+### Added
+- The upper bound for the stdlib dependency has been increased to 7.0.0
+
+### Bugfixes
+- (MODULES-9004) Resize XFS file system by mount point, not by volume
+
 ## Release 1.2.0
 ### Summary
 This release is a roll up of minor bugfixes.

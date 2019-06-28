@@ -1,3 +1,4 @@
+require 'open3'
 Puppet::Type.type(:volume_group).provide :lvm do
   desc 'Manages LVM volume groups on Linux'
 
@@ -52,6 +53,8 @@ Puppet::Type.type(:volume_group).provide :lvm do
   end
 
   def exists?
+    # activate before scanning
+    Open3.popen3("vgs -o lv_active --noheadings #{@resource[:name]} | grep -q active || vgchange -ay #{@resource[:name]}")
     vgs(@resource[:name])
   rescue Puppet::ExecutionFailure
     false

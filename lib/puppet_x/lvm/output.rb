@@ -10,11 +10,10 @@ module Puppet_X
 
       def self.parse(key,data)
         results = {}
-
         data.each do |entry|
           name = entry[key]
           results[name] = {}
-          data = data.delete(key)
+          entry.delete(key)
           entry.each do |k,v|
             k = remove_prefix(k)
             results[name][k] = v

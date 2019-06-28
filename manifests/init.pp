@@ -2,13 +2,16 @@
 #
 class lvm (
   Enum['installed', 'present', 'latest', 'absent'] $package_ensure = 'installed',
-  Boolean $manage_pkg                                              = false,
   Hash $volume_groups                                              = {},
 ) {
 
-  if $manage_pkg {
+  if $package_ensure == 'absent' {
     package { 'lvm2':
-      ensure   => $package_ensure
+      ensure => 'absent',
+    }
+  } elsif ! defined(Package['lvm2']) {
+    package { 'lvm2':
+      ensure => $package_ensure,
     }
   }
 

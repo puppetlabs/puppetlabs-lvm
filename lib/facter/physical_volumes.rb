@@ -29,7 +29,8 @@ Facter.add(:physical_volumes) do
       'pv_ba_size',
     ]
 
-    output = Facter::Core::Execution.exec("pvs -o #{columns.join(',')}  --noheading --nosuffix")
-    Puppet_X::LVM::Output.parse('pv_name', columns, output)
+    output = JSON.parse(Facter::Core::Execution.exec("pvs -o #{columns.join(',')}  --reportformat json"))['report'][0]['pv']
+    Puppet_X::LVM::Output.parse('pv_name', output)
+
   end
 end

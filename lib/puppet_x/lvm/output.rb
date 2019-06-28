@@ -7,19 +7,18 @@ module Puppet_X
       # the data with the prefix removed i.e. "lv_free" would be come "free"
       # this however doesn't descriminate and will turn something like
       # "foo_bar" into "bar"
-      def self.parse(key, columns, data)
+
+      def self.parse(key,data)
         results = {}
 
-        # Remove prefixes
-        columns = remove_prefixes(columns)
-        key     = remove_prefix(key)
-
-        data.split("\n").each do |line|
-          parsed_line = line.gsub(%r{\s+}, ' ').strip.split(' ')
-          values      = Hash[columns.zip(parsed_line)]
-          current_key = values[key]
-          values.delete(key)
-          results[current_key] = values
+        data.each do |entry|
+          name = entry[key]
+          results[name] = {}
+          data = data.delete(key)
+          entry.each do |k,v|
+            k = remove_prefix(k)
+            results[name][k] = v
+          end
         end
 
         results

@@ -22,7 +22,8 @@ Facter.add(:volume_groups) do
       'vg_free',
     ]
 
-    output = Facter::Core::Execution.exec("vgs -o #{columns.join(',')}  --noheading --nosuffix")
-    Puppet_X::LVM::Output.parse('vg_name', columns, output)
+    output = JSON.parse(Facter::Core::Execution.exec("vgs -o #{columns.join(',')}  --reportformat json"))['report'][0]['vg']
+    Puppet_X::LVM::Output.parse('vg_name', output)
+
   end
 end

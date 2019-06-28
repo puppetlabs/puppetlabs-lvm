@@ -26,7 +26,7 @@ Facter.add(:logical_volumes) do
       'lv_permissions',
     ]
 
-    output = Facter::Core::Execution.exec("lvs -o #{columns.join(',')}  --noheading --nosuffix")
-    Puppet_X::LVM::Output.parse('lv_name', columns, output)
+    output = JSON.parse(Facter::Core::Execution.exec("lvs -o #{columns.join(',')}  --reportformat json"))['report'][0]['lv']
+    Puppet_X::LVM::Output.parse('lv_name', output)
   end
 end

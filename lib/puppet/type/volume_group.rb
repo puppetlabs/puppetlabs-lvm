@@ -11,14 +11,6 @@ Puppet::Type.newtype(:volume_group) do
              will automatically set these as dependencies, but they must be defined elsewhere
              using the physical_volume resource type."
 
-        munge do |value|
-          if value.is_a?(Hash) then
-            value.keys.sort
-          else
-            value
-          end
-        end
-
         def insync?(is)
           if @resource.parameter(:followsymlinks).value == :true then
             real_should = []

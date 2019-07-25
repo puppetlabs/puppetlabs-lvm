@@ -43,8 +43,13 @@ Puppet::Type.type(:volume_group).provide :lvm do
       volume_groups_properties
     end
 
+    # TODO: this should be private
+    def canonical_should_physical_volumes
+      @resource[:physical_volumes].flatten
+    end
+
     def create
-        vgcreate(@resource[:name], *@resource.should(:physical_volumes))
+        vgcreate(@resource[:name], *canonical_should_physical_volumes)
     end
 
     def destroy
@@ -79,7 +84,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
         else
           # Trick the check by setting the returned value to what is
           #  listed in the puppet catalog
-          @resource[:physical_volumes]
+          canonical_should_physical_volumes
         end
     end
 

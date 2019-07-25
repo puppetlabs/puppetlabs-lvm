@@ -11,6 +11,48 @@ Puppet::Type.newtype(:volume_group) do
              will automatically set these as dependencies, but they must be defined elsewhere
              using the physical_volume resource type."
 
+        munge do |value|
+          # Example valid usage with multiple volumes
+          #
+          # volume_groups => {
+          #   'vg' => {
+          #     createonly => true,
+          #     physical_volumes => [
+          #       { '/dev/sdb' => { unless_vg => 'vg' }},
+          #       { '/dev/sdc' => { unless_vg => 'vg' }},
+          #     ],
+          #   },
+          # },
+          #
+          # This should error
+          #
+          # volume_groups => {
+          #   'vg' => {
+          #     createonly => true,
+          #     physical_volumes => {
+          #       '/dev/sdb' => { unless_vg => 'vg' },
+          #       '/dev/sdc' => { unless_vg => 'vg' }
+          #     },
+          #   },
+          # },
+          #
+          # This should also error
+          #
+          # volume_groups => {
+          #   'vg' => {
+          #     createonly => true,
+          #     physical_volumes => [{
+          #       '/dev/sdb' => { unless_vg => 'vg' },
+          #       '/dev/sdc' => { unless_vg => 'vg' }
+          #     }],
+          #   },
+          # },
+          #
+          # If we don't have this check we end up with arrays-of-arrays e.g. in the examples above you would end up with `[['/dev/sdb', '/dev/sdc']]` not `['/dev/sdb', '/dev/sdc']`
+          raise "physical_volumes items in a hash can only have one name per physical volume" if value.is_a?(Hash) && value.keys.count > 1
+          value.is_a?(Hash) ? value.keys[0] : value
+        end
+
         def insync?(is)
           if @resource.parameter(:followsymlinks).value == :true then
             real_should = []

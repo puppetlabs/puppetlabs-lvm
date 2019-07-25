@@ -49,5 +49,21 @@ describe Puppet::Type.type(:volume_group) do
         resource.should(:physical_volumes).should == %w{mypv otherpv}
       end
     end
+    it "should support a single item hash" do
+      with(:name => "myvg", :physical_volumes => { 'mypv' => { :unless_vg => 'vg'}}) do |resource|
+        resource.should(:physical_volumes).should == %w{mypv}
+      end
+    end
+    it "should support an array of hash" do
+      with(:name => "myvg", :physical_volumes => [{ 'mypv' => { :unless_vg => 'vg'}}, { 'otherpv' => { :unless_vg => 'vg'}}]) do |resource|
+        resource.should(:physical_volumes).should == %w{mypv otherpv}
+      end
+    end
+    it "should not support a multi-key hash" do
+      expect { with(:name => "myvg", :physical_volumes => { 'mypv' => { :unless_vg => 'vg' }, 'otherpv' => { :unless_vg => 'vg' } }) }.to raise_error(/Munging failed for value/)
+    end
+    it "should not support a multi-key hash inside of an array" do
+      expect { with(:name => "myvg", :physical_volumes => [{ 'mypv' => { :unless_vg => 'vg' }, 'otherpv' => { :unless_vg => 'vg' } }]) }.to raise_error(/Munging failed for value/)
+    end
   end
 end

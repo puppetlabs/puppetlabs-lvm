@@ -6,7 +6,7 @@
   "license": "GPL-2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-lvm",
   "project_page": "https://github.com/puppetlabs/puppetlabs-lvm",
-  "issues_url": "https://tickets.puppetlabs.com/browse/MODULES/component/11456/",
+  "issues_url": "https://tickets.puppetlabs.com",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",

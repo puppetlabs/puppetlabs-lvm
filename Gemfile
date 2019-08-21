@@ -6,6 +6,10 @@ group :development, :test do
   gem 'mocha', "~> 0.10.5",     :require => false
   gem 'puppetlabs_spec_helper', :require => false
   gem 'puppet-blacksmith',      :require => false
+	gem 'puppet_litmus', 					:require => false
+	gem 'parallel',			 					:require => false
+	gem 'serverspec',			 					:require => false
+	gem 'pry',			 					:require => false
 end
 
 if puppetversion = ENV['PUPPET_GEM_VERSION']
@@ -26,12 +30,3 @@ gem 'metadata-json-lint',                :require => false if RUBY_VERSION >= '1
 if RUBY_VERSION < '2.0'
       gem 'mime-types', '<3.0', :require => false
 end
-
-group :system_tests do
-  if beaker_version = ENV['BEAKER_VERSION']
-    gem 'beaker', *location_for(beaker_version)
-  end
-  gem 'beaker-puppet_install_helper',  :require => false
-  gem 'master_manipulator', '~> 1.2',  :require => false
-end
-# vim:ft=ruby

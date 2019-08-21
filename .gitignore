@@ -5,3 +5,5 @@ Gemfile.lock
 .fixtures/modules
 .fixtures/manifests
 spec/fixtures
+pkg/
+inventory.yaml

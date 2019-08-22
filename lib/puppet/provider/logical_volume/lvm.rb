@@ -147,6 +147,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
         else
             args << @resource[:volume_group]
         end
+
+        if @resource[:physical_volume]
+            args << @resource[:physical_volume]
+        end
         lvcreate(*args)
     end
 

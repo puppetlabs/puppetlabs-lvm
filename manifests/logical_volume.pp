@@ -28,6 +28,7 @@ define lvm::logical_volume (
   $no_sync                           = undef,
   $region_size                       = undef,
   $alloc                             = undef,
+  $physical_volume                   = undef,
 ) {
 
   $lvm_device_path = "/dev/${volume_group}/${name}"
@@ -90,6 +91,7 @@ define lvm::logical_volume (
     no_sync          => $no_sync,
     region_size      => $region_size,
     alloc            => $alloc,
+    physical_volume  => $physical_volume,
   }
 
   if $createfs {

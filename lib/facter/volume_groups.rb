@@ -16,11 +16,11 @@ Facter.add(:volume_groups) do
       'vg_uuid',
       'vg_name',
       'vg_attr',
-      'vg_permissions',
-      'vg_allocation_policy',
       'vg_size',
       'vg_free',
     ]
+    lvm_version = Gem::Version.new(Facter.value(:lvm_version))
+    columns.push('vg_permissions', 'vg_allocation_policy') if lvm_version >= Gem::Version.new('2.02.108')
 
     output = Facter::Core::Execution.exec("vgs -o #{columns.join(',')}  --noheading --nosuffix")
     Puppet_X::LVM::Output.parse('vg_name', columns, output)

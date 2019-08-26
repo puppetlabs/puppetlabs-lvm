@@ -15,16 +15,14 @@ Facter.add(:logical_volumes) do
     columns = [
       'lv_uuid',
       'lv_name',
-      'lv_full_name',
       'lv_path',
-      'lv_dm_path',
       'lv_attr',
-      'lv_layout',
-      'lv_role',
-      'lv_active',
       'lv_size',
-      'lv_permissions',
     ]
+    lvm_version = Gem::Version.new(Facter.value(:lvm_version))
+    columns.push('lv_active') if lvm_version >= Gem::Version.new('2.02.99')
+    columns.push('lv_full_name', 'lv_dm_path', 'lv_permissions') if lvm_version >= Gem::Version.new('2.02.108')
+    columns.push('lv_layout', 'lv_role') if lvm_version >= Gem::Version.new('2.02.110')
 
     output = Facter::Core::Execution.exec("lvs -o #{columns.join(',')}  --noheading --nosuffix")
     Puppet_X::LVM::Output.parse('lv_name', columns, output)

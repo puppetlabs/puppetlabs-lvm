@@ -1,5 +1,6 @@
 module Puppet_X
   module LVM
+    # Work with LVM Output
     class Output
       # Parses the results of LVMs commands. This does not handle when columns
       # have no data and therefore these columns should be avoided. It returns
@@ -8,7 +9,7 @@ module Puppet_X
       # "foo_bar" into "bar"
       def self.parse(key,columns,data)
         results = {}
-    
+
         # Remove prefixes
         columns = remove_prefixes(columns)
         key     = remove_prefix(key)
@@ -20,7 +21,7 @@ module Puppet_X
           values.delete(key)
           results[current_key] = values
         end
-    
+
         results
       end
 

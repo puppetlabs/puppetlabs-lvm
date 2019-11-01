@@ -88,7 +88,8 @@ Puppet::Type.type(:volume_group).provide :lvm do
     def reduce_with(volume)
         vgreduce(@resource[:name], volume)
     rescue Puppet::ExecutionFailure => detail
-        raise Puppet::Error, "Could not remove physical volume #{volume} from volume group '#{@resource[:name]}'; this physical volume may be in use and may require a manual data migration (using pvmove) before it can be removed (#{detail.message})"
+        raise Puppet::Error, "Could not remove physical volume #{volume} from volume group '#{@resource[:name]}'; this physical volume may " \
+          + "be in use and may require a manual data migration (using pvmove) before it can be removed (#{detail.message})"
     end
 
     def extend_with(volume)

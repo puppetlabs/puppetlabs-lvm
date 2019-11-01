@@ -4,3 +4,6 @@
 
 spec/spec_helper.rb:
   mock_with: ':rspec'
+
+.travis.yml:
+  simplecov: true

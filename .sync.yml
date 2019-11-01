@@ -1,0 +1,9 @@
+---
+.rubocop.yml:
+  include_todos: true
+
+spec/spec_helper.rb:
+  mock_with: ':mocha'
+
+.travis.yml:
+  simplecov: true

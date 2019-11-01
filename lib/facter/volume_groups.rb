@@ -2,7 +2,7 @@ Facter.add(:volume_groups) do
   # Fact should be confined to only linux servers that have the lvs command
   confine do
     Facter.value('kernel') == 'Linux' &&
-    Facter::Core::Execution.which('vgs')
+      Facter::Core::Execution.which('vgs')
   end
 
   setcode do

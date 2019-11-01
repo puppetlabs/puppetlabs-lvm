@@ -29,7 +29,7 @@ Puppet.settings[:group] = '0'
 # This is exactly the same as the parameters you would pass to the
 # `puppet resource` command, except in Ruby.
 logical_volume = Puppet::Resource.indirection.find(
-  "logical_volume/#{logical_volume_name}"
+  "logical_volume/#{logical_volume_name}",
 )
 
 throw "Logical volume #{logical_volume_name} not found" if logical_volume[:ensure] == :absent

@@ -14,10 +14,9 @@
     },
     {
       "name": "puppetlabs/mount_core",
-      "version_requirement": ">= 1.0.0 < 2.0.0"      
+      "version_requirement": ">= 1.0.0 < 2.0.0"
     }
   ],
-  "data_provider": null,
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat"
@@ -49,5 +48,8 @@
       "name": "puppet",
       "version_requirement": ">= 4.6.1 < 7.0.0"
     }
-  ]
+  ],
+  "pdk-version": "1.14.0",
+  "template-url": "pdk-default#1.14.0",
+  "template-ref": "1.14.0-0-g1bf3a4e"
 }

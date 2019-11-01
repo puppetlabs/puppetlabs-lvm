@@ -208,7 +208,7 @@ describe Puppet::Type.type(:logical_volume) do
     }.not_to raise_error
   end
 
-  it 'invalid stripesize raises error' do
+  it 'string stripesize raises error' do
     expect {
       resource = Puppet::Type.type(:logical_volume).new(
         name: 'bert',
@@ -258,7 +258,7 @@ describe Puppet::Type.type(:logical_volume) do
     }.not_to raise_error
   end
 
-  it 'invalid readahead raises error' do
+  it 'string readahead raises error' do
     expect {
       resource = Puppet::Type.type(:logical_volume).new(
         name: 'bert',
@@ -333,7 +333,7 @@ describe Puppet::Type.type(:logical_volume) do
     }.not_to raise_error
   end
 
-  it 'region_size with invalid value throws error' do
+  it 'region_size with string value throws error' do
     expect {
       resource = Puppet::Type.type(:logical_volume).new(
         name: 'fred',

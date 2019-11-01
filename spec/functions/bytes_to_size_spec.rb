@@ -2,16 +2,16 @@ require 'spec_helper'
 
 describe 'lvm::bytes_to_size' do
   context 'with incorrect parameters' do
-    it 'should fail' do
+    it 'fails' do
       is_expected.to run.with_params('foo').and_raise_error(
         ArgumentError,
-        /expects a Numeric value/
+        %r{expects a Numeric value},
       )
     end
   end
 
   context 'with lower case parameters' do
-    it 'should return the correct values' do
+    it 'returns the correct values' do
       is_expected.to run.with_params(1024).and_return('1k')
       is_expected.to run.with_params(1_048_576).and_return('1m')
       is_expected.to run.with_params(1_073_741_824).and_return('1g')

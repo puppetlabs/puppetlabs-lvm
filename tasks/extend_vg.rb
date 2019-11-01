@@ -25,7 +25,7 @@ Puppet.settings[:group] = '0'
 # This is exactly the same as the parameters you would pass to the
 # `puppet resource` command, except in Ruby.
 volume_group = Puppet::Resource.indirection.find(
-  "volume_group/#{name}"
+  "volume_group/#{name}",
 )
 
 throw "Volume group #{name} not found" if volume_group[:ensure] == :absent
@@ -34,7 +34,7 @@ throw "Volume group #{name} not found" if volume_group[:ensure] == :absent
 volume_group.prune_parameters
 
 # Set the settings we need
-volume_group[:name]             = name
+volume_group[:name] = name
 volume_group[:physical_volumes] << physical_volumes
 volume_group[:physical_volumes].flatten!
 

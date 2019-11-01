@@ -17,40 +17,40 @@ require 'pry'
 # ==== Examples
 #
 # verify_if_created?(agent, 'physical_volume', /dev/sdb', VolumeGroup_123, "Size     7GB")
-def verify_if_created?(resource_type, resource_name, vg=nil, properties=nil)
+def verify_if_created?(resource_type, resource_name, vg = nil, properties = nil)
   case resource_type
-    when 'physical_volume'
-      run_shell("pvdisplay") do |result|
-        assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
+  when 'physical_volume'
+    run_shell('pvdisplay') do |result|
+      assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
+    end
+  when 'volume_group'
+    run_shell('vgdisplay') do |result|
+      assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
+    end
+  when 'logical_volume'
+    raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
+    run_shell("lvdisplay /dev/#{vg}/#{resource_name}") do |result|
+      assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
+      if properties
+        assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected')
       end
-    when 'volume_group'
-      run_shell("vgdisplay") do |result|
-        assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
+    end
+  when 'aix_physical_volume'
+    run_shell("lspv #{resource_name}") do |result|
+      assert_match(%r{Physical volume #{resource_name} is not assigned to}, result.stdout, 'Unexpected error was detected')
+    end
+  when 'aix_volume_group'
+    run_shell('lsvg') do |result|
+      assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
+    end
+  when 'aix_logical_volume'
+    raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
+    run_shell("lslv #{resource_name}") do |result|
+      assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
+      if properties
+        assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected')
       end
-    when 'logical_volume'
-      raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
-      run_shell("lvdisplay /dev/#{vg}/#{resource_name}") do |result|
-        assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
-        if properties
-          assert_match(/#{properties}/, result.stdout, 'Unexpected error was detected')
-        end
-      end
-    when 'aix_physical_volume'
-      run_shell("lspv #{resource_name}") do |result|
-        assert_match(/Physical volume #{resource_name} is not assigned to/, result.stdout, 'Unexpected error was detected')
-      end
-    when 'aix_volume_group'
-      run_shell("lsvg") do |result|
-        assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
-      end
-    when 'aix_logical_volume'
-      raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
-      run_shell("lslv #{resource_name}") do |result|
-        assert_match(/#{resource_name}/, result.stdout, 'Unexpected error was detected')
-        if properties
-          assert_match(/#{properties}/, result.stdout, 'Unexpected error was detected')
-        end
-      end
+    end
   end
 end
 
@@ -74,27 +74,27 @@ end
 # ==== Examples
 #
 # remove_all('/dev/sdb', 'VolumeGroup_1234', 'LogicalVolume_fa13')
-def remove_all(pv=nil, vg=nil, lv=nil, aix=false)
+def remove_all(pv = nil, vg = nil, lv = nil, aix = false)
   if aix
     run_shell("reducevg -d -f #{vg} #{pv}")
     run_shell("rm -rf /dev/#{vg} /dev/#{lv}")
   else
     if lv
-      if lv.kind_of?(Array)
+      if lv.is_a?(Array)
         lv.each do |logical_volume|
           run_shell("umount /dev/#{vg}/#{logical_volume}", expect_failures: true)
-          run_shell("lvremove /dev/#{vg}/#{logical_volume} --force",  expect_failures: true)
+          run_shell("lvremove /dev/#{vg}/#{logical_volume} --force", expect_failures: true)
         end
       else
-        #note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
+        # note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
         # the logical volume must be unmount before being able to delete it
         run_shell("umount /dev/#{vg}/#{lv}", expect_failures: true)
-        run_shell("lvremove /dev/#{vg}/#{lv} --force",  expect_failures: true)
+        run_shell("lvremove /dev/#{vg}/#{lv} --force", expect_failures: true)
       end
     end
 
     if vg
-      if vg.kind_of?(Array)
+      if vg.is_a?(Array)
         vg.each do |volume_group|
           run_shell("vgremove /dev/#{volume_group}")
         end
@@ -104,7 +104,7 @@ def remove_all(pv=nil, vg=nil, lv=nil, aix=false)
     end
 
     if pv
-      if pv.kind_of?(Array)
+      if pv.is_a?(Array)
         pv.each do |physical_volume|
           run_shell("pvremove #{physical_volume}")
         end
@@ -117,20 +117,20 @@ end
 
 RSpec.configure do |c|
   c.before :suite do
-		auth_tok = 'pvxejsxwstwhsy0u2tjolfovg9wfzg2e'
-		fail_test "AUTH_TOKEN must be set" unless auth_tok
-		machine = ENV['TARGET_HOST']
-		command = "curl -H X-AUTH-TOKEN:#{auth_tok} -X POST --url vcloud.delivery.puppetlabs.net/api/v1/vm/#{machine}/disk/1"
-		fdisk = run_shell('fdisk -l').stdout
-		if fdisk !~ /sdb/
-			stdout, _stderr, _status = Open3.capture3(command)
-			sleep(30)
-			run_shell("echo \"- - -\" >/sys/class/scsi_host/host2/scan")
-		end
-		if fdisk !~ /sdc/
-			stdout, _stderr, _status = Open3.capture3(command)
-			sleep(30)
-			run_shell("echo \"- - -\" >/sys/class/scsi_host/host2/scan")
-		end
-	end
+    auth_tok = 'pvxejsxwstwhsy0u2tjolfovg9wfzg2e'
+    fail_test 'AUTH_TOKEN must be set' unless auth_tok
+    machine = ENV['TARGET_HOST']
+    command = "curl -H X-AUTH-TOKEN:#{auth_tok} -X POST --url vcloud.delivery.puppetlabs.net/api/v1/vm/#{machine}/disk/1"
+    fdisk = run_shell('fdisk -l').stdout
+    if fdisk !~ %r{sdb}
+      stdout, _stderr, _status = Open3.capture3(command)
+      sleep(30)
+      run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')
+    end
+    if fdisk !~ %r{sdc}
+      stdout, _stderr, _status = Open3.capture3(command)
+      sleep(30)
+      run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')
+    end
+  end
 end

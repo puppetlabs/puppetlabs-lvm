@@ -29,7 +29,7 @@ Puppet.settings[:group] = '0'
 # This is exactly the same as the parameters you would pass to the
 # `puppet resource` command, except in Ruby.
 physical_volume = Puppet::Resource.indirection.find(
-  "physical_volume/#{params['name']}"
+  "physical_volume/#{params['name']}",
 )
 
 # Prune parameters that we don't need

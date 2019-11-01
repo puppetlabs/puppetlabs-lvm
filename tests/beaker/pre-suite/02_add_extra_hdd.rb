@@ -28,8 +28,8 @@ confine_block(:except, roles: ['master', 'dashboard', 'database']) do
 
     step 'Verify the newly add HDDs recognized:'
     on(agent, 'fdisk -l') do |result|
-      assert_match(/\/dev\/sdc/, result.stdout, 'Unexpected errors is detected')
-      assert_match(/\/dev\/sdd/, result.stdout, 'Unexpected errors is detected')
+      assert_match(%r{/dev/sdc}, result.stdout, 'Unexpected errors is detected')
+      assert_match(%r{/dev/sdd}, result.stdout, 'Unexpected errors is detected')
     end
   end
 end

@@ -36,7 +36,7 @@ vg_list.each_with_index do |vg, i|
       pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
       res = nil
       unless pvs.nil?
-        res = pvs.split("\n").select { |l| l =~ /^\s+\// }.map(&:strip).sort.join(',')
+        res = pvs.split("\n").select { |l| l =~ %r{^\s+/} }.map(&:strip).sort.join(',')
       end
       res
     end

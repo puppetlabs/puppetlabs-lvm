@@ -7,138 +7,6 @@
 # versions of RuboCop, may require this file to be generated again.
 
 # Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowAdjacentOneLineDefs, NumberOfEmptyLines.
-Layout/EmptyLineBetweenDefs:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 7
-# Cop supports --auto-correct.
-Layout/EmptyLines:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/aix.rb'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Layout/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/type/filesystem.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-    - 'lib/puppet/type/volume_group.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment, ForceEqualSignAlignment.
-Layout/ExtraSpacing:
-  Exclude:
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: normal, rails
-Layout/IndentationConsistency:
-  Exclude:
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-
-# Offense count: 112
-# Cop supports --auto-correct.
-# Configuration parameters: Width, IgnoredPatterns.
-Layout/IndentationWidth:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/aix.rb'
-    - 'lib/puppet/provider/volume_group/lvm.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-    - 'lib/puppet/type/physical_volume.rb'
-    - 'lib/puppet/type/volume_group.rb'
-
-# Offense count: 7
-# Cop supports --auto-correct.
-Layout/LeadingCommentSpace:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/volume_group/aix.rb'
-
-# Offense count: 8
-# Cop supports --auto-correct.
-Layout/SpaceAfterComma:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/type/filesystem.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-    - 'lib/puppet_x/lvm/output.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Layout/SpaceAfterNot:
-  Exclude:
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/aix.rb'
-    - 'lib/puppet/provider/volume_group/lvm.rb'
-
-# Offense count: 13
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment.
-Layout/SpaceAroundOperators:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/aix.rb'
-    - 'lib/puppet/type/volume_group.rb'
-
-# Offense count: 14
-# Cop supports --auto-correct.
-Layout/SpaceBeforeComma:
-  Exclude:
-    - 'lib/puppet/type/logical_volume.rb'
-    - 'lib/puppet/type/physical_volume.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Layout/SpaceInsideBrackets:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 46
-# Cop supports --auto-correct.
-Layout/SpaceInsideParens:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: final_newline, final_blank_line
-Layout/TrailingBlankLines:
-  Exclude:
-    - 'lib/puppet/provider/volume_group/aix.rb'
-    - 'lib/puppet_x/lvm/output.rb'
-
-# Offense count: 5
-# Cop supports --auto-correct.
-Layout/TrailingWhitespace:
-  Exclude:
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet_x/lvm/output.rb'
-
-# Offense count: 1
 # Configuration parameters: AllowSafeAssignment.
 Lint/AssignmentInCondition:
   Exclude:
@@ -208,27 +76,6 @@ Style/AccessorMethodName:
     - 'lib/puppet/provider/physical_volume/lvm.rb'
     - 'lib/puppet/provider/volume_group/lvm.rb'
 
-# Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: always, conditionals
-Style/AndOr:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
-# SupportedStyles: line_count_based, semantic, braces_for_chaining
-# ProceduralMethods: benchmark, bm, bmbm, create, each_with_object, measure, new, realtime, tap, with_object
-# FunctionalMethods: let, let!, subject, watch
-# IgnoredMethods: lambda, proc, it
-Style/BlockDelimiters:
-  Exclude:
-    - 'lib/puppet/provider/volume_group/aix.rb'
-    - 'lib/puppet/provider/volume_group/lvm.rb'
-
 # Offense count: 1
 Style/ClassAndModuleCamelCase:
   Exclude:
@@ -240,23 +87,6 @@ Style/ClassAndModuleCamelCase:
 Style/ClassAndModuleChildren:
   Exclude:
     - 'lib/puppet_x/lvm/output.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: PreferredMethods.
-Style/CollectionMethods:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/lvm.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, SingleLineConditionsOnly, IncludeTernaryExpressions.
-# SupportedStyles: assign_to_condition, assign_inside_condition
-Style/ConditionalAssignment:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
 
 # Offense count: 1
 Style/Documentation:
@@ -282,67 +112,10 @@ Style/GuardClause:
     - 'lib/puppet/provider/volume_group/aix.rb'
     - 'lib/puppet/provider/volume_group/lvm.rb'
 
-# Offense count: 44
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, UseHashRocketsWithSymbolValues, PreferHashRocketsForNonAlnumEndingSymbols.
-# SupportedStyles: ruby19, hash_rockets, no_mixed_keys, ruby19_no_mixed_keys
-Style/HashSyntax:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/aix.rb'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/aix.rb'
-    - 'lib/puppet/provider/volume_group/lvm.rb'
-    - 'lib/puppet/type/volume_group.rb'
-
-# Offense count: 6
-# Cop supports --auto-correct.
-Style/MethodCallWithoutArgsParentheses:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/aix.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/MultilineIfThen:
-  Exclude:
-    - 'lib/puppet/type/volume_group.rb'
-
 # Offense count: 1
 Style/MultilineTernaryOperator:
   Exclude:
     - 'lib/puppet/provider/filesystem/lvm.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/Not:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedOctalStyle, SupportedOctalStyles.
-# SupportedOctalStyles: zero_with_o, zero_only
-Style/NumericLiteralPrefix:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AutoCorrect, EnforcedStyle, SupportedStyles.
-# SupportedStyles: predicate, comparison
-Style/NumericPredicate:
-  Exclude:
-    - 'spec/**/*'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 15
-# Cop supports --auto-correct.
-Style/PerlBackrefs:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/type/logical_volume.rb'
 
 # Offense count: 1
 # Configuration parameters: NamePrefix, NamePrefixBlacklist, NameWhitelist.
@@ -356,75 +129,8 @@ Style/PredicateName:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/RedundantBegin:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/RedundantParentheses:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 48
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - 'lib/facter/lvm_support.rb'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/aix.rb'
-    - 'lib/puppet/provider/volume_group/lvm.rb'
-    - 'lib/puppet/type/filesystem.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-    - 'lib/puppet/type/physical_volume.rb'
-    - 'lib/puppet_x/lvm/output.rb'
-    - 'tests/beaker/pre-suite/02_add_extra_hdd.rb'
-
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: only_raise, only_fail, semantic
-Style/SignalException:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
-# Offense count: 98
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, ConsistentQuotesInMultiline.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiterals:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/aix.rb'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/aix.rb'
-    - 'lib/puppet/provider/volume_group/lvm.rb'
-    - 'lib/puppet/type/filesystem.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-    - 'lib/puppet/type/physical_volume.rb'
-    - 'lib/puppet/type/volume_group.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowSafeAssignment.
 # SupportedStyles: require_parentheses, require_no_parentheses, require_parentheses_when_complex
 Style/TernaryParentheses:
   Exclude:
     - 'lib/puppet/provider/filesystem/lvm.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/UnneededInterpolation:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'

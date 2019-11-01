@@ -30,11 +30,6 @@ Lint/Void:
   Exclude:
     - 'spec/unit/facter/lvm_support_spec.rb'
 
-# Offense count: 1
-# Configuration parameters: CountBlocks.
-Metrics/BlockNesting:
-  Max: 4
-
 # Offense count: 3
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https

@@ -20,6 +20,7 @@ Facter.add(:logical_volumes) do
       'lv_size',
     ]
     lvm_version = Gem::Version.new(Facter.value(:lvm_version))
+    columns.push('lv_path') if lvm_version >= Gem::Version.new('2.02.68')
     columns.push('lv_active') if lvm_version >= Gem::Version.new('2.02.99')
     columns.push('lv_full_name', 'lv_dm_path', 'lv_permissions') if lvm_version >= Gem::Version.new('2.02.108')
     columns.push('lv_layout', 'lv_role') if lvm_version >= Gem::Version.new('2.02.110')

@@ -24,9 +24,9 @@ Facter.add(:physical_volumes) do
       'pv_pe_count',
       'pv_pe_alloc_count',
       'pv_mda_count',
-      'pv_mda_used_count',
     ]
     lvm_version = Gem::Version.new(Facter.value(:lvm_version))
+    columns.push('pv_mda_used_count') if lvm_version >= Gem::Version.new('2.02.69')
     columns.push('pv_ba_start', 'pv_ba_size') if lvm_version >= Gem::Version.new('2.02.99')
 
     output = Facter::Core::Execution.exec("pvs -o #{columns.join(',')}  --noheading --nosuffix")

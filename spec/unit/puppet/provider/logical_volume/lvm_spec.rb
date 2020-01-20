@@ -34,6 +34,12 @@ describe provider_class do
       @provider.class.stubs(:lvs).with('data').returns(lvs_output)
       expect(@provider.exists?).to be > 10
     end
+    it "returns 'nil', lv 'swap' in vg 'VolGroup' exists" do
+      @resource.expects(:[]).with(:name).returns('swap')
+      @resource.expects(:[]).with(:volume_group).returns('VolGroup').at_least_once
+      @provider.class.stubs(:lvs).with('VolGroup').returns(lvs_output)
+      expect(@provider.exists?).to be_nil
+    end
     it "returns 'nil', lv 'data' in vg 'myvg' does not exist" do
       @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
       @provider.class.stubs(:lvs).with('myvg').raises(Puppet::ExecutionFailure, 'Execution of \'/sbin/lvs myvg\' returned 5')

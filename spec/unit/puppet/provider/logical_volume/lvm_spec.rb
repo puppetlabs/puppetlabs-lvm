@@ -9,10 +9,11 @@ describe provider_class do
   end
 
   lvs_output = <<-EOS
-  LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
-  lv_root VolGroup -wi-ao----  18.54g
-  lv_swap VolGroup -wi-ao---- 992.00m
-  data    data     -wi-ao---- 992.00m
+  LV      VG         Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  lv_root VolGroup   -wi-ao----  18.54g
+  lv_swap VolGroup   -wi-ao---- 992.00m
+  data    data       -wi-ao---- 992.00m
+  j1      vg_jenkins -wi-a-----   1.00g
   EOS
 
   describe 'self.instances' do
@@ -33,6 +34,12 @@ describe provider_class do
       @resource.expects(:[]).with(:volume_group).returns('data').at_least_once
       @provider.class.stubs(:lvs).with('data').returns(lvs_output)
       expect(@provider.exists?).to be > 10
+    end
+    it "returns 'nil', lv 'jenkins' in vg 'vg_jenkins' exists" do
+      @resource.expects(:[]).with(:name).returns('jenkins')
+      @resource.expects(:[]).with(:volume_group).returns('vg_jenkins').at_least_once
+      @provider.class.stubs(:lvs).with('vg_jenkins').returns(lvs_output)
+      expect(@provider.exists?).to be_nil
     end
     it "returns 'nil', lv 'data' in vg 'myvg' does not exist" do
       @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once

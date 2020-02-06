@@ -9,7 +9,7 @@ if [ $SCRIPT_BASE_PATH = "test_run_scripts" ]; then
   cd ../
 fi
 
-export pe_dist_dir="http://pe-releases.puppetlabs.lan/2015.3.3"
+export pe_dist_dir="https://artifactory.delivery.puppetlabs.net/artifactory/generic_enterprise__local/archives/releases/2015.3.3"
 export GEM_SOURCE=https://artifactory.delivery.puppetlabs.net/artifactory/api/gems/rubygems/
 
 bundle install --without build development test --path .bundle/gems

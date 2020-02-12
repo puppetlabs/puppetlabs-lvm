@@ -2,7 +2,7 @@ Facter.add(:physical_volumes) do
   # Fact should be confined to only linux servers that have the lvs command
   confine do
     Facter.value('kernel') == 'Linux' &&
-    Facter::Core::Execution.which('pvs')
+      Facter::Core::Execution.which('pvs')
   end
 
   setcode do

@@ -5,6 +5,14 @@
   include_todos: true
 .travis.yml:
   simplecov: true
+  use_litmus: true
+  litmus:
+    install_wget: true
+    provision_list:
+      - travis_deb
+      - travis_ub
+      - travis_el6
+      - travis_el7
 appveyor.yml:
   delete: true
 Gemfile:

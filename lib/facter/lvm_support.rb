@@ -9,6 +9,17 @@ Facter.add('lvm_support') do
   end
 end
 
+Facter.add('lvm_version') do
+  confine :lvm_support => true
+  if Facter.value(:lvm_support)
+    lvm_version = Facter::Core::Execution.execute('vgs --version 2> /dev/null', timeout: 30)
+    unless lvm_version.nil?
+      lvm_version = lvm_version.split("\n").select{|l| l =~ /LVM version/}.first[/version:\s+(\d+\.\d+.\d+)/, 1]
+      setcode { lvm_version }
+    end
+  end
+end
+
 # lvm_vgs: [0-9]+
 #   Number of VGs
 vg_list = []

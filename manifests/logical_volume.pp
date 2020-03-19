@@ -14,6 +14,7 @@ define lvm::logical_volume (
   Boolean $mountpath_require         = false,
   Boolean $mounted                   = true,
   Boolean $createfs                  = true,
+  Boolean $use_fs_label              = false,
   $extents                           = undef,
   $stripes                           = undef,
   $stripesize                        = undef,
@@ -32,6 +33,17 @@ define lvm::logical_volume (
 
   $lvm_device_path = "/dev/${volume_group}/${name}"
 
+  $mount_device = $use_fs_label ? {
+    false => $lvm_device_path,
+    true  => "LABEL=${name}",
+  }
+
+  $mkfs_label = $use_fs_label ? {
+    false => '',
+    # the ending whitespace is required
+    true  => "-L ${name} ",
+  }
+
   if $mountpath_require and $fs_type != 'swap' {
     Mount {
       require => File[$mountpath],
@@ -40,7 +52,7 @@ define lvm::logical_volume (
 
   if $fs_type == 'swap' {
     $mount_title     = $lvm_device_path
-    $fixed_mountpath = "swap_${lvm_device_path}"
+    $fixed_mountpath = "swap_${mount_device}"
     $fixed_pass      = 0
     $fixed_dump      = 0
     $mount_ensure    = $ensure ? {
@@ -96,7 +108,7 @@ define lvm::logical_volume (
     filesystem { $lvm_device_path:
       ensure  => $ensure,
       fs_type => $fs_type,
-      options => $mkfs_options,
+      options => "${mkfs_label}${mkfs_options}",
     }
   }
 
@@ -113,7 +125,7 @@ define lvm::logical_volume (
     mount { $mount_title:
       ensure  => $mount_ensure,
       name    => $fixed_mountpath,
-      device  => $lvm_device_path,
+      device  => $mount_device,
       fstype  => $fs_type,
       options => $options,
       pass    => $fixed_pass,

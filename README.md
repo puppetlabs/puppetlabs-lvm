@@ -142,12 +142,12 @@ If you need a more complex configuration, you'll need to build the
 resources out yourself.
 
 ## Optional Values
-  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check 
+  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check
   to see if "myvg" exists.  If "myvg" does exist then they will not modify
   the physical volume or volume_group.  This is useful if your environment
   is built with certain disks but they change while the server grows, shrinks
   or moves.
- 
+
   Example:
 ```puppet
     physical_volume { "/dev/hdc":
@@ -200,6 +200,7 @@ resources out yourself.
 * stripes (Parameter) - The number of stripes to allocate for the new logical volume.
 * stripesize (Parameter) - The stripesize to use for the new logical volume.
 * thinpool (Parameter) - Default value: `false` - Set to true to create a thin pool or to pool name to create thin volume
+* use_fs_label (Parameter) - Default value: `false` - Set to true to create and mount the filesystem with a label (e.g. `mkfs.ext4 -L foobar` and `mount LABEL=foobar /mnt`). The value is taken from the resource-title.
 * volume_group (Parameter) - The volume group name associated with this logical volume. This will automatically set this volume group as a dependency, but it must be defined elsewhere using the volume_group resource type.
 
 ### physical_volume

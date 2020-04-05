@@ -6,23 +6,25 @@ define lvm::volume_group (
   Enum['present', 'absent'] $ensure = present,
   Hash $logical_volumes             = {},
   Boolean $followsymlinks           = false,
+  Boolean $manage_pv                = true,
 ) {
 
-  if is_hash($physical_volumes) {
-    create_resources(
-      'lvm::physical_volume',
-      $physical_volumes,
-      {
-        ensure           => $ensure,
+  if $manage_pv {
+    if is_hash($physical_volumes) {
+      create_resources(
+        'lvm::physical_volume',
+        $physical_volumes,
+        {
+          ensure           => $ensure,
+        }
+      )
+    }
+    else {
+      physical_volume { $physical_volumes:
+        ensure => $ensure,
       }
-    )
-  }
-  else {
-    physical_volume { $physical_volumes:
-      ensure => $ensure,
     }
   }
-
 
   volume_group { $name:
     ensure           => $ensure,

@@ -54,7 +54,7 @@ Puppet::Type.type(:filesystem).provide :lvm do
 
     current_fs_type = fstype(name)
     unless current_fs_type.nil?
-      if force == :true || force == true || force == 'true'
+      if [:true, true, 'true'].include?(force)
         umount(name) if mounted(name)
         info("#{name} will be umount and FS will be changed to #{fs_type} (currently #{current_fs_type})")
       else

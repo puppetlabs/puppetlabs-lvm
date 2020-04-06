@@ -13,6 +13,7 @@ describe provider_class do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('ext4')
       @resource.expects(:[]).with(:options)
+      @resource.expects(:[]).with(:force).returns(:false)
       @provider.expects(:execute).with(['mkfs.ext4', '/dev/myvg/mylv'])
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
@@ -21,6 +22,7 @@ describe provider_class do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('ext4')
       @resource.expects(:[]).with(:options).returns('-b 4096 -E stride=32,stripe-width=64').twice
+      @resource.expects(:[]).with(:force).returns(:false)
       @provider.expects(:execute).with(['mkfs.ext4', '/dev/myvg/mylv', ['-b', '4096', '-E', 'stride=32,stripe-width=64']])
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
@@ -29,7 +31,17 @@ describe provider_class do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('reiserfs')
       @resource.expects(:[]).with(:options).returns('-b 4096 -E stride=32,stripe-width=64').twice
+      @resource.expects(:[]).with(:force).returns(:false)
       @provider.expects(:execute).with(['mkfs.reiserfs', '/dev/myvg/mylv', '-q', ['-b', '4096', '-E', 'stride=32,stripe-width=64']])
+      @resource.expects(:[]).with(:mkfs_cmd)
+      @provider.create
+    end
+    it 'includes -f for xfs' do
+      @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
+      @resource.expects(:[]).with(:fs_type).returns('xfs')
+      @resource.expects(:[]).with(:options).returns('-b 4096 -E stride=32,stripe-width=64').twice
+      @resource.expects(:[]).with(:force).returns(:false)
+      @provider.expects(:execute).with(['mkfs.xfs', '/dev/myvg/mylv', '-f', ['-b', '4096', '-E', 'stride=32,stripe-width=64']])
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
@@ -37,6 +49,7 @@ describe provider_class do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('swap')
       @resource.expects(:[]).with(:options)
+      @resource.expects(:[]).with(:force).returns(:false)
       @provider.expects(:execute).with(['mkswap', '/dev/myvg/mylv'])
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.expects(:execute).with(['swapon', '/dev/myvg/mylv'])
@@ -46,8 +59,21 @@ describe provider_class do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('jbd')
       @resource.expects(:[]).with(:options).returns('-O journal_dev').twice
+      @resource.expects(:[]).with(:force).returns(:false)
       @provider.expects(:execute).with(['mkfs.ext4', '/dev/myvg/mylv', ['-O', 'journal_dev']])
       @resource.expects(:[]).with(:mkfs_cmd).returns('mkfs.ext4').twice
+      @provider.create
+    end
+  end
+
+  describe 'when creating with force' do
+    it "executes the 'mkfs.xfs' with force option" do
+      @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
+      @resource.expects(:[]).with(:fs_type).returns('xfs')
+      @resource.expects(:[]).with(:force).returns(:true)
+      @resource.expects(:[]).with(:options)
+      @provider.expects(:execute).with(['mkfs.xfs', '/dev/myvg/mylv', '-f'])
+      @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
   end

@@ -170,6 +170,9 @@ resources out yourself.
 * fs_type (Parameter) - The file system type. eg. ext3.
 * mkfs_cmd (Parameter) - Command to use to create the file system. Defaults to `mkswap` for `fs_type=swap`, otherwise `mkfs.{fs_type}`
 * options (Parameter) - Params for the mkfs command. eg. `-l internal,agcount=x`
+* force (Parameter) Default value: `false` - Force the creation even if the FS exists and mounted.
+   - `true`
+   - `false`
 
 ### logical_volume
 

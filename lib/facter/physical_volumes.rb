@@ -31,6 +31,5 @@ Facter.add(:physical_volumes) do
 
     output = JSON.parse(Facter::Core::Execution.exec("pvs -o #{columns.join(',')}  --reportformat json"))['report'][0]['pv']
     Puppet_X::LVM::Output.parse('pv_name', output)
-
   end
 end

@@ -8,13 +8,13 @@ module Puppet_X
       # this however doesn't descriminate and will turn something like
       # "foo_bar" into "bar"
 
-      def self.parse(key,data)
+      def self.parse(key, data)
         results = {}
         data.each do |entry|
           name = entry[key]
           results[name] = {}
           entry.delete(key)
-          entry.each do |k,v|
+          entry.each do |k, v|
             k = remove_prefix(k)
             results[name][k] = v
           end

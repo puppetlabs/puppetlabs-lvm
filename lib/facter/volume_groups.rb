@@ -24,6 +24,5 @@ Facter.add(:volume_groups) do
 
     output = JSON.parse(Facter::Core::Execution.exec("vgs -o #{columns.join(',')}  --reportformat json"))['report'][0]['vg']
     Puppet_X::LVM::Output.parse('vg_name', output)
-
   end
 end

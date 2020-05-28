@@ -18,7 +18,12 @@ Puppet::Type.type(:filesystem).provide :lvm do
   end
 
   def fstype
-    %r{\bTYPE=\"(\S+)\"}.match(blkid(@resource[:name]))[1]
+    type_match = %r{\bTYPE=\"(\S+)\"}.match(blkid(@resource[:name]))
+    # when creating FS on a non LVM partition that already exists but does not have FS
+    # blkid output does not contain `TYPE=....` -> type_match is nil
+    if type_match
+      type_match[1]
+    end
   rescue Puppet::ExecutionFailure
     nil
   end

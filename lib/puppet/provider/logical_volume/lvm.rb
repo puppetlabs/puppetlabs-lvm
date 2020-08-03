@@ -149,7 +149,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   def destroy
     name_escaped = "#{@resource[:volume_group].gsub('-', '--')}-#{@resource[:name].gsub('-', '--')}"
-    if File.exist?(path) and blkid(path) =~ %r{\bTYPE=\"(swap)\"}
+    if File.exist?(path) && blkid(path) =~ %r{\bTYPE=\"(swap)\"}
       swapoff(path)
       dmsetup('remove', name_escaped)
     end

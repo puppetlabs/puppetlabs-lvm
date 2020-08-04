@@ -149,7 +149,18 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   def destroy
     name_escaped = "#{@resource[:volume_group].gsub('-', '--')}-#{@resource[:name].gsub('-', '--')}"
-    if blkid(path) =~ %r{\bTYPE=\"(swap)\"}
+    begin
+      isswap = blkid(path) =~ %r{\bTYPE=\"(swap)\"}
+    rescue Puppet::ExecutionFailure => detail
+      ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
+      if detail.message =~ %r{ returned 2:}
+        Puppet.debug(detail.message)
+	isswap = false
+      else
+        raise
+      end
+    end
+    if isswap
       swapoff(path)
     end
     dmsetup('remove', name_escaped)

@@ -155,7 +155,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
       ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
       if detail.message =~ %r{ returned 2:}
         Puppet.debug(detail.message)
-	isswap = false
+        isswap = false
       else
         raise
       end

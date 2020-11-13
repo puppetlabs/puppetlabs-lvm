@@ -36,60 +36,68 @@ describe 'logical_volumes fact' do
 
       it 'is able to resolve VGs' do
         lvs_output = <<-OUTPUT
-        E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl root       centos/root      /dev/centos/root      /dev/mapper/centos-root      -wi-ao---- linear     public     active  18.46g writeable
-        buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA swap       centos/swap      /dev/centos/swap      /dev/mapper/centos-swap      -wi-ao---- linear     public     active   1.00g writeable
-        uedsry-OTVv-wGW4-vaFf-c7IY-oH6Z-ig6IXB cool_tasks tasks/cool_tasks /dev/tasks/cool_tasks /dev/mapper/tasks-cool_tasks -wi-a----- linear     public     active 800.00m writeable
-        gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv lame_tasks tasks/lame_tasks /dev/tasks/lame_tasks /dev/mapper/tasks-lame_tasks -wi-a----- linear     public     active 400.00m writeable
+        {
+            "report": [
+                {
+                    "lv": [
+                      {"lv_uuid":"E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl", "lv_name":"root", "lv_full_name":"centos/root, "lv_path":"/dev/centos/root", "lv_dm_path":"/dev/mapper/centos-root", "lv_attr":"-wi-ao----", "lv_layout":"linear", "lv_role":"public", "lv_active":"active", "lv_size":"18.46g", "lv_permissions":"writeable"},
+                      {"lv_uuid":"buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA", "lv_name":"swap", "lv_full_name":"centos/swap", "lv_path":"/dev/centos/swap", "lv_dm_path":"/dev/mapper/centos-swap", "lv_attr":"-wi-ao----", "lv_layout":"linear", "lv_role":"public", "lv_active":"active", "lv_size":"1.00g", "lv_permissions":"writeable"},
+                      {"lv_uuid":"uedsry-OTVv-wGW4-vaFf-c7IY-oH6Z-ig6IXB", "lv_name":"cool_tasks", "lv_full_name":"tasks/cool_tasks", "lv_path":"/dev/tasks/cool_tasks", "lv_dm_path":"/dev/mapper/tasks-cool_tasks", "lv_attr":"-wi-ao----", "lv_layout":"linear", "lv_role":"public", "lv_active":"active", "lv_size":"800.00m ", "lv_permissions":"writeable"},
+                      {"lv_uuid":"gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv ", "lv_name":"lame_tasks", "lv_full_name":"tasks/lame_tasks", "lv_path":"/dev/tasks/lame_tasks", "lv_dm_path":"/dev/mapper/tasks-lame_tasks", "lv_attr":"-wi-ao----", "lv_layout":"linear", "lv_role":"public", "lv_active":"active", "lv_size":"400.00m", "lv_permissions":"writeable"}
+                    ]
+                }
+            ]
+        }
         OUTPUT
         lvs_output.lstrip!
         Facter::Core::Execution.expects(:exec).at_least(1).returns(lvs_output)
         Facter.value(:logical_volumes).should include('cool_tasks' => {
-                                                        'uuid' => 'uedsry-OTVv-wGW4-vaFf-c7IY-oH6Z-ig6IXB',
-                                                        'full_name'   => 'tasks/cool_tasks',
-                                                        'path'        => '/dev/tasks/cool_tasks',
-                                                        'dm_path'     => '/dev/mapper/tasks-cool_tasks',
-                                                        'attr'        => '-wi-a-----',
-                                                        'layout'      => 'linear',
-                                                        'role'        => 'public',
-                                                        'active'      => 'active',
-                                                        'size'        => '800.00m',
-                                                        'permissions' => 'writeable',
+                                                        'lv_uuid' => 'uedsry-OTVv-wGW4-vaFf-c7IY-oH6Z-ig6IXB',
+                                                        'lv_full_name'   => 'tasks/cool_tasks',
+                                                        'lv_path'        => '/dev/tasks/cool_tasks',
+                                                        'lv_dm_path'     => '/dev/mapper/tasks-cool_tasks',
+                                                        'lv_attr'        => '-wi-a-----',
+                                                        'lv_layout'      => 'linear',
+                                                        'lv_role'        => 'public',
+                                                        'lv_active'      => 'active',
+                                                        'lv_size'        => '800.00m',
+                                                        'lv_permissions' => 'writeable',
                                                       },
                                                       'lame_tasks' => {
-                                                        'uuid'        => 'gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv',
-                                                        'full_name'   => 'tasks/lame_tasks',
-                                                        'path'        => '/dev/tasks/lame_tasks',
-                                                        'dm_path'     => '/dev/mapper/tasks-lame_tasks',
-                                                        'attr'        => '-wi-a-----',
-                                                        'layout'      => 'linear',
-                                                        'role'        => 'public',
-                                                        'active'      => 'active',
-                                                        'size'        => '400.00m',
-                                                        'permissions' => 'writeable',
+                                                        'lv_uuid'        => 'gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv',
+                                                        'lv_full_name'   => 'tasks/lame_tasks',
+                                                        'lv_path'        => '/dev/tasks/lame_tasks',
+                                                        'lv_dm_path'     => '/dev/mapper/tasks-lame_tasks',
+                                                        'lv_attr'        => '-wi-a-----',
+                                                        'lv_layout'      => 'linear',
+                                                        'lv_role'        => 'public',
+                                                        'lv_active'      => 'active',
+                                                        'lv_size'        => '400.00m',
+                                                        'lv_permissions' => 'writeable',
                                                       },
                                                       'root' => {
-                                                        'uuid'        => 'E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl',
-                                                        'full_name'   => 'centos/root',
-                                                        'path'        => '/dev/centos/root',
-                                                        'dm_path'     => '/dev/mapper/centos-root',
-                                                        'attr'        => '-wi-ao----',
-                                                        'layout'      => 'linear',
-                                                        'role'        => 'public',
-                                                        'active'      => 'active',
-                                                        'size'        => '18.46g',
-                                                        'permissions' => 'writeable',
+                                                        'lv_uuid'        => 'E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl',
+                                                        'lv_full_name'   => 'centos/root',
+                                                        'lv_path'        => '/dev/centos/root',
+                                                        'lv_dm_path'     => '/dev/mapper/centos-root',
+                                                        'lv_attr'        => '-wi-ao----',
+                                                        'lv_layout'      => 'linear',
+                                                        'lv_role'        => 'public',
+                                                        'lv_active'      => 'active',
+                                                        'lv_size'        => '18.46g',
+                                                        'lv_permissions' => 'writeable',
                                                       },
                                                       'swap' => {
-                                                        'uuid'        => 'buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA',
-                                                        'full_name'   => 'centos/swap',
-                                                        'path'        => '/dev/centos/swap',
-                                                        'dm_path'     => '/dev/mapper/centos-swap',
-                                                        'attr'        => '-wi-ao----',
-                                                        'layout'      => 'linear',
-                                                        'role'        => 'public',
-                                                        'active'      => 'active',
-                                                        'size'        => '1.00g',
-                                                        'permissions' => 'writeable',
+                                                        'lv_uuid'        => 'buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA',
+                                                        'lv_full_name'   => 'centos/swap',
+                                                        'lv_path'        => '/dev/centos/swap',
+                                                        'lv_dm_path'     => '/dev/mapper/centos-swap',
+                                                        'lv_attr'        => '-wi-ao----',
+                                                        'lv_layout'      => 'linear',
+                                                        'lv_role'        => 'public',
+                                                        'lv_active'      => 'active',
+                                                        'lv_size'        => '1.00g',
+                                                        'lv_permissions' => 'writeable',
                                                       })
       end
     end

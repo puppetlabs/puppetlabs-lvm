@@ -63,8 +63,8 @@ describe 'lvm_vgs facts' do
       it 'lists vgs' do
         Facter::Core::Execution.stubs(:execute) # All other calls
         Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o name --noheadings 2>/dev/null', timeout: 30).returns("vg0\nvg1")
-        Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o pv_name vg0 2>/dev/null', timeout: 30).returns("  PV\n  /dev/pv3\n  /dev/pv2")
-        Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o pv_name vg1 2>/dev/null', timeout: 30).returns("  PV\n  /dev/pv0")
+        Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o pv_name --noheadings vg0 2>/dev/null', timeout: 30).returns("  /dev/pv3\n  /dev/pv2")
+        Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o pv_name --noheadings vg1 2>/dev/null', timeout: 30).returns('  /dev/pv0')
         Facter.fact(:lvm_support).expects(:value).at_least(1).returns(true)
         Facter.value(:lvm_vgs).should == 2
         Facter.value(:lvm_vg_0).should == 'vg0'

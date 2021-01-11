@@ -7,7 +7,7 @@ describe 'lvm_support fact' do
   end
 
   context 'when not on Linux' do
-    it 'is set to not' do
+    it 'is set to nil' do
       Facter.fact(:kernel).expects(:value).at_least(1).returns('SunOs')
       Facter.value(:lvm_support).should be_nil
     end

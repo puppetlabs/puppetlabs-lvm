@@ -2,6 +2,7 @@ function lvm::bytes_to_size (
   Numeric $size,
 ) {
   $units = {
+    'b' => 1,
     'k' => 1024,
     'm' => 1048576,
     'g' => 1073741824,
@@ -18,7 +19,7 @@ function lvm::bytes_to_size (
   # Use the last unit
   $largest_unit = $remaining_units.keys[-1]
 
-  $value = ($size / $units[$largest_unit])
+  $value = (Float($size) / $units[$largest_unit])
 
   # # Return the string
   "${value}${largest_unit}"

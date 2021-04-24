@@ -10,7 +10,7 @@ function lvm::size_to_bytes (
     'E' => 1.1529215e18,
   }
   # Check if the size is valid and if so, extract the units
-  if $size =~ /^([0-9]+(\.[0-9]+)?)([KMGTPEkmgtpe])/ {
+  if $size =~ /^<?([0-9]+(\.[0-9]+)?)([KMGTPEkmgtpe])/ {
     $unit   = String($3, '%u') # Store the units in uppercase
     $number = Float($1)       # Store the number as a float
 

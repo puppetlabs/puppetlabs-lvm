@@ -20,3 +20,4 @@ function lvm::size_to_bytes (
     fail("${size} is not a valid LVM size")
   }
 }
+

@@ -148,7 +148,7 @@ describe Puppet::Type.type(:logical_volume) do
     end
     it 'supports only valid values' do
       ['1', '1%', '1%vg', '1%PVS', '1%FrEe', '1%Origin'].each do |extent|
-        with(valid_params.merge(extents: extent))[:extents].should == extent
+        with(valid_params.merge(extents: extent))[:extents].should eq(extent)
       end
       ['foo', '1%bar', '1(', '1v', '1g', '1f'].each do |extent|
         specifying(valid_params.merge(extents: extent)).should raise_error(Puppet::Error)

@@ -4,16 +4,16 @@ require 'securerandom'
 
 test_name "FM-4614 - C96579 - create logical volume with property 'mirrorlog'"
 
-#initilize
+# initilize
 pv = ['/dev/sdc', '/dev/sdd']
-vg = "VolumeGroup_" + SecureRandom.hex(2)
-lv = ["LogicalVolume_" + SecureRandom.hex(3), \
-      "LogicalVolume_" + SecureRandom.hex(3), \
-      "LogicalVolume_" + SecureRandom.hex(3)]
+vg = 'VolumeGroup_' + SecureRandom.hex(2)
+lv = ['LogicalVolume_' + SecureRandom.hex(3), \
+      'LogicalVolume_' + SecureRandom.hex(3), \
+      'LogicalVolume_' + SecureRandom.hex(3)]
 
 # Teardown
 teardown do
-  confine_block(:except, :roles => %w{master dashboard database}) do
+  confine_block(:except, roles: ['master', 'dashboard', 'database']) do
     agents.each do |agent|
       remove_all(agent, pv, vg, lv)
     end
@@ -52,14 +52,14 @@ logical_volume{'#{lv[2]}':
 MANIFEST
 
 step 'Inject "site.pp" on Master'
-site_pp = create_site_pp(master, :manifest => pp)
+site_pp = create_site_pp(master, manifest: pp)
 inject_site_pp(master, get_site_pp_path(master), site_pp)
 
 step 'Run Puppet Agent to create logical volumes'
-confine_block(:except, :roles => %w{master dashboard database}) do
+confine_block(:except, roles: ['master', 'dashboard', 'database']) do
   agents.each do |agent|
-    on(agent, puppet('agent -t --environment production'), :acceptable_exit_codes => [0,2]) do |result|
-      assert_no_match(/Error:/, result.stderr, 'Unexpected error was detected!')
+    on(agent, puppet('agent -t --environment production'), acceptable_exit_codes: [0, 2]) do |result|
+      assert_no_match(%r{Error:}, result.stderr, 'Unexpected error was detected!')
     end
 
     step "Verify the logical volumes  are successfuly created: #{lv}"
@@ -69,17 +69,17 @@ confine_block(:except, :roles => %w{master dashboard database}) do
 
     step 'verify mirrorlog core (stored in mem):'
     on(agent, "lvs -a -o mirror_log /dev/#{vg}/#{lv[0]}") do |result|
-      assert_match(/\s+/, result.stdout, "Unexpected error was detected")
+      assert_match(%r{\s+}, result.stdout, 'Unexpected error was detected')
     end
 
     step 'verify mirrorlog disk (stored in disk):'
     on(agent, "lvs -a -o mirror_log /dev/#{vg}/#{lv[1]}") do |result|
-      assert_match(/#{lv}_mlog/, result.stdout, "Unexpected error was detected")
+      assert_match(%r{#{lv}_mlog}, result.stdout, 'Unexpected error was detected')
     end
 
     step 'verify mirrorlog mirrored (stored in disk):'
     on(agent, "lvs -a -o mirror_log /dev/#{vg}/#{lv[2]}") do |result|
-      assert_match(/#{lv}_mlog/, result.stdout, "Unexpected error was detected")
+      assert_match(%r{#{lv}_mlog}, result.stdout, 'Unexpected error was detected')
     end
   end
 end

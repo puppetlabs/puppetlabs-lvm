@@ -1,7 +1,7 @@
 # lvm_support: true/nil
 #   Whether there is LVM support (based on the presence of the "vgs" command)
 Facter.add('lvm_support') do
-  confine :kernel => :linux
+  confine kernel: :linux
 
   setcode do
     vgdisplay = Facter::Util::Resolution.which('vgs')
@@ -13,8 +13,12 @@ end
 #   Number of VGs
 vg_list = []
 Facter.add('lvm_vgs') do
-  confine :lvm_support => true
-  vgs = Facter::Util::Resolution.exec('vgs -o name --noheadings 2>/dev/null')
+  confine lvm_support: true
+
+  if Facter.value(:lvm_support)
+    vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', timeout: 30)
+  end
+
   if vgs.nil?
     setcode { 0 }
   else
@@ -29,10 +33,10 @@ vg_list.each_with_index do |vg, i|
   Facter.add("lvm_vg_#{i}") { setcode { vg } }
   Facter.add("lvm_vg_#{vg}_pvs") do
     setcode do
-      pvs = Facter::Util::Resolution.exec("vgs -o pv_name #{vg} 2>/dev/null")
+      pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
       res = nil
       unless pvs.nil?
-        res = pvs.split("\n").select{|l| l =~ /^\s+\// }.collect(&:strip).sort.join(',')
+        res = pvs.split("\n").select { |l| l =~ %r{^\s+/} }.map(&:strip).sort.join(',')
       end
       res
     end
@@ -43,8 +47,11 @@ end
 #   Number of PVs
 pv_list = []
 Facter.add('lvm_pvs') do
-  confine :lvm_support => true
-  pvs = Facter::Util::Resolution.exec('pvs -o name --noheadings 2>/dev/null')
+  confine lvm_support: true
+  if Facter.value(:lvm_support)
+    pvs = Facter::Core::Execution.execute('pvs -o name --noheadings 2>/dev/null', timeout: 30)
+  end
+
   if pvs.nil?
     setcode { 0 }
   else

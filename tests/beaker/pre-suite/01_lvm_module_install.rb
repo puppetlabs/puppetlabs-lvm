@@ -5,8 +5,8 @@ on(master, puppet('module install puppetlabs-stdlib'))
 
 step 'Install LVM Module'
 proj_root = File.expand_path(File.join(File.dirname(__FILE__), '../../../'))
-staging = { :module_name => 'puppetlabs-lvm' }
-local = { :module_name => 'lvm', :source => proj_root, :target_module_path => master['distmoduledir'] }
+staging = { module_name: 'puppetlabs-lvm' }
+local = { module_name: 'lvm', source: proj_root, target_module_path: master['distmoduledir'] }
 
 # Check to see if module version is specified.
 staging[:version] = ENV['MODULE_VERSION'] if ENV['MODULE_VERSION']

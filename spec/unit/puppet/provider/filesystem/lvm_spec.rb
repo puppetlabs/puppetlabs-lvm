@@ -3,13 +3,13 @@ require 'spec_helper'
 provider_class = Puppet::Type.type(:filesystem).provider(:lvm)
 
 describe provider_class do
-  before do
-    @resource = stub("resource")
+  before(:each) do
+    @resource = stub('resource')
     @provider = provider_class.new(@resource)
   end
 
   describe 'when creating' do
-    it "should execute the correct filesystem command" do
+    it 'executes the correct filesystem command' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('ext4')
       @resource.expects(:[]).with(:options)
@@ -17,7 +17,7 @@ describe provider_class do
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
-    it "should include the supplied filesystem options" do
+    it 'includes the supplied filesystem options' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('ext4')
       @resource.expects(:[]).with(:options).returns('-b 4096 -E stride=32,stripe-width=64').twice
@@ -25,7 +25,7 @@ describe provider_class do
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
-    it "should include -q for reiserfs" do
+    it 'includes -q for reiserfs' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('reiserfs')
       @resource.expects(:[]).with(:options).returns('-b 4096 -E stride=32,stripe-width=64').twice
@@ -33,15 +33,16 @@ describe provider_class do
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
-    it "should call mkswap for filesystem type swap" do
+    it 'calls mkswap for filesystem type swap' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('swap')
       @resource.expects(:[]).with(:options)
       @provider.expects(:execute).with(['mkswap', '/dev/myvg/mylv'])
       @resource.expects(:[]).with(:mkfs_cmd)
+      @provider.expects(:execute).with(['swapon', '/dev/myvg/mylv'])
       @provider.create
     end
-    it "should create an ext4 journal correctly" do
+    it 'creates an ext4 journal correctly' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('jbd')
       @resource.expects(:[]).with(:options).returns('-O journal_dev').twice
@@ -50,5 +51,4 @@ describe provider_class do
       @provider.create
     end
   end
-
 end

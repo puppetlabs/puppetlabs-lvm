@@ -2,6 +2,12 @@
 
 Provides Logical Resource Management (LVM) features for Puppet.
 
+
+> This module is supported by the Puppet community. We expect it to be of the same high
+> quality as our own Supported modules, but it does not qualify for Puppet Support plans.
+> See the `CODEOWNERS` file for usernames of the maintainers.
+
+
 ## Usage Examples
 
 This module provides four resource types (and associated providers):
@@ -142,12 +148,12 @@ If you need a more complex configuration, you'll need to build the
 resources out yourself.
 
 ## Optional Values
-  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check 
+  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check
   to see if "myvg" exists.  If "myvg" does exist then they will not modify
   the physical volume or volume_group.  This is useful if your environment
   is built with certain disks but they change while the server grows, shrinks
   or moves.
- 
+
   Example:
 ```puppet
     physical_volume { "/dev/hdc":

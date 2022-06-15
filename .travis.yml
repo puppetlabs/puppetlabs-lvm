@@ -38,6 +38,10 @@ matrix:
       rvm: 2.5.3
       stage: spec
     -
+      env: FACTER_GEM_VERSION='~> 3.11.0' PUPPET_GEM_VERSION="~> 6.0" CHECK=parallel_spec
+      rvm: 2.5.3
+      stage: spec
+    -
       env: DEPLOY_TO_FORGE=yes
       stage: deploy
 branches:

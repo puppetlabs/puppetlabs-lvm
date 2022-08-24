@@ -4,7 +4,7 @@
 .rubocop.yml:
   include_todos: true
 .travis.yml:
-  simplecov: true
+  delete: true
 appveyor.yml:
   delete: true
 Gemfile:

@@ -49,7 +49,7 @@
       "version_requirement": ">= 4.6.1 < 7.0.0"
     }
   ],
-  "pdk-version": "1.16.0",
-  "template-url": "pdk-default#1.16.0",
-  "template-ref": "tags/1.16.0-0-gaf44904"
+  "pdk-version": "2.5.0",
+  "template-url": "pdk-default#2.5.0",
+  "template-ref": "tags/2.5.0-0-g369d483"
 }

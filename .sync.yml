@@ -20,3 +20,8 @@ Rakefile:
 spec/spec_helper.rb:
   mock_with: ':mocha'
   coverage_report: true
+.github/workflows/auto_release.yml:
+  unmanaged: false
+.github/workflows/release.yml:
+  unmanaged: false
+

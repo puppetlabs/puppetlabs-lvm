@@ -61,7 +61,6 @@ define lvm::volume (
   $extents = undef,
   $initial_size = undef
 ) {
-
   if ($name == undef) {
     fail("lvm::volume \$name can't be undefined")
   }

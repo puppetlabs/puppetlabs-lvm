@@ -20,9 +20,12 @@ Facter.add(:volume_groups) do
       'vg_allocation_policy',
       'vg_size',
       'vg_free',
+      'vg_extent_size',
+      'vg_extent_count',
+      'vg_free_count',
     ]
 
-    output = Facter::Core::Execution.exec("vgs -o #{columns.join(',')}  --noheading --nosuffix")
+    output = Facter::Core::Execution.exec("vgs -o #{columns.join(',')}  --noheading --nosuffix --units m")
     Puppet_X::LVM::Output.parse('vg_name', columns, output)
   end
 end

@@ -14,5 +14,4 @@ define lvm::physical_volume (
     force     => $force,
     unless_vg => $unless_vg,
   }
-
 }

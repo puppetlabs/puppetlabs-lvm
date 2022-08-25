@@ -133,7 +133,6 @@ define lvm::volume (
           require => Logical_volume[$name],
         }
       }
-
     }
     default: {
       fail ( sprintf('%s%s', 'puppet-lvm::volume: ensure parameter can only ',

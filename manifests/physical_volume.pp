@@ -12,7 +12,7 @@ define lvm::physical_volume (
   physical_volume { $name:
     ensure    => $ensure,
     force     => $force,
-    unless_vg => $unless_vg
+    unless_vg => $unless_vg,
   }
 
 }

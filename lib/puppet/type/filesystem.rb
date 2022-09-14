@@ -148,4 +148,10 @@ Puppet::Type.newtype(:filesystem) do
       @parameters[:name].value
     end
   end
+
+  newparam(:force) do
+    desc 'Force the FS type even if the FS is mounted.'
+    defaultto :false
+    newvalues(:true, :false)
+  end
 end

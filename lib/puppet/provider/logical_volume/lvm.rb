@@ -118,6 +118,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     else
       args << @resource[:volume_group]
     end
+
+    if @resource[:yes]
+      args.push('--yes')
+    end
     lvcreate(*args)
   end
 
@@ -183,7 +187,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     if resizeable
-      lvextend('-L', new_size, path) || raise("Cannot extend to size #{new_size} because lvextend failed.")
+      args = []
+      if @resource[:yes]
+        args.push('--yes')
+      end
+      lvextend('-L', new_size, path, *args) || raise("Cannot extend to size #{new_size} because lvextend failed.")
 
       unless @resource[:resize_fs] == :false || @resource[:resize_fs] == false || @resource[:resize_fs] == 'false'
         begin

@@ -180,6 +180,11 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
+  newparam(:yes) do
+    desc "Do not prompt for confirmation interactively but always assume the answer yes."
+    defaultto false
+  end
+
   autorequire(:volume_group) do
     @parameters[:volume_group].value
   end

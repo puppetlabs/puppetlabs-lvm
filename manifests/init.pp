@@ -5,10 +5,9 @@ class lvm (
   Boolean $manage_pkg                                              = false,
   Hash $volume_groups                                              = {},
 ) {
-
   if $manage_pkg {
     package { 'lvm2':
-      ensure   => $package_ensure
+      ensure   => $package_ensure,
     }
   }
 

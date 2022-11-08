@@ -83,7 +83,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
     end
   end
 
-    private
+  private
 
   def reduce_with(volume)
     vgreduce(@resource[:name], volume)

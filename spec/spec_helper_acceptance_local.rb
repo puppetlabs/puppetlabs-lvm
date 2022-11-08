@@ -86,7 +86,7 @@ def remove_all(pv = nil, vg = nil, lv = nil, aix = false)
           run_shell("lvremove /dev/#{vg}/#{logical_volume} --force", expect_failures: true)
         end
       else
-        # note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
+        # NOTE: in some test cases, for example, the test case 'create_vg_property_logical_volume'
         # the logical volume must be unmount before being able to delete it
         run_shell("umount /dev/#{vg}/#{lv}", expect_failures: true)
         run_shell("lvremove /dev/#{vg}/#{lv} --force", expect_failures: true)
@@ -122,12 +122,12 @@ RSpec.configure do |c|
     machine = ENV['TARGET_HOST']
     command = "curl -H X-AUTH-TOKEN:#{auth_tok} -X POST --url vcloud.delivery.puppetlabs.net/api/v1/vm/#{machine}/disk/1"
     fdisk = run_shell('fdisk -l').stdout
-    if fdisk !~ %r{sdb}
+    unless %r{sdb}.match?(fdisk)
       stdout, _stderr, _status = Open3.capture3(command)
       sleep(30)
       run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')
     end
-    if fdisk !~ %r{sdc}
+    unless %r{sdc}.match?(fdisk)
       stdout, _stderr, _status = Open3.capture3(command)
       sleep(30)
       run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')

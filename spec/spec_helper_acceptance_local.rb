@@ -139,6 +139,9 @@ RSpec.configure do |c|
     pp = <<-MANIFEST
       package { 'lvm2':
         ensure => 'latest',
+      }  
+      package { 'util-linux':
+        ensure => 'latest',
       }
     MANIFEST
     LitmusHelper.instance.apply_manifest(pp)

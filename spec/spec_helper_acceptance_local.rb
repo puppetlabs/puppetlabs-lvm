@@ -1,4 +1,8 @@
 require 'pry'
+require 'singleton'
+require 'serverspec'
+require 'puppetlabs_spec_helper/module_spec_helper'
+include PuppetLitmus
 # Verify if a physical volume, volume group, logical volume, or filesystem resource type is created
 #
 # ==== Attributes
@@ -132,5 +136,11 @@ RSpec.configure do |c|
       sleep(30)
       run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')
     end
+    pp = <<-MANIFEST
+      package { 'lvm2':
+        ensure => 'latest',
+      }
+    MANIFEST
+    LitmusHelper.instance.apply_manifest(pp)
   end
 end

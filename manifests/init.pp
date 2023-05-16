@@ -1,4 +1,9 @@
 # == Class: lvm
+# @param package_ensure ensures package is installed
+
+# @param manage_pkg Boolean (true, false)
+
+# @param volume_groups
 #
 class lvm (
   Enum['installed', 'present', 'latest', 'absent'] $package_ensure = 'installed',

@@ -1,25 +1,38 @@
 # == Define: lvm::volume
 #
-# This defined type will create a <code>logical_volume</code> with the name of
-# the define and ensure a <code>physical_volume</code>,
-# <code>volume_group</code>, and <code>filesystem</code> resource have been
+# This defined type will create a logical_volume with the name of
+# the define and ensure a physical_volume,
+# volume_group, and filesystem resource have been
 # created on the block device supplied.
 #
 # === Parameters
 #
-# [*ensure*] Can only be set to <code>cleaned</code>, <code>absent</code> or
-# <code>present</code>. A value of <code>present</code> will ensure that the
-# <code>physical_volume</code>, <code>volume_group</code>,
-# <code>logical_volume</code>, and <code>filesystem</code> resources are
-# present for the volume. A value of <code>cleaned</code> will ensure that all
-# of the resources are <code>absent</code> <b>Warning this has a high potential
-# for unexpected harm</b> use it with caution. A value of <code>absent</code>
-# will remove only the <code>logical_volume</code> resource from the system.
-# [*pv*] The block device to ensure a <code>physical_volume</code> has been
-# created on.  [*vg*] The <code>volume_group</code> to ensure is created on the
-# <code>physical_volume</code> provided by the <code>pv</code> parameter.
-# [*fstype*] The type of <code>filesystem</code> to create on the logical
-# volume.  [*size*] The size the <code>logical_voluem</code> should be.
+# @param ensure Can only be set to cleaned, absent or present. A value of present will ensure that the
+# physical_volume, volume_group,
+# logical_volume, and filesystem resources are
+# present for the volume. A value of cleaned will ensure that all
+# of the resources are absent Warning this has a high potential
+# for unexpected harm use it with caution. A value of absent
+# will remove only the logical_volume resource from the system.
+# The block device to ensure a physical_volume has been
+# created on The volume_group to ensure is created on the
+# physical_volume provided by the pv parameter.
+# 
+
+# @param fstype The type of filesystem to create on the logical
+# volume.
+
+# @param pv path to physcial volume
+
+# @param vg value of volume group
+
+# @param size The size the logical_voluem should be.
+
+# @param extents The number of logical extents to allocate for the new logical volume. 
+# Set to undef to use all available space
+
+# @param initial_size The initial size of the logical volume. 
+# This will only apply to newly-created volumes
 #
 # === Examples
 #
@@ -53,13 +66,13 @@
 # with puppetlabs/lvm. If not, see http://www.gnu.org/licenses/.
 #
 define lvm::volume (
-  $ensure,
-  $pv,
-  $vg,
-  $fstype  = undef,
-  $size    = undef,
-  $extents = undef,
-  $initial_size = undef
+  Enum['presnet', 'absent', 'cleaned'] $ensure,
+  Stdlib::Absolutepath $pv,
+  Stdlib::Absolutepath $vg,
+  Optional[String[1]] $fstype                     = undef,
+  Optional[String[1]] $size                       = undef,
+  Optional[Variant[String[1], Integert]] $extents = undef,
+  Optional[String[1]] $initial_size               = undef
 ) {
   if ($name == undef) {
     fail("lvm::volume \$name can't be undefined")

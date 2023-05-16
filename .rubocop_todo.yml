@@ -6,15 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.Layout/AccessModifierIndentation
 
-# Offense count: 8
-# This cop supports safe autocorrection (--autocorrect).
-Layout/EmptyLineAfterGuardClause:
-  Exclude:
-    - 'spec/lib/helpers.rb'
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'tests/beaker/lib/lvm_helper.rb'
-    - 'tests/beaker/pre-suite/02_add_extra_hdd.rb'
-
 # Offense count: 87
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowMultipleStyles, EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle.

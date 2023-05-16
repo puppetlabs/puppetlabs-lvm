@@ -27,12 +27,14 @@ module Helpers
   # Sets up an expection that a resource for +type+ is not created
   def should_not_create(type)
     raise "Invalid type #{type}" unless TYPES[type]
+
     Puppet::Type.type(TYPES[type]).expects(:new).never
   end
 
   # Sets up an expection that a resource for +type+ is created
   def should_create(type)
     raise "Invalid type #{type}" unless TYPES[type]
+
     Puppet::Type.type(TYPES[type]).expects(:new).with { |args| yield(args) }
   end
 
@@ -48,6 +50,7 @@ module Helpers
     unless defined?(@type)
       raise ArgumentError, '@type must be set'
     end
+
     provider = @type.provider(:lvm)
     @type.stubs(defaultprovider: provider)
   end

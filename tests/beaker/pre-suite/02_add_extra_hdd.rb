@@ -8,6 +8,7 @@ fail_test 'AUTH_TOKEN must be set' unless auth_tok
 confine_block(:except, roles: ['master', 'dashboard', 'database']) do
   agents.each do |agent|
     next if agent['platform'] =~ %r{windows} && agent['platform'] =~ %r{aix}
+
     step 'adding an extra disk: /dev/sdc:'
     on(agent, "curl -X POST -H X-AUTH-TOKEN:#{auth_tok} --url vcloud/api/v1/vm/#{agent[:vmhostname]}/disk/1")
     sleep(30)

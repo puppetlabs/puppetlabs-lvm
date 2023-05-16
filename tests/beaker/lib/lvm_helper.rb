@@ -28,6 +28,7 @@ def verify_if_created?(agent, resource_type, resource_name, vg = nil, properties
     end
   when 'logical_volume'
     raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
+
     on(agent, "lvdisplay /dev/#{vg}/#{resource_name}") do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
       if properties
@@ -44,6 +45,7 @@ def verify_if_created?(agent, resource_type, resource_name, vg = nil, properties
     end
   when 'aix_logical_volume'
     raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
+
     on(agent, "lslv #{resource_name}") do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
       if properties

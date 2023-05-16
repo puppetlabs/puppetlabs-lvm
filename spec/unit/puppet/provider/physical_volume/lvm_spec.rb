@@ -8,11 +8,11 @@ describe provider_class do
     @provider = provider_class.new(@resource)
   end
 
-  pvs_output = <<-EOS
+  pvs_output = <<-OUTPUT
   PV         VG     Fmt  Attr PSize  PFree
   /dev/sda2  centos lvm2 a--  19.51g    0
   /dev/sda3  centos lvm2 a--  10.11g    0
-  EOS
+  OUTPUT
 
   before :each do
     @provider.class.stubs(:pvs).returns(pvs_output)

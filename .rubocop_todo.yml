@@ -99,11 +99,11 @@ Naming/FileName:
 # Offense count: 3
 # Configuration parameters: ForbiddenDelimiters.
 # ForbiddenDelimiters: (?i-mx:(^|\s)(EO[A-Z]{1}|END)(\s|$))
-Naming/HeredocDelimiterNaming:
-  Exclude:
-    - 'spec/unit/puppet/provider/logical_volume/lvm_spec.rb'
-    - 'spec/unit/puppet/provider/physical_volume/lvm_spec.rb'
-    - 'spec/unit/puppet/provider/volume_group/lvm_spec.rb'
+# Naming/HeredocDelimiterNaming:
+#   Exclude:
+#     - 'spec/unit/puppet/provider/logical_volume/lvm_spec.rb'
+#     - 'spec/unit/puppet/provider/physical_volume/lvm_spec.rb'
+#     - 'spec/unit/puppet/provider/volume_group/lvm_spec.rb'
 
 # Offense count: 10
 # Configuration parameters: MinNameLength, AllowNamesEndingInNumbers, AllowedNames, ForbiddenNames.

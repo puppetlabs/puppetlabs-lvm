@@ -8,10 +8,10 @@ describe provider_class do
     @provider = provider_class.new(@resource)
   end
 
-  vgs_output = <<-EOS
+  vgs_output = <<-OUTPUT
   VG       #PV #LV #SN Attr   VSize  VFree
   VolGroup   1   2   0 wz--n- 19.51g    0
-  EOS
+  OUTPUT
 
   describe 'self.instances' do
     before :each do

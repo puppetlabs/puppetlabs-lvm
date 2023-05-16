@@ -8,13 +8,13 @@ describe provider_class do
     @provider = provider_class.new(@resource)
   end
 
-  lvs_output = <<-EOS
+  lvs_output = <<-OUTPUT
   LV      VG         Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
   lv_root VolGroup   -wi-ao----  18.54g
   lv_swap VolGroup   -wi-ao---- 992.00m
   data    data       -wi-ao---- 992.00m
   j1      vg_jenkins -wi-a-----   1.00g
-  EOS
+  OUTPUT
 
   describe 'self.instances' do
     before :each do

@@ -243,10 +243,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
           elsif blkid_type =~ %r{\bTYPE=\"(swap)\"}
             (swapoff(path) && mkswap(path) && swapon(path)) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
           end
-        rescue Puppet::ExecutionFailure => detail
+        rescue Puppet::ExecutionFailure => e
           ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
-          if detail.message =~ %r{ returned 2:} # rubocop:disable Metrics/BlockNesting
-            Puppet.debug(detail.message)
+          if e.message =~ %r{ returned 2:} # rubocop:disable Metrics/BlockNesting
+            Puppet.debug(e.message)
           end
         end
       end

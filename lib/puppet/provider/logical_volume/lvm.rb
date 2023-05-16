@@ -241,7 +241,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             mount_point = lsblk('-o', 'MOUNTPOINT', '-nr', path).chomp
             xfs_growfs(mount_point) || raise("Cannot resize filesystem to size #{new_size} because xfs_growfs failed.")
           elsif blkid_type =~ %r{\bTYPE=\"(swap)\"}
-            swapoff(path) && mkswap(path) && swapon(path) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
+            (swapoff(path) && mkswap(path) && swapon(path)) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
           end
         rescue Puppet::ExecutionFailure => detail
           ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.

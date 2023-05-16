@@ -5,11 +5,6 @@
 # one by one as the offenses are removed from the code base.
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.Layout/AccessModifierIndentation
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Lint/AmbiguousOperatorPrecedence:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).

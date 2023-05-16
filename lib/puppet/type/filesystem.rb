@@ -142,7 +142,7 @@ Puppet::Type.newtype(:filesystem) do
   end
 
   autorequire(:logical_volume) do
-    if device = @parameters[:device]
+    if (device = @parameters[:device])
       device.value
     else
       @parameters[:name].value

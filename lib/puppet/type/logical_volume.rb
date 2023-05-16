@@ -204,7 +204,7 @@ Puppet::Type.newtype(:logical_volume) do
     desc 'An optimization in lvcreate, at least on Linux.'
   end
   newparam(:region_size) do
-    desc 'A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are in sync. '\
+    desc 'A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are in sync. ' \
       +'CAN NOT BE CHANGED on already mirrored volume. Take your mirror size in terabytes and round up that number to the next power of 2, ' \
       +'using that number as the -R argument.'
     validate do |value|

@@ -102,13 +102,6 @@ Naming/FileName:
 Naming/VariableNumber:
   Exclude:
     - 'spec/unit/facter/lvm_support_spec.rb'
-# Offense count: 5
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Performance/StringInclude:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'tests/beaker/pre-suite/02_add_extra_hdd.rb'
 
 # Offense count: 4
 # This cop supports unsafe autocorrection (--autocorrect-all).

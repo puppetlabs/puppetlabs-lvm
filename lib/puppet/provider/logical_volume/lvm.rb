@@ -245,7 +245,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
           end
         rescue Puppet::ExecutionFailure => e
           ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
-          if %r{ returned 2:}.match?(e.message) # rubocop:disable Metrics/BlockNesting
+          if e.message.include?(' returned 2:') # rubocop:disable Metrics/BlockNesting
             Puppet.debug(e.message)
           end
         end

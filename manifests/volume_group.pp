@@ -7,8 +7,7 @@ define lvm::volume_group (
   Hash $logical_volumes             = {},
   Boolean $followsymlinks           = false,
 ) {
-
-  if is_hash($physical_volumes) {
+  if $physical_volumes.is_a(Hash) {
     create_resources(
       'lvm::physical_volume',
       $physical_volumes,
@@ -22,7 +21,6 @@ define lvm::volume_group (
       ensure => $ensure,
     }
   }
-
 
   volume_group { $name:
     ensure           => $ensure,

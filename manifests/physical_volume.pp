@@ -5,7 +5,6 @@ define lvm::physical_volume (
   $force      = false,
   $unless_vg  = undef,
 ) {
-
   if ($name == undef) {
     fail("lvm::physical_volume \$name can't be undefined")
   }
@@ -13,7 +12,6 @@ define lvm::physical_volume (
   physical_volume { $name:
     ensure    => $ensure,
     force     => $force,
-    unless_vg => $unless_vg
+    unless_vg => $unless_vg,
   }
-
 }

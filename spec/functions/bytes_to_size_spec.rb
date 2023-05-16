@@ -11,7 +11,7 @@ describe 'lvm::bytes_to_size' do
   end
 
   context 'with lower case parameters' do
-    it 'returns the correct values' do
+    it 'returns the correct values' do # rubocop:disable RSpec/MultipleExpectations
       is_expected.to run.with_params(1024).and_return('1k')
       is_expected.to run.with_params(1_048_576).and_return('1m')
       is_expected.to run.with_params(1_073_741_824).and_return('1g')

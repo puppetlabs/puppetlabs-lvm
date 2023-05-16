@@ -43,18 +43,18 @@ describe 'volume_groups fact' do
         Facter::Core::Execution.expects(:exec).at_least(1).returns(vgs_output)
         Facter.value(:volume_groups).should include('centos' => {
                                                       'uuid' => 'ZcFkEG-217a-nnc6-PvWx-oXou-7THt-XR6eci',
-                                                      'attr'              => 'wz--n-', 'permissions' => 'writeable',
+                                                      'attr' => 'wz--n-', 'permissions' => 'writeable',
                                                       'allocation_policy' => 'normal',
-                                                      'size'              => '19.51g',
-                                                      'free'              => '44.00m'
+                                                      'size' => '19.51g',
+                                                      'free' => '44.00m'
                                                     },
                                                     'tasks' => {
                                                       'uuid' => 'tMqdQC-ukEx-bEft-bLk8-WoM1-jX0a-0p1rri',
-                                                      'attr'              => 'wz--n-',
-                                                      'permissions'       => 'writeable',
+                                                      'attr' => 'wz--n-',
+                                                      'permissions' => 'writeable',
                                                       'allocation_policy' => 'normal',
-                                                      'size'              => '3.99g',
-                                                      'free'              => '2.82g',
+                                                      'size' => '3.99g',
+                                                      'free' => '2.82g',
                                                     })
       end
     end

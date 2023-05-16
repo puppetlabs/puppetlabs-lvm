@@ -11,15 +11,15 @@ describe 'lvm', type: :class do
         volume_groups: {
           'myvg' => {
             'physical_volumes' => ['/dev/sda2', '/dev/sda3'],
-            'logical_volumes'  => {
-              'opt'    => { 'size' => '20G' },
-              'tmp'    => { 'size' => '1G' },
-              'usr'    => { 'size' => '3G' },
-              'var'    => { 'size' => '15G' },
-              'home'   => { 'size' => '5G' },
+            'logical_volumes' => {
+              'opt' => { 'size' => '20G' },
+              'tmp' => { 'size' => '1G' },
+              'usr' => { 'size' => '3G' },
+              'var' => { 'size' => '15G' },
+              'home' => { 'size' => '5G' },
               'backup' => {
-                'size'              => '5G',
-                'mountpath'         => '/var/backups',
+                'size' => '5G',
+                'mountpath' => '/var/backups',
                 'mountpath_require' => false,
               },
             },
@@ -56,11 +56,11 @@ describe 'lvm', type: :class do
         volume_groups: {
           'myvg' => {
             'physical_volumes' => ['/dev/sda2'],
-            'logical_volumes'  => {
+            'logical_volumes' => {
               'not_mounted' => {
-                'size'              => '5G',
-                'mounted'           => false,
-                'mountpath'         => '/mnt/not_mounted',
+                'size' => '5G',
+                'mounted' => false,
+                'mountpath' => '/mnt/not_mounted',
                 'mountpath_require' => false,
               },
             },
@@ -80,14 +80,14 @@ describe 'lvm', type: :class do
         volume_groups: {
           'myvg' => {
             'physical_volumes' => ['/dev/sda2', '/dev/sda3'],
-            'logical_volumes'  => {
+            'logical_volumes' => {
               'swap' => {
-                'size'    => '20G',
+                'size' => '20G',
                 'fs_type' => 'swap',
               },
               'swap2' => {
-                'ensure'  => 'absent',
-                'size'    => '20G',
+                'ensure' => 'absent',
+                'size' => '20G',
                 'fs_type' => 'swap',
               },
             },

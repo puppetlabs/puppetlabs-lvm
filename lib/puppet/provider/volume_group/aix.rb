@@ -4,7 +4,7 @@ Puppet::Type.type(:volume_group).provide :aix do
   # confine :operatingsystem => AIX
 
   commands mkvg: 'mkvg',
-           #:vgremove => 'vgremove',
+           # :vgremove => 'vgremove',
            lsvg: 'lsvg',
            extendvg: 'extendvg',
            reducevg: 'reducevg',

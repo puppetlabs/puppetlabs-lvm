@@ -95,17 +95,6 @@ Naming/FileName:
   Exclude:
     - 'tests/beaker/tests/create_filesystem_non-existing-format.rb'
 
-# Offense count: 1
-# Configuration parameters: NamePrefix, ForbiddenPrefixes, AllowedMethods, MethodDefinitionMacros.
-# NamePrefix: is_, has_, have_
-# ForbiddenPrefixes: is_, has_, have_
-# AllowedMethods: is_a?
-# MethodDefinitionMacros: define_method, define_singleton_method
-Naming/PredicateName:
-  Exclude:
-    - 'spec/**/*'
-    - 'tests/beaker/lib/lvm_helper.rb'
-
 # Offense count: 5
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: PreferredName.
@@ -217,10 +206,6 @@ RSpec/InstanceVariable:
 RSpec/MultipleDescribes:
   Exclude:
     - 'spec/unit/facter/lvm_support_spec.rb'
-
-# Offense count: 2
-RSpec/MultipleExpectations:
-  Max: 8
 
 # Offense count: 6
 # Configuration parameters: AllowedGroups.

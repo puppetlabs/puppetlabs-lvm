@@ -53,6 +53,6 @@ confine_block(:except, roles: ['master', 'dashboard', 'database']) do
     end
 
     step "Verify the logical volume has correct format type: #{lv}"
-    is_correct_format?(agent, vg, lv, 'ext3')
+    correct_format?(agent, vg, lv, 'ext3')
   end
 end

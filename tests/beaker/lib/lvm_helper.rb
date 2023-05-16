@@ -71,8 +71,8 @@ end
 # assert_match failure message
 # ==== Examples
 #
-# is_correct_format?(agent, VolumeGroup_1234, LogicalVolume_a2b3, ext3)
-def is_correct_format?(agent, volume_group, logical_volume, format_type)
+# correct_format?(agent, VolumeGroup_1234, LogicalVolume_a2b3, ext3)
+def correct_format?(agent, volume_group, logical_volume, format_type)
   on(agent, "file -sL /dev/#{volume_group}/#{logical_volume}") do |result|
     assert_match(%r{#{format_type}}, result.stdout, 'Unexpected error was detected')
   end

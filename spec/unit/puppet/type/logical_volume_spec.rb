@@ -71,22 +71,22 @@ describe Puppet::Type.type(:logical_volume) do
     end
     it 'is insync if current size is greater but size_is_minsize is true' do
       with(valid_params.merge(size_is_minsize: :true)) do |resource|
-        expect(resource.parameters[:size].insync?('10g')).to eq(true)
+        expect(resource.parameters[:size].insync?('10g')).to be(true)
       end
     end
     it 'is not insync if current size is smaller but size_is_minsize is true' do
       with(valid_params.merge(size_is_minsize: :true)) do |resource|
-        expect(resource.parameters[:size].insync?('500m')).to eq(false)
+        expect(resource.parameters[:size].insync?('500m')).to be(false)
       end
     end
     it 'is insync if current size is equal to wanted size and size_is_minsize is true' do
       with(valid_params.merge(size_is_minsize: :true)) do |resource|
-        expect(resource.parameters[:size].insync?('1g')).to eq(true)
+        expect(resource.parameters[:size].insync?('1g')).to be(true)
       end
     end
     it 'is not insync if current size is greater but size_is_minsize is false' do
       with(valid_params.merge(size_is_minsize: :false)) do |resource|
-        expect(resource.parameters[:size].insync?('10g')).to eq(false)
+        expect(resource.parameters[:size].insync?('10g')).to be(false)
       end
     end
   end

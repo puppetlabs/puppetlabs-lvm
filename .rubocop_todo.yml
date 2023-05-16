@@ -103,12 +103,6 @@ Naming/VariableNumber:
   Exclude:
     - 'spec/unit/facter/lvm_support_spec.rb'
 
-# Offense count: 4
-# This cop supports unsafe autocorrection (--autocorrect-all).
-RSpec/BeEq:
-  Exclude:
-    - 'spec/unit/puppet/type/logical_volume_spec.rb'
-
 # Offense count: 2
 # Configuration parameters: Prefixes, AllowedPatterns.
 # Prefixes: when, with, without

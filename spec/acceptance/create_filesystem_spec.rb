@@ -34,7 +34,7 @@ filesystem {'Create_filesystem':
 	ensure  => present,
 	fs_type => 'non-existing-format',
 }
-			MANIFEST
+      			MANIFEST
     end
 
     it 'applies the manifest' do
@@ -75,7 +75,7 @@ filesystem {'Create_filesystem':
   ensure  => present,
   fs_type => 'ext2',
 }
-			MANIFEST
+      			MANIFEST
     end
 
     it 'applies the manifest' do
@@ -117,7 +117,7 @@ filesystem {'Create_filesystem':
   ensure  => present,
   fs_type => 'ext4',
 }
-			MANIFEST
+      			MANIFEST
     end
 
     it 'applies the manifest' do

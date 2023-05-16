@@ -20,35 +20,35 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => #{pv}
-}
-->
-logical_volume{'#{lv[0]}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '20M',
-  mirror        => '1',
-  mirrorlog     => 'core',
-}
-->
-logical_volume{'#{lv[1]}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '40M',
-  mirror        => '1',
-  mirrorlog     => 'disk',
-}
-->
-logical_volume{'#{lv[2]}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '100M',
-  mirror        => '1',
-  mirrorlog     => 'mirrored',
-}
+pp = <<~MANIFEST
+  volume_group {'#{vg}':
+    ensure            => present,
+    physical_volumes  => #{pv}
+  }
+  ->
+  logical_volume{'#{lv[0]}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    size          => '20M',
+    mirror        => '1',
+    mirrorlog     => 'core',
+  }
+  ->
+  logical_volume{'#{lv[1]}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    size          => '40M',
+    mirror        => '1',
+    mirrorlog     => 'disk',
+  }
+  ->
+  logical_volume{'#{lv[2]}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    size          => '100M',
+    mirror        => '1',
+    mirrorlog     => 'mirrored',
+  }
 MANIFEST
 
 step 'Inject "site.pp" on Master'

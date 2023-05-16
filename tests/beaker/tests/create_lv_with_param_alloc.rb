@@ -20,50 +20,50 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-}
-->
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv[0]}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  alloc         => 'anywhere',
-  size          => '20M',
-}
-->
-logical_volume{'#{lv[1]}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  alloc         => 'contiguous',
-  size          => '10M',
-}
-->
-logical_volume{'#{lv[2]}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  alloc         => 'cling',
-  size          => '15M',
-}
-->
-logical_volume{'#{lv[3]}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  alloc         => 'inherit',
-  size          => '30M',
-}
-->
-logical_volume{'#{lv[4]}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  alloc         => 'normal',
-  size          => '5M',
-}
+pp = <<~MANIFEST
+  physical_volume {'#{pv}':
+    ensure  => present,
+  }
+  ->
+  volume_group {'#{vg}':
+    ensure            => present,
+    physical_volumes  => '#{pv}',
+  }
+  ->
+  logical_volume{'#{lv[0]}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    alloc         => 'anywhere',
+    size          => '20M',
+  }
+  ->
+  logical_volume{'#{lv[1]}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    alloc         => 'contiguous',
+    size          => '10M',
+  }
+  ->
+  logical_volume{'#{lv[2]}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    alloc         => 'cling',
+    size          => '15M',
+  }
+  ->
+  logical_volume{'#{lv[3]}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    alloc         => 'inherit',
+    size          => '30M',
+  }
+  ->
+  logical_volume{'#{lv[4]}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    alloc         => 'normal',
+    size          => '5M',
+  }
 MANIFEST
 
 step 'Inject "site.pp" on Master'

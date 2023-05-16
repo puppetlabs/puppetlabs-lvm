@@ -17,15 +17,15 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-class { 'lvm':
-  volume_groups => {
-    '#{vg}' => {
-      physical_volumes => '#{pv}',
+pp = <<~MANIFEST
+  class { 'lvm':
+    volume_groups => {
+      '#{vg}' => {
+        physical_volumes => '#{pv}',
+      },
     },
-  },
-}
-include ::lvm
+  }
+  include ::lvm
 
 MANIFEST
 

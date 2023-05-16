@@ -18,28 +18,28 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-}
-->
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '20M',
-}
-->
-filesystem {'Create_filesystem':
-  name    => '/dev/#{vg}/#{lv}',
-  ensure  => present,
-  fs_type => 'ext4',
-  options => '-b 4096 -E stride=32,stripe-width=64',
-}
+pp = <<~MANIFEST
+  physical_volume {'#{pv}':
+    ensure  => present,
+  }
+  ->
+  volume_group {'#{vg}':
+    ensure            => present,
+    physical_volumes  => '#{pv}',
+  }
+  ->
+  logical_volume{'#{lv}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    size          => '20M',
+  }
+  ->
+  filesystem {'Create_filesystem':
+    name    => '/dev/#{vg}/#{lv}',
+    ensure  => present,
+    fs_type => 'ext4',
+    options => '-b 4096 -E stride=32,stripe-width=64',
+  }
 MANIFEST
 
 step 'Inject "site.pp" on Master'

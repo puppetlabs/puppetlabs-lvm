@@ -7,17 +7,17 @@ test_name 'FM-4614 - C96613 - remove physical volume'
 # initilize
 pv = '/dev/sdc'
 
-pp = <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure => present,
-}
+pp = <<~MANIFEST
+  physical_volume {'#{pv}':
+    ensure => present,
+  }
 MANIFEST
 
-pp2 = <<-MANIFEST
-physical_volume {"Remove physical volume group: #{pv}":
-  ensure  => absent,
-  name    => '#{pv}',
-}
+pp2 = <<~MANIFEST
+  physical_volume {"Remove physical volume group: #{pv}":
+    ensure  => absent,
+    name    => '#{pv}',
+  }
 MANIFEST
 
 # creating physical volume

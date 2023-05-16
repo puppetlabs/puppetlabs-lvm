@@ -18,18 +18,18 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-class { 'lvm':
-  volume_groups    => {
-    '#{vg}' => {
-      physical_volumes => '#{pv}',
-      logical_volumes  => {
-        '#{lv}'    => {'size' => '200M'},
+pp = <<~MANIFEST
+  class { 'lvm':
+    volume_groups    => {
+      '#{vg}' => {
+        physical_volumes => '#{pv}',
+        logical_volumes  => {
+          '#{lv}'    => {'size' => '200M'},
+        },
       },
     },
-  },
-}
-include ::lvm
+  }
+  include ::lvm
 
 MANIFEST
 

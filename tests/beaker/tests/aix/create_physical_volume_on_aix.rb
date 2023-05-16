@@ -7,10 +7,10 @@ test_name 'FM-4969 - C97713 - create physical volume on aix'
 # initilize
 pv = 'hdisk1'
 
-pp = <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-}
+pp = <<~MANIFEST
+  physical_volume {'#{pv}':
+    ensure  => present,
+  }
 MANIFEST
 
 step 'Inject "site.pp" on Master'

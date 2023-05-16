@@ -13,27 +13,27 @@ describe 'create filesystems' do
       ('LogicalVolume_' + SecureRandom.hex(3))
     end
     let(:pp) do
-      <<-MANIFEST
-physical_volume {'#{pv}':
-	ensure  => present,
-}
-->
-volume_group {'#{vg}':
-	ensure            => present,
-	physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-	ensure        => present,
-	volume_group  => '#{vg}',
-	size          => '20M',
-}
-->
-filesystem {'Create_filesystem':
-	name    => '/dev/#{vg}/#{lv}',
-	ensure  => present,
-	fs_type => 'non-existing-format',
-}
+      <<~MANIFEST
+        physical_volume {'#{pv}':
+        	ensure  => present,
+        }
+        ->
+        volume_group {'#{vg}':
+        	ensure            => present,
+        	physical_volumes  => '#{pv}',
+        }
+        ->
+        logical_volume{'#{lv}':
+        	ensure        => present,
+        	volume_group  => '#{vg}',
+        	size          => '20M',
+        }
+        ->
+        filesystem {'Create_filesystem':
+        	name    => '/dev/#{vg}/#{lv}',
+        	ensure  => present,
+        	fs_type => 'non-existing-format',
+        }
       			MANIFEST
     end
 
@@ -54,27 +54,27 @@ filesystem {'Create_filesystem':
       ('LogicalVolume_' + SecureRandom.hex(3))
     end
     let(:pp) do
-      <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-}
-->
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '20M',
-}
-->
-filesystem {'Create_filesystem':
-  name    => '/dev/#{vg}/#{lv}',
-  ensure  => present,
-  fs_type => 'ext2',
-}
+      <<~MANIFEST
+        physical_volume {'#{pv}':
+          ensure  => present,
+        }
+        ->
+        volume_group {'#{vg}':
+          ensure            => present,
+          physical_volumes  => '#{pv}',
+        }
+        ->
+        logical_volume{'#{lv}':
+          ensure        => present,
+          volume_group  => '#{vg}',
+          size          => '20M',
+        }
+        ->
+        filesystem {'Create_filesystem':
+          name    => '/dev/#{vg}/#{lv}',
+          ensure  => present,
+          fs_type => 'ext2',
+        }
       			MANIFEST
     end
 
@@ -96,27 +96,27 @@ filesystem {'Create_filesystem':
       ('LogicalVolume_' + SecureRandom.hex(3))
     end
     let(:pp) do
-      <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-}
-->
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '20M',
-}
-->
-filesystem {'Create_filesystem':
-  name    => '/dev/#{vg}/#{lv}',
-  ensure  => present,
-  fs_type => 'ext4',
-}
+      <<~MANIFEST
+        physical_volume {'#{pv}':
+          ensure  => present,
+        }
+        ->
+        volume_group {'#{vg}':
+          ensure            => present,
+          physical_volumes  => '#{pv}',
+        }
+        ->
+        logical_volume{'#{lv}':
+          ensure        => present,
+          volume_group  => '#{vg}',
+          size          => '20M',
+        }
+        ->
+        filesystem {'Create_filesystem':
+          name    => '/dev/#{vg}/#{lv}',
+          ensure  => present,
+          fs_type => 'ext4',
+        }
       			MANIFEST
     end
 

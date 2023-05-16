@@ -18,28 +18,28 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-}
-->
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '100M',
-}
+pp = <<~MANIFEST
+  physical_volume {'#{pv}':
+    ensure  => present,
+  }
+  ->
+  volume_group {'#{vg}':
+    ensure            => present,
+    physical_volumes  => '#{pv}',
+  }
+  ->
+  logical_volume{'#{lv}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    size          => '100M',
+  }
 MANIFEST
 
-pp2 = <<-MANIFEST
-logical_volume {'#{lv}':
-  ensure        => absent,
-  volume_group  => '#{vg}',
-}
+pp2 = <<~MANIFEST
+  logical_volume {'#{lv}':
+    ensure        => absent,
+    volume_group  => '#{vg}',
+  }
 MANIFEST
 
 # Creating a logical volume

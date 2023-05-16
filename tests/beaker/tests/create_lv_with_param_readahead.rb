@@ -18,18 +18,18 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '700M',
-  readahead     => '7',
-}
+pp = <<~MANIFEST
+  volume_group {'#{vg}':
+    ensure            => present,
+    physical_volumes  => '#{pv}',
+  }
+  ->
+  logical_volume{'#{lv}':
+    ensure        => present,
+    volume_group  => '#{vg}',
+    size          => '700M',
+    readahead     => '7',
+  }
 MANIFEST
 
 step 'Inject "site.pp" on Master'

@@ -17,27 +17,27 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-physical_volume {'#{pv[0]}':
-  ensure => present,
-}
-->
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv[0]}',
-}
-->
-physical_volume {'#{pv[1]}':
-  ensure    => present,
-  unless_vg => '#{vg}'
-}
+pp = <<~MANIFEST
+  physical_volume {'#{pv[0]}':
+    ensure => present,
+  }
+  ->
+  volume_group {'#{vg}':
+    ensure            => present,
+    physical_volumes  => '#{pv[0]}',
+  }
+  ->
+  physical_volume {'#{pv[1]}':
+    ensure    => present,
+    unless_vg => '#{vg}'
+  }
 MANIFEST
 
-pp2 = <<-MANIFEST
-physical_volume {'#{pv[1]}':
-  ensure    => present,
-  unless_vg => 'non-existing-volume-group'
-}
+pp2 = <<~MANIFEST
+  physical_volume {'#{pv[1]}':
+    ensure    => present,
+    unless_vg => 'non-existing-volume-group'
+  }
 MANIFEST
 
 step 'Inject "site.pp" on Master'

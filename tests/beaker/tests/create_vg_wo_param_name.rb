@@ -17,15 +17,15 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure => present,
-}
-->
-volume_group {"#{vg}":
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
+pp = <<~MANIFEST
+  physical_volume {'#{pv}':
+    ensure => present,
+  }
+  ->
+  volume_group {"#{vg}":
+    ensure            => present,
+    physical_volumes  => '#{pv}',
+  }
 
 MANIFEST
 

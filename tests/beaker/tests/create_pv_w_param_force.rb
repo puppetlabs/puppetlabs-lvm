@@ -14,11 +14,11 @@ teardown do
   end
 end
 
-pp = <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-  force   => true,
-}
+pp = <<~MANIFEST
+  physical_volume {'#{pv}':
+    ensure  => present,
+    force   => true,
+  }
 MANIFEST
 
 step 'Inject "site.pp" on Master'

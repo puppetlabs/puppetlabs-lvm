@@ -6,7 +6,7 @@ require 'pry'
 # * +resource_type+ - resorce type, i.e 'physical_volume', 'volume_group', 'logical_volume', 'filesystem',
 # *                   'aix_physical_volume', 'aix_volume_group', or 'aix_logical_volume'.
 # * +resource_name+ - The name of resource type, i.e '/dev/sdb' for physical volume, vg_1234 for volume group
-# * +vg+ - volume group name associated with logical volume (if any)
+# * +vol_group+ - volume group name associated with logical volume (if any)
 # * +properties+ - a matching string or regular expression in logical volume properties
 # ==== Returns
 #
@@ -17,7 +17,7 @@ require 'pry'
 # ==== Examples
 #
 # verify_if_created?(agent, 'physical_volume', /dev/sdb', VolumeGroup_123, "Size     7GB")
-def verify_if_created?(resource_type, resource_name, vg = nil, properties = nil)
+def verify_if_created?(resource_type, resource_name, vol_group = nil, properties = nil)
   case resource_type
   when 'physical_volume'
     run_shell('pvdisplay') do |result|
@@ -28,9 +28,9 @@ def verify_if_created?(resource_type, resource_name, vg = nil, properties = nil)
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
     end
   when 'logical_volume'
-    raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
+    raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vol_group
 
-    run_shell("lvdisplay /dev/#{vg}/#{resource_name}") do |result|
+    run_shell("lvdisplay /dev/#{vol_group}/#{resource_name}") do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
       if properties
         assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected')
@@ -45,7 +45,7 @@ def verify_if_created?(resource_type, resource_name, vg = nil, properties = nil)
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
     end
   when 'aix_logical_volume'
-    raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vg
+    raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vol_group
 
     run_shell("lslv #{resource_name}") do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
@@ -62,9 +62,9 @@ end
 #
 # ==== Attributes
 #
-# * +pv+ - physical volume, can be one volume or an array of multiple volumes
-# * +vg+ - volume group, can be one group or an array of multiple volume groups
-# * +lv+ - logical volume, can be one volume or an array of multiple volumes
+# * +physical_volume+ - physical volume, can be one volume or an array of multiple volumes
+# * +vol_group+ - volume group, can be one group or an array of multiple volume groups
+# * +logical_volume+ - logical volume, can be one volume or an array of multiple volumes
 # * +aix+ - if the agent is an AIX server.
 #
 # ==== Returns
@@ -76,42 +76,42 @@ end
 # ==== Examples
 #
 # remove_all('/dev/sdb', 'VolumeGroup_1234', 'LogicalVolume_fa13')
-def remove_all(pv = nil, vg = nil, lv = nil, aix = false)
+def remove_all(physical_volume = nil, vol_group = nil, logical_volume = nil, aix = false)
   if aix
-    run_shell("reducevg -d -f #{vg} #{pv}")
-    run_shell("rm -rf /dev/#{vg} /dev/#{lv}")
+    run_shell("reducevg -d -f #{vol_group} #{physical_volume}")
+    run_shell("rm -rf /dev/#{vol_group} /dev/#{logical_volume}")
   else
-    if lv
-      if lv.is_a?(Array)
-        lv.each do |logical_volume|
-          run_shell("umount /dev/#{vg}/#{logical_volume}", expect_failures: true)
-          run_shell("lvremove /dev/#{vg}/#{logical_volume} --force", expect_failures: true)
+    if logical_volume
+      if logical_volume.is_a?(Array)
+        logical_volume.each do |logical_volume|
+          run_shell("umount /dev/#{vol_group}/#{logical_volume}", expect_failures: true)
+          run_shell("lvremove /dev/#{vol_group}/#{logical_volume} --force", expect_failures: true)
         end
       else
         # note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
         # the logical volume must be unmount before being able to delete it
-        run_shell("umount /dev/#{vg}/#{lv}", expect_failures: true)
-        run_shell("lvremove /dev/#{vg}/#{lv} --force", expect_failures: true)
+        run_shell("umount /dev/#{vol_group}/#{logical_volume}", expect_failures: true)
+        run_shell("lvremove /dev/#{vol_group}/#{logical_volume} --force", expect_failures: true)
       end
     end
 
-    if vg
-      if vg.is_a?(Array)
-        vg.each do |volume_group|
+    if vol_group
+      if vol_group.is_a?(Array)
+        vol_group.each do |volume_group|
           run_shell("vgremove /dev/#{volume_group}")
         end
       else
-        run_shell("vgremove /dev/#{vg}")
+        run_shell("vgremove /dev/#{vol_group}")
       end
     end
 
-    if pv
-      if pv.is_a?(Array)
-        pv.each do |physical_volume|
+    if physical_volume
+      if physical_volume.is_a?(Array)
+        physical_volume.each do |physical_volume|
           run_shell("pvremove #{physical_volume}")
         end
       else
-        run_shell("pvremove #{pv}")
+        run_shell("pvremove #{physical_volume}")
       end
     end
   end

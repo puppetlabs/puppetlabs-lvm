@@ -16,7 +16,7 @@ Puppet::Type.newtype(:physical_volume) do
     desc "Do not do anything if the VG already exists.  The value should be the
               name of the volume group to check for."
     validate do |value|
-      unless value =~ %r{^[0-9A-Z]}i
+      unless %r{^[0-9A-Z]}i.match?(value)
         raise ArgumentError, "#{value} is not a valid volume group name"
       end
     end

@@ -149,7 +149,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   def destroy
     name_escaped = "#{@resource[:volume_group].gsub('-', '--')}-#{@resource[:name].gsub('-', '--')}"
-    if blkid(path) =~ %r{\bTYPE=\"(swap)\"}
+    if %r{\bTYPE=\"(swap)\"}.match?(blkid(path))
       swapoff(path)
     end
     dmsetup('remove', name_escaped)
@@ -233,19 +233,19 @@ Puppet::Type.type(:logical_volume).provide :lvm do
           blkid_type = blkid(path)
           if command(:resize4fs) && blkid_type =~ %r{\bTYPE=\"(ext4)\"}
             resize4fs(path) || raise("Cannot resize file system to size #{new_size} because resize2fs failed.")
-          elsif blkid_type =~ %r{\bTYPE=\"(ext[34])\"}
+          elsif %r{\bTYPE=\"(ext[34])\"}.match?(blkid_type)
             resize2fs(path) || raise("Cannot resize file system to size #{new_size} because resize2fs failed.")
-          elsif blkid_type =~ %r{\bTYPE=\"(xfs)\"}
+          elsif %r{\bTYPE=\"(xfs)\"}.match?(blkid_type)
             # New versions of xfs_growfs only support resizing by mount point, not by volume (e.g. under RHEL8)
             # * https://tickets.puppetlabs.com/browse/MODULES-9004
             mount_point = lsblk('-o', 'MOUNTPOINT', '-nr', path).chomp
             xfs_growfs(mount_point) || raise("Cannot resize filesystem to size #{new_size} because xfs_growfs failed.")
-          elsif blkid_type =~ %r{\bTYPE=\"(swap)\"}
+          elsif %r{\bTYPE=\"(swap)\"}.match?(blkid_type)
             (swapoff(path) && mkswap(path) && swapon(path)) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
           end
         rescue Puppet::ExecutionFailure => e
           ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
-          if e.message =~ %r{ returned 2:} # rubocop:disable Metrics/BlockNesting
+          if %r{ returned 2:}.match?(e.message) # rubocop:disable Metrics/BlockNesting
             Puppet.debug(e.message)
           end
         end
@@ -293,8 +293,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     raw = lvs('-a', '-o', '+devices', vgpath)
 
     if mirror.to_i > 0
-      if raw =~ %r{\[#{lvname}_mlog\]\s+#{vgname}\s+}im
-        if raw =~ %r{\[#{lvname}_mlog\]\s+#{vgname}\s+mw\S+}im # attributes start with "m" or "M"
+      if %r{\[#{lvname}_mlog\]\s+#{vgname}\s+}im.match?(raw)
+        if %r{\[#{lvname}_mlog\]\s+#{vgname}\s+mw\S+}im.match?(raw) # attributes start with "m" or "M"
           return 'mirrored'
         else
           return 'disk'

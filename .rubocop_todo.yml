@@ -94,6 +94,7 @@ Naming/ClassAndModuleCamelCase:
 Naming/FileName:
   Exclude:
     - 'tests/beaker/tests/create_filesystem_non-existing-format.rb'
+
 # Offense count: 4
 # Configuration parameters: EnforcedStyle, CheckMethodNames, CheckSymbols, AllowedIdentifiers, AllowedPatterns.
 # SupportedStyles: snake_case, normalcase, non_integer
@@ -101,16 +102,6 @@ Naming/FileName:
 Naming/VariableNumber:
   Exclude:
     - 'spec/unit/facter/lvm_support_spec.rb'
-
-# Offense count: 18
-# This cop supports safe autocorrection (--autocorrect).
-Performance/RegexpMatch:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-    - 'lib/puppet/type/physical_volume.rb'
-    - 'spec/spec_helper_acceptance_local.rb'
-
 # Offense count: 5
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Performance/StringInclude:

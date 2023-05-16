@@ -124,12 +124,12 @@ RSpec.configure do |c|
     machine = ENV['TARGET_HOST']
     command = "curl -H X-AUTH-TOKEN:#{auth_tok} -X POST --url vcloud.delivery.puppetlabs.net/api/v1/vm/#{machine}/disk/1"
     fdisk = run_shell('fdisk -l').stdout
-    if fdisk !~ %r{sdb}
+    unless %r{sdb}.match?(fdisk)
       stdout, _stderr, _status = Open3.capture3(command)
       sleep(30)
       run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')
     end
-    if fdisk !~ %r{sdc}
+    unless %r{sdc}.match?(fdisk)
       stdout, _stderr, _status = Open3.capture3(command)
       sleep(30)
       run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')

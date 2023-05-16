@@ -33,7 +33,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:initial_size) do
     desc 'The initial size of the logical volume. This will only apply to newly-created volumes'
     validate do |value|
-      unless value =~ %r{^[0-9]+(\.[0-9]+)?[KMGTPE]}i
+      unless %r{^[0-9]+(\.[0-9]+)?[KMGTPE]}i.match?(value)
         raise ArgumentError, "#{value} is not a valid logical volume size"
       end
     end
@@ -42,7 +42,7 @@ Puppet::Type.newtype(:logical_volume) do
   newproperty(:size) do
     desc 'The size of the logical volume. Set to undef to use all available space'
     validate do |value|
-      unless value =~ %r{^[0-9]+(\.[0-9]+)?[KMGTPE]}i
+      unless %r{^[0-9]+(\.[0-9]+)?[KMGTPE]}i.match?(value)
         raise ArgumentError, "#{value} is not a valid logical volume size"
       end
     end
@@ -70,7 +70,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:extents) do
     desc 'The number of logical extents to allocate for the new logical volume. Set to undef to use all available space'
     validate do |value|
-      unless value =~ %r{^\d+(%(?:vg|pvs|free|origin)?)?$}i
+      unless %r{^\d+(%(?:vg|pvs|free|origin)?)?$}i.match?(value)
         raise ArgumentError, "#{value} is not a valid logical volume extent"
       end
     end
@@ -107,7 +107,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:poolmetadatasize) do
     desc 'Change the size of logical volume pool metadata'
     validate do |value|
-      unless value =~ %r{^[0-9]+(\.[0-9]+)?[KMGTPE]}i
+      unless %r{^[0-9]+(\.[0-9]+)?[KMGTPE]}i.match?(value)
         raise ArgumentError, "#{value} is not a valid size for pool metadata"
       end
     end
@@ -138,7 +138,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:stripes) do
     desc 'The number of stripes to allocate for the new logical volume.'
     validate do |value|
-      unless value.to_s =~ %r{^[0-9]+$}i
+      unless %r{^[0-9]+$}i.match?(value.to_s)
         raise ArgumentError, "#{value} is not a valid stripe count"
       end
     end
@@ -147,7 +147,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:stripesize) do
     desc 'The stripesize to use for the new logical volume.'
     validate do |value|
-      unless value.to_s =~ %r{^[0-9]+$}i
+      unless %r{^[0-9]+$}i.match?(value.to_s)
         raise ArgumentError, "#{value} is not a valid stripesize"
       end
     end
@@ -156,7 +156,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:readahead) do
     desc 'The readahead count to use for the new logical volume.'
     validate do |value|
-      unless value.to_s =~ %r{^([0-9]+|Auto|None)}i
+      unless %r{^([0-9]+|Auto|None)}i.match?(value.to_s)
         raise ArgumentError, "#{value} is not a valid readahead count"
       end
     end
@@ -208,7 +208,7 @@ Puppet::Type.newtype(:logical_volume) do
       +'CAN NOT BE CHANGED on already mirrored volume. Take your mirror size in terabytes and round up that number to the next power of 2, ' \
       +'using that number as the -R argument.'
     validate do |value|
-      unless value.to_s =~ %r{^[0-9]+$}i
+      unless %r{^[0-9]+$}i.match?(value.to_s)
         raise ArgumentError, "#{value} is not a valid region size in MB."
       end
     end

@@ -50,7 +50,7 @@ Puppet::Type.type(:volume_group).provide :aix do
     end
   end
 
-    private
+  private
 
   def reduce_with(volume)
     reducevg(@resource[:name], volume)

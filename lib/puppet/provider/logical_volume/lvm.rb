@@ -323,7 +323,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
   end
 
-    private
+  private
 
   def lvs_pattern
     # lvs output format:

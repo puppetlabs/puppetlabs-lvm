@@ -73,7 +73,7 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     physical_volumes_properties
   end
 
-    private
+  private
 
   def create_physical_volume(path)
     args = []

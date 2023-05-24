@@ -7,10 +7,10 @@ describe 'create filesystems' do
       '/dev/sdc'
     end
     let(:vg) do
-      ('VolumeGroup_' + SecureRandom.hex(2))
+      'VolumeGroup'
     end
     let(:lv) do
-      ('LogicalVolume_' + SecureRandom.hex(3))
+      'LogicalVolume'
     end
     let(:pp) do
       <<~MANIFEST
@@ -48,10 +48,10 @@ describe 'create filesystems' do
       '/dev/sdc'
     end
     let(:vg) do
-      ('VolumeGroup_' + SecureRandom.hex(2))
+      'VolumeGroup_ext2'
     end
     let(:lv) do
-      ('LogicalVolume_' + SecureRandom.hex(3))
+      'LogicalVolume_ext2'
     end
     let(:pp) do
       <<~MANIFEST
@@ -90,10 +90,10 @@ describe 'create filesystems' do
       '/dev/sdc'
     end
     let(:vg) do
-      ('VolumeGroup_' + SecureRandom.hex(2))
+      'VolumeGroup_ext4'
     end
     let(:lv) do
-      ('LogicalVolume_' + SecureRandom.hex(3))
+      'LogicalVolume_ext4'
     end
     let(:pp) do
       <<~MANIFEST

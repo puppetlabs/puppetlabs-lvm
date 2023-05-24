@@ -1,4 +1,11 @@
-require 'pry'
+require 'singleton'
+require 'puppet_litmus'
+
+class LitmusHelper
+  include Singleton
+  include PuppetLitmus
+end
+
 # Verify if a physical volume, volume group, logical volume, or filesystem resource type is created
 #
 # ==== Attributes
@@ -20,40 +27,49 @@ require 'pry'
 def verify_if_created?(resource_type, resource_name, vol_group = nil, properties = nil)
   case resource_type
   when 'physical_volume'
-    run_shell('pvdisplay') do |result|
+    LitmusHelper.instance.run_shell('pvdisplay') do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
     end
   when 'volume_group'
-    run_shell('vgdisplay') do |result|
+    LitmusHelper.instance.run_shell('vgdisplay') do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
     end
   when 'logical_volume'
     raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vol_group
 
-    run_shell("lvdisplay /dev/#{vol_group}/#{resource_name}") do |result|
+    LitmusHelper.instance.run_shell("lvdisplay /dev/#{vol_group}/#{resource_name}") do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
       if properties
         assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected')
       end
     end
   when 'aix_physical_volume'
-    run_shell("lspv #{resource_name}") do |result|
+    LitmusHelper.instance.run_shell("lspv #{resource_name}") do |result|
       assert_match(%r{Physical volume #{resource_name} is not assigned to}, result.stdout, 'Unexpected error was detected')
     end
   when 'aix_volume_group'
-    run_shell('lsvg') do |result|
+    LitmusHelper.instance.run_shell('lsvg') do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
     end
   when 'aix_logical_volume'
     raise ArgumentError, 'Missing volume group that the logical volume is associated with' unless vol_group
 
-    run_shell("lslv #{resource_name}") do |result|
+    LitmusHelper.instance.run_shell("lslv #{resource_name}") do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
       if properties
         assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected')
       end
     end
   end
+end
+
+def install_dependencies
+  pp = <<-MANIFEST
+    package { 'lvm2':
+      ensure => 'latest',
+    }
+  MANIFEST
+  LitmusHelper.instance.apply_manifest(pp)
 end
 
 # Clean the box after each test, make sure the newly created logical volumes, volume groups,
@@ -78,61 +94,59 @@ end
 # remove_all('/dev/sdb', 'VolumeGroup_1234', 'LogicalVolume_fa13')
 def remove_all(physical_volume = nil, vol_group = nil, logical_volume = nil, aix = false)
   if aix
-    run_shell("reducevg -d -f #{vol_group} #{physical_volume}")
-    run_shell("rm -rf /dev/#{vol_group} /dev/#{logical_volume}")
+    LitmusHelper.instance.run_shell("reducevg -d -f #{vol_group} #{physical_volume}")
+    LitmusHelper.instance.run_shell("rm -rf /dev/#{vol_group} /dev/#{logical_volume}")
   else
     if logical_volume
       if logical_volume.is_a?(Array)
         logical_volume.each do |logical_volume|
-          run_shell("umount /dev/#{vol_group}/#{logical_volume}", expect_failures: true)
-          run_shell("lvremove /dev/#{vol_group}/#{logical_volume} --force", expect_failures: true)
+          LitmusHelper.instance.run_shell("umount /dev/#{vol_group}/#{logical_volume}", expect_failures: true)
+          LitmusHelper.instance.run_shell("lvremove /dev/#{vol_group}/#{logical_volume} --force", expect_failures: true)
         end
       else
         # note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
         # the logical volume must be unmount before being able to delete it
-        run_shell("umount /dev/#{vol_group}/#{logical_volume}", expect_failures: true)
-        run_shell("lvremove /dev/#{vol_group}/#{logical_volume} --force", expect_failures: true)
+        LitmusHelper.instance.run_shell("umount /dev/#{vol_group}/#{logical_volume}", expect_failures: true)
+        LitmusHelper.instance.run_shell("lvremove /dev/#{vol_group}/#{logical_volume} --force", expect_failures: true)
       end
     end
 
     if vol_group
       if vol_group.is_a?(Array)
         vol_group.each do |volume_group|
-          run_shell("vgremove /dev/#{volume_group}")
+          LitmusHelper.instance.run_shell("vgremove /dev/#{volume_group}")
         end
       else
-        run_shell("vgremove /dev/#{vol_group}")
+        LitmusHelper.instance.run_shell("vgremove /dev/#{vol_group}")
       end
     end
 
     if physical_volume
       if physical_volume.is_a?(Array)
         physical_volume.each do |physical_volume|
-          run_shell("pvremove #{physical_volume}")
+          LitmusHelper.instance.run_shell("pvremove #{physical_volume}")
         end
       else
-        run_shell("pvremove #{physical_volume}")
+        LitmusHelper.instance.run_shell("pvremove #{physical_volume}")
       end
     end
   end
 end
 
 RSpec.configure do |c|
+  disks = ['sdb', 'sdc']
+  hostname = LitmusHelper.instance.run_shell('hostname').stdout.strip.gsub(%r{\..*$}, '')
   c.before :suite do
-    auth_tok = 'pvxejsxwstwhsy0u2tjolfovg9wfzg2e'
-    fail_test 'AUTH_TOKEN must be set' unless auth_tok
-    machine = ENV['TARGET_HOST']
-    command = "curl -H X-AUTH-TOKEN:#{auth_tok} -X POST --url vcloud.delivery.puppetlabs.net/api/v1/vm/#{machine}/disk/1"
-    fdisk = run_shell('fdisk -l').stdout
-    unless fdisk.include?('sdb')
-      stdout, _stderr, _status = Open3.capture3(command)
-      sleep(30)
-      run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')
+    install_dependencies
+    disks.each do |disk|
+      LitmusHelper.instance.run_shell("gcloud compute disks create #{hostname}-#{disk} --size 10GB --type pd-standard --zone=us-west1-c")
+      LitmusHelper.instance.run_shell("gcloud compute instances attach-disk #{hostname} --disk #{hostname}-#{disk} --zone=us-west1-c")
     end
-    unless fdisk.include?('sdc')
-      stdout, _stderr, _status = Open3.capture3(command)
-      sleep(30)
-      run_shell('echo "- - -" >/sys/class/scsi_host/host2/scan')
+  end
+  c.after :suite do
+    disks.each do |disk|
+      LitmusHelper.instance.run_shell("gcloud compute instances detach-disk #{hostname} --disk=#{hostname}-#{disk} --zone=us-west1-c --quiet")
+      LitmusHelper.instance.run_shell("gcloud compute disks delete #{hostname}-#{disk} --zone=us-west1-c --quiet")
     end
   end
 end

@@ -39,7 +39,6 @@ Facter.add('lvm_vgs') do
           end
         end
       end
-
       vg_list.length
     end
   end
@@ -66,7 +65,6 @@ Facter.add('lvm_pvs') do
       pv_list.each_with_index do |pv, i|
         Facter.add("lvm_pv_#{i}") { setcode { pv } }
       end
-
       pv_list.length
     end
   end

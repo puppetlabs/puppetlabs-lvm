@@ -18,7 +18,7 @@ module Puppet_X
 
         data.split("\n").each do |line|
           parsed_line = line.gsub(%r{\s+}, ' ').strip.split(' ')
-          values      = Hash[columns.zip(parsed_line)]
+          values      = columns.zip(parsed_line).to_h
           current_key = values[key]
           values.delete(key)
           results[current_key] = values

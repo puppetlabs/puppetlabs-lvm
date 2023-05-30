@@ -191,13 +191,6 @@ Style/ClassAndModuleChildren:
   Exclude:
     - 'lib/puppet_x/lvm/output.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowSplatArgument.
-Style/HashConversion:
-  Exclude:
-    - 'lib/puppet_x/lvm/output.rb'
-
 # Offense count: 56
 # This cop supports safe autocorrection (--autocorrect).
 Style/IfUnlessModifier:

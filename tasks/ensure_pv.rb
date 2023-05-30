@@ -4,7 +4,7 @@ require 'yaml'
 require 'puppet'
 
 # Parse the parameters
-params = JSON.parse(STDIN.read)
+params = JSON.parse($stdin.read)
 
 defaults = {
   'force' => false,

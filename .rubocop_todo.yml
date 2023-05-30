@@ -198,18 +198,6 @@ Style/ClassAndModuleChildren:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-# Offense count: 7
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/GlobalStdStream:
-  Exclude:
-    - 'tasks/ensure_fs.rb'
-    - 'tasks/ensure_lv.rb'
-    - 'tasks/ensure_pv.rb'
-    - 'tasks/ensure_vg.rb'
-    - 'tasks/extend_lv.rb'
-    - 'tasks/extend_vg.rb'
-    - 'tasks/mount_lv.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowSplatArgument.

@@ -21,7 +21,7 @@ describe provider_class do
     end
 
     it 'returns an array of volume groups' do
-      volume_groups = @provider.class.instances.map { |x| x.name }
+      volume_groups = @provider.class.instances.map(&:name)
 
       expect(volume_groups).to include('VolGroup')
     end

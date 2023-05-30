@@ -22,7 +22,7 @@ describe provider_class do
 
   describe 'self.instances' do
     it 'returns an array of physical volumes' do
-      physical_volumes = @provider.class.instances.map { |x| x.name }
+      physical_volumes = @provider.class.instances.map(&:name)
 
       expect(physical_volumes).to include('/dev/sda2', '/dev/sda3')
     end

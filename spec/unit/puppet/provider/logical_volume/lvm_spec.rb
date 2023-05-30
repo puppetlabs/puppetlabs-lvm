@@ -24,7 +24,7 @@ describe provider_class do
     end
 
     it 'returns an array of logical volumes' do
-      logical_volumes = @provider.class.instances.map { |x| x.name }
+      logical_volumes = @provider.class.instances.map(&:name)
 
       expect(logical_volumes).to include('lv_root', 'lv_swap')
     end

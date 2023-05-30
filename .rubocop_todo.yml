@@ -217,14 +217,6 @@ Style/OptionalBooleanParameter:
     - 'tests/beaker/lib/lvm_helper.rb'
 
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, AllowSafeAssignment.
-# SupportedStyles: require_parentheses, require_no_parentheses, require_parentheses_when_complex
-Style/TernaryParentheses:
-  Exclude:
-    - 'lib/puppet/provider/filesystem/lvm.rb'
-
 # Offense count: 31
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: EnforcedStyleForMultiline.

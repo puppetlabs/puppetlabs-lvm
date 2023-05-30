@@ -137,9 +137,9 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     if @resource[:thinpool]
       args.push('--thin')
       args << if @resource[:thinpool].is_a? String
-                @resource[:volume_group] + '/' + @resource[:thinpool]
+                "#{@resource[:volume_group]}/#{@resource[:thinpool]}"
               else
-                @resource[:volume_group] + '/' + @resource[:name]
+                "#{@resource[:volume_group]}/#{@resource[:name]}"
               end
     else
       args << @resource[:volume_group]
@@ -179,7 +179,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     return unless raw =~ %r{\s+(\d+)\.(\d+)#{unit}}i
     return Regexp.last_match(1) + unit.capitalize if Regexp.last_match(2).to_i.zero?
 
-    Regexp.last_match(1) + '.' + Regexp.last_match(2).sub(%r{0+$}, '') + unit.capitalize
+    "#{Regexp.last_match(1)}.#{Regexp.last_match(2).sub(%r{0+$}, '')}#{unit.capitalize}"
   end
 
   def size=(new_size)

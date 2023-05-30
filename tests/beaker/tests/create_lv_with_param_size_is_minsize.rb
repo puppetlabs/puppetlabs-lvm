@@ -8,8 +8,8 @@ test_name "FM-4614 - C96586 - create logical volume with parameter 'size_is_mins
 
 # initilize
 pv = '/dev/sdc'
-vg = 'VolumeGroup_' + SecureRandom.hex(2)
-lv = 'LogicalVolume_' + SecureRandom.hex(3)
+vg = "VolumeGroup_#{SecureRandom.hex(2)}"
+lv = "LogicalVolume_#{SecureRandom.hex(3)}"
 
 # Teardown
 teardown do

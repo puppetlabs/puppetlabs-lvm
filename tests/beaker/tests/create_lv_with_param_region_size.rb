@@ -8,8 +8,8 @@ test_name "FM-4614 - C96584 - create logical volume with property 'region_size'"
 
 # initilize
 pv = ['/dev/sdc', '/dev/sdd']
-vg = 'VolumeGroup_' + SecureRandom.hex(2)
-lv = 'LogicalVolume_' + SecureRandom.hex(3)
+vg = "VolumeGroup_#{SecureRandom.hex(2)}"
+lv = "LogicalVolume_#{SecureRandom.hex(3)}"
 
 # Teardown
 teardown do

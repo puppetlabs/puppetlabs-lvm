@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Helpers
-  TEST_DIR = Pathname.new(__FILE__).parent + '..'
+  TEST_DIR = "#{Pathname.new(__FILE__).parent}.."
 
   TYPES = {
     pv: :physical_volume,
@@ -58,6 +58,6 @@ module Helpers
   end
 
   def fixture(name, ext = '.txt')
-    (TEST_DIR + 'fixtures' + "#{name}#{ext}").read
+    "#{TEST_DIR}fixtures#{name}#{ext}".read
   end
 end

@@ -8,7 +8,7 @@ test_name "FM-4614 - C96596 - create volume group with parameter 'createonly'"
 
 # initilize
 pv = ['/dev/sdc', '/dev/sdd']
-vg = 'VolumeGroup_' + SecureRandom.hex(3)
+vg = "VolumeGroup_#{SecureRandom.hex(3)}"
 
 # Teardown
 teardown do

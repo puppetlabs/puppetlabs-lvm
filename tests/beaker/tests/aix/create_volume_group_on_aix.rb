@@ -8,7 +8,7 @@ test_name 'FM-4969 - C97714 - create volume group on aix'
 
 # initilize
 pv = 'hdisk1'
-vg = 'VG_' + SecureRandom.hex(2)
+vg = "VG_#{SecureRandom.hex(2)}"
 
 # Teardown
 teardown do

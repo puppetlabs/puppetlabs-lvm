@@ -8,8 +8,8 @@ test_name "FM-4969 - C97372 - create logical volume with parameter min 'range'"
 
 # initilize
 pv = 'hdisk1'
-vg = 'VG_' + SecureRandom.hex(2)
-lv = 'LV_' + SecureRandom.hex(3)
+vg = "VG_#{SecureRandom.hex(2)}"
+lv = "LV_#{SecureRandom.hex(3)}"
 
 # Teardown
 teardown do

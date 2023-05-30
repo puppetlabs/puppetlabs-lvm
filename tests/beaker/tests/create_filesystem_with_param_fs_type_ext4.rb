@@ -8,8 +8,8 @@ test_name "FM-4615 - C96568 - create filesystem with parameter 'fs_type' and ext
 
 # initilize
 pv = '/dev/sdc'
-vg = ('VolumeGroup_' + SecureRandom.hex(2))
-lv = ('LogicalVolume_' + SecureRandom.hex(3))
+vg = "VolumeGroup_#{SecureRandom.hex(2)}"
+lv = "LogicalVolume_#{SecureRandom.hex(3)}"
 
 # Teardown
 teardown do

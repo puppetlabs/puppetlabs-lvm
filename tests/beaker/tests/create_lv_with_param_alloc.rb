@@ -8,10 +8,10 @@ test_name "FM-4614 - C96574 - create logical volume  parameter 'alloc'"
 
 # initilize
 pv = '/dev/sdc'
-vg = 'VolumeGroup_' + SecureRandom.hex(2)
-lv = ['LogicalVolume_' + SecureRandom.hex(3), 'LogicalVolume_' + SecureRandom.hex(3), \
-      'LogicalVolume_' + SecureRandom.hex(3), 'LogicalVolume_' + SecureRandom.hex(3), \
-      'LogicalVolume_' + SecureRandom.hex(3)]
+vg = "VolumeGroup_#{SecureRandom.hex(2)}"
+lv = ["LogicalVolume_#{SecureRandom.hex(3)}", "LogicalVolume_#{SecureRandom.hex(3)}", \
+      "LogicalVolume_#{SecureRandom.hex(3)}", "LogicalVolume_#{SecureRandom.hex(3)}", \
+      "LogicalVolume_#{SecureRandom.hex(3)}"]
 
 # Teardown
 teardown do

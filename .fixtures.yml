@@ -8,5 +8,3 @@ fixtures:
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
   forge_modules:
     mount_core: "puppetlabs/mount_core"
-  symlinks:
-    lvm: "#{source_dir}"

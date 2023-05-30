@@ -32,10 +32,10 @@ module Helpers
   end
 
   # Sets up an expection that a resource for +type+ is created
-  def should_create(type)
+  def should_create(type, &block)
     raise "Invalid type #{type}" unless TYPES[type]
 
-    Puppet::Type.type(TYPES[type]).expects(:new).with { |args| yield(args) }
+    Puppet::Type.type(TYPES[type]).expects(:new).with(&block)
   end
 
   # Return the +@valid_params+ without one or more keys

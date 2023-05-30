@@ -1,7 +1,7 @@
 test_name 'FM-4614 - C97274 - add extra hard drives for LVM testing'
 
 # Get the auth_token from ENV
-auth_tok = ENV['AUTH_TOKEN']
+auth_tok = ENV.fetch('AUTH_TOKEN', nil)
 fail_test 'AUTH_TOKEN must be set' unless auth_tok
 
 # On the PE agent where LVM running

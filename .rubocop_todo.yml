@@ -191,13 +191,6 @@ Style/ClassAndModuleChildren:
   Exclude:
     - 'lib/puppet_x/lvm/output.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowedVars.
-Style/FetchEnvVar:
-  Exclude:
-    - 'tests/beaker/pre-suite/02_add_extra_hdd.rb'
-
 # Offense count: 88
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: EnforcedStyle.

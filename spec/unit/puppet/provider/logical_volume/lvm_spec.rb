@@ -66,6 +66,7 @@ describe provider_class do
       expect(@provider.size).to eq('2.5G')
     end
   end
+
   describe 'when creating' do
     context 'with size' do
       it "executes 'lvcreate' with a '--size' option" do
@@ -76,6 +77,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with size and type' do
       it "executes 'lvcreate' with a '--size' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -86,6 +88,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with initial_size' do
       it "executes 'lvcreate' with a '--size' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -96,6 +99,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'without size and without extents' do
       it "executes 'lvcreate' without a '--size' option or a '--extents' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -107,6 +111,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with extents' do
       it "executes 'lvcreate' with a '--extents' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -117,6 +122,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'without extents' do
       it "executes 'lvcreate' without a '--extents' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -126,6 +132,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with initial_size and mirroring' do
       it "executes 'lvcreate' with '--size' and '--mirrors' and '--mirrorlog' options" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -137,6 +144,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with persistent minor block device' do
       it "executes 'lvcreate' with '--persistent y' and '--minor 100' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -148,6 +156,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with named thinpool option' do
       it "executes 'lvcreate' with '--virtualsize 1g' and '--thin myvg/mythinpool' options" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -216,6 +225,7 @@ describe provider_class do
             expect { @provider.size = '1100000k' }.not_to raise_error(Puppet::ExecutionFailure, %r{blkid})
           end
         end
+
         context 'with defined thin pool' do
           it "executes 'lvextend' as with normal volume" do
             @resource.expects(:[]).with(:name).returns('mylv').at_least_once
@@ -232,6 +242,7 @@ describe provider_class do
           end
         end
       end
+
       context 'not in extent portions' do
         it 'raises an exception' do
           @resource.expects(:[]).with(:name).returns('mylv').at_least_once
@@ -246,6 +257,7 @@ describe provider_class do
         end
       end
     end
+
     context 'with a smaller size' do
       context 'without size_is_minsize set to false' do
         it 'raises an exception' do
@@ -260,6 +272,7 @@ describe provider_class do
           proc { @provider.size = '1m' }.should raise_error(Puppet::Error, %r{manual})
         end
       end
+
       context 'with size_is_minsize set to true' do
         it 'does not raise an exception and print info message' do
           Puppet::Util::Log.level = :info

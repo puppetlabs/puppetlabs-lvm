@@ -7,7 +7,7 @@ module Helpers
     pv: :physical_volume,
     lv: :logical_volume,
     vg: :volume_group,
-    fs: :filesystem,
+    fs: :filesystem
   }.freeze
 
   def self.included(obj)

@@ -56,7 +56,7 @@ describe 'volume_groups fact' do
                                                       'permissions' => 'writeable',
                                                       'allocation_policy' => 'normal',
                                                       'size' => '3.99g',
-                                                      'free' => '2.82g',
+                                                      'free' => '2.82g'
                                                     })
       end
     end

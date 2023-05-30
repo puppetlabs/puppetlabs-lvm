@@ -15,7 +15,7 @@ describe Puppet::Type.type(:logical_volume) do
       persistent: :false,
       minor: 100,
       thinpool: false,
-      poolmetadatasize: '10M',
+      poolmetadatasize: '10M'
     }
     stub_default_provider!
   end

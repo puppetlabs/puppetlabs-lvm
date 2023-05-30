@@ -55,7 +55,7 @@ describe 'logical_volumes fact' do
                                                         'role' => 'public',
                                                         'active' => 'active',
                                                         'size' => '800.00m',
-                                                        'permissions' => 'writeable',
+                                                        'permissions' => 'writeable'
                                                       },
                                                       'lame_tasks' => {
                                                         'uuid' => 'gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv',
@@ -67,7 +67,7 @@ describe 'logical_volumes fact' do
                                                         'role' => 'public',
                                                         'active' => 'active',
                                                         'size' => '400.00m',
-                                                        'permissions' => 'writeable',
+                                                        'permissions' => 'writeable'
                                                       },
                                                       'root' => {
                                                         'uuid' => 'E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl',
@@ -79,7 +79,7 @@ describe 'logical_volumes fact' do
                                                         'role' => 'public',
                                                         'active' => 'active',
                                                         'size' => '18.46g',
-                                                        'permissions' => 'writeable',
+                                                        'permissions' => 'writeable'
                                                       },
                                                       'swap' => {
                                                         'uuid' => 'buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA',
@@ -91,7 +91,7 @@ describe 'logical_volumes fact' do
                                                         'role' => 'public',
                                                         'active' => 'active',
                                                         'size' => '1.00g',
-                                                        'permissions' => 'writeable',
+                                                        'permissions' => 'writeable'
                                                       })
       end
     end

@@ -9,7 +9,7 @@ require 'puppet'
 params = JSON.parse($stdin.read)
 
 defaults = {
-  'force' => false,
+  'force' => false
 }
 
 # Merge in the default values

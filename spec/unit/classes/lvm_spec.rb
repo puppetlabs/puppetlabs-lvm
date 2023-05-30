@@ -22,11 +22,11 @@ describe 'lvm', type: :class do
               'backup' => {
                 'size' => '5G',
                 'mountpath' => '/var/backups',
-                'mountpath_require' => false,
-              },
-            },
-          },
-        },
+                'mountpath_require' => false
+              }
+            }
+          }
+        }
       }
     end
 
@@ -66,11 +66,11 @@ describe 'lvm', type: :class do
                 'size' => '5G',
                 'mounted' => false,
                 'mountpath' => '/mnt/not_mounted',
-                'mountpath_require' => false,
-              },
-            },
-          },
-        },
+                'mountpath_require' => false
+              }
+            }
+          }
+        }
       }
     end
 
@@ -88,16 +88,16 @@ describe 'lvm', type: :class do
             'logical_volumes' => {
               'swap' => {
                 'size' => '20G',
-                'fs_type' => 'swap',
+                'fs_type' => 'swap'
               },
               'swap2' => {
                 'ensure' => 'absent',
                 'size' => '20G',
-                'fs_type' => 'swap',
-              },
-            },
-          },
-        },
+                'fs_type' => 'swap'
+              }
+            }
+          }
+        }
       }
     end
 

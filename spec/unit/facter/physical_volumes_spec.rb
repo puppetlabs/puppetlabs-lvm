@@ -56,7 +56,7 @@ describe 'physical_volumes fact' do
                                                          'mda_count' => '1',
                                                          'mda_used_count' => '1',
                                                          'ba_start' => '0',
-                                                         'ba_size' => '0',
+                                                         'ba_size' => '0'
                                                        },
                                                        '/dev/sdc' => {
                                                          'uuid' => '09ksGm-Pt28-AR9H-NlgQ-QxtG-5uEH-Qzy1RR',
@@ -70,7 +70,7 @@ describe 'physical_volumes fact' do
                                                          'mda_count' => '1',
                                                          'mda_used_count' => '1',
                                                          'ba_start' => '0',
-                                                         'ba_size' => '0',
+                                                         'ba_size' => '0'
                                                        },
                                                        '/dev/sdd2' => {
                                                          'uuid' => 'PpSFVZ-SS3P-n3a6-ctPF-sb9H-6M85-i0TqBv',
@@ -84,7 +84,7 @@ describe 'physical_volumes fact' do
                                                          'mda_count' => '1',
                                                          'mda_used_count' => '1',
                                                          'ba_start' => '0',
-                                                         'ba_size' => '0',
+                                                         'ba_size' => '0'
                                                        })
       end
     end

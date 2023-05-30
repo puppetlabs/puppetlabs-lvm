@@ -32,21 +32,21 @@ describe 'lvm', type: :class do
     it { is_expected.to contain_physical_volume('/dev/sda3') }
 
     it {
-      is_expected.to contain_volume_group('myvg').with(ensure: 'present',
-                                                       physical_volumes: ['/dev/sda2', '/dev/sda3'])
+      expect(subject).to contain_volume_group('myvg').with(ensure: 'present',
+                                                           physical_volumes: ['/dev/sda2', '/dev/sda3'])
     }
 
     it {
-      is_expected.to contain_logical_volume('opt').with(volume_group: 'myvg',
-                                                        size: '20G')
+      expect(subject).to contain_logical_volume('opt').with(volume_group: 'myvg',
+                                                            size: '20G')
     }
 
     it { is_expected.to contain_filesystem('/dev/myvg/opt') }
     it { is_expected.to contain_mount('/opt') }
 
     it {
-      is_expected.to contain_logical_volume('backup').with(volume_group: 'myvg',
-                                                           size: '5G')
+      expect(subject).to contain_logical_volume('backup').with(volume_group: 'myvg',
+                                                               size: '5G')
     }
 
     it { is_expected.to contain_filesystem('/dev/myvg/backup') }
@@ -73,7 +73,7 @@ describe 'lvm', type: :class do
     end
 
     it {
-      is_expected.to contain_mount('/mnt/not_mounted').with(ensure: 'present')
+      expect(subject).to contain_mount('/mnt/not_mounted').with(ensure: 'present')
     }
   end
 
@@ -100,20 +100,20 @@ describe 'lvm', type: :class do
     end
 
     it {
-      is_expected.to contain_logical_volume('swap').with(volume_group: 'myvg',
-                                                         size: '20G')
+      expect(subject).to contain_logical_volume('swap').with(volume_group: 'myvg',
+                                                             size: '20G')
     }
 
     it {
-      is_expected.to contain_filesystem('/dev/myvg/swap').with(fs_type: 'swap')
+      expect(subject).to contain_filesystem('/dev/myvg/swap').with(fs_type: 'swap')
     }
 
     it {
-      is_expected.to contain_mount('/dev/myvg/swap').with(name: 'swap_/dev/myvg/swap',
-                                                          ensure: 'present',
-                                                          fstype: 'swap',
-                                                          pass: 0,
-                                                          dump: 0)
+      expect(subject).to contain_mount('/dev/myvg/swap').with(name: 'swap_/dev/myvg/swap',
+                                                              ensure: 'present',
+                                                              fstype: 'swap',
+                                                              pass: 0,
+                                                              dump: 0)
     }
   end
 end

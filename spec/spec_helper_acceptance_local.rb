@@ -104,7 +104,7 @@ def remove_all(physical_volume = nil, vol_group = nil, logical_volume = nil, aix
           LitmusHelper.instance.run_shell("lvremove /dev/#{vol_group}/#{logical_volume} --force", expect_failures: true)
         end
       else
-        # note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
+        # NOTE: in some test cases, for example, the test case 'create_vg_property_logical_volume'
         # the logical volume must be unmount before being able to delete it
         LitmusHelper.instance.run_shell("umount /dev/#{vol_group}/#{logical_volume}", expect_failures: true)
         LitmusHelper.instance.run_shell("lvremove /dev/#{vol_group}/#{logical_volume} --force", expect_failures: true)

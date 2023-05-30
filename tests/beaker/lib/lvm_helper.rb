@@ -112,7 +112,7 @@ def remove_all(agent, physical_volume = nil, vol_group = nil, logical_volume = n
           on(agent, "lvremove /dev/#{vol_group}/#{logical_volume} --force")
         end
       else
-        # note: in some test cases, for example, the test case 'create_vg_property_logical_volume'
+        # NOTE: in some test cases, for example, the test case 'create_vg_property_logical_volume'
         # the logical volume must be unmount before being able to delete it
         on(agent, "umount /dev/#{vol_group}/#{logical_volume}", acceptable_exit_codes: [0, 1])
         on(agent, "lvremove /dev/#{vol_group}/#{logical_volume} --force")

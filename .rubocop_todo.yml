@@ -191,15 +191,6 @@ Style/ClassAndModuleChildren:
   Exclude:
     - 'lib/puppet_x/lvm/output.rb'
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: Keywords, RequireColon.
-# Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW, NOTE
-Style/CommentAnnotation:
-  Exclude:
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'tests/beaker/lib/lvm_helper.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Style/ExplicitBlockArgument:

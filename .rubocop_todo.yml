@@ -115,20 +115,6 @@ RSpec/ContextWording:
 RSpec/DescribeClass:
   Enabled: false
 
-# Offense count: 53
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowConsecutiveOneLiners.
-RSpec/EmptyLineAfterExample:
-  Exclude:
-    - 'spec/unit/classes/lvm_spec.rb'
-    - 'spec/unit/puppet/provider/filesystem/lvm_spec.rb'
-    - 'spec/unit/puppet/provider/logical_volume/lvm_spec.rb'
-    - 'spec/unit/puppet/provider/physical_volume/lvm_spec.rb'
-    - 'spec/unit/puppet/type/filesystem_spec.rb'
-    - 'spec/unit/puppet/type/logical_volume_spec.rb'
-    - 'spec/unit/puppet/type/physical_volume_spec.rb'
-    - 'spec/unit/puppet/type/volume_group_spec.rb'
-
 # Offense count: 13
 # This cop supports safe autocorrection (--autocorrect).
 RSpec/EmptyLineAfterExampleGroup:

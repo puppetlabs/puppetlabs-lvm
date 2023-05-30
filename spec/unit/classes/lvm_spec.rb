@@ -30,6 +30,7 @@ describe 'lvm', type: :class do
 
     it { is_expected.to contain_physical_volume('/dev/sda2') }
     it { is_expected.to contain_physical_volume('/dev/sda3') }
+
     it {
       is_expected.to contain_volume_group('myvg').with(ensure: 'present',
                                                        physical_volumes: ['/dev/sda2', '/dev/sda3'])
@@ -39,6 +40,7 @@ describe 'lvm', type: :class do
       is_expected.to contain_logical_volume('opt').with(volume_group: 'myvg',
                                                         size: '20G')
     }
+
     it { is_expected.to contain_filesystem('/dev/myvg/opt') }
     it { is_expected.to contain_mount('/opt') }
 
@@ -46,6 +48,7 @@ describe 'lvm', type: :class do
       is_expected.to contain_logical_volume('backup').with(volume_group: 'myvg',
                                                            size: '5G')
     }
+
     it { is_expected.to contain_filesystem('/dev/myvg/backup') }
     it { is_expected.to contain_mount('/var/backups') }
   end
@@ -100,9 +103,11 @@ describe 'lvm', type: :class do
       is_expected.to contain_logical_volume('swap').with(volume_group: 'myvg',
                                                          size: '20G')
     }
+
     it {
       is_expected.to contain_filesystem('/dev/myvg/swap').with(fs_type: 'swap')
     }
+
     it {
       is_expected.to contain_mount('/dev/myvg/swap').with(name: 'swap_/dev/myvg/swap',
                                                           ensure: 'present',

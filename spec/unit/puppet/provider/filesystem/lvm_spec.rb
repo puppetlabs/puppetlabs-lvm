@@ -17,6 +17,7 @@ describe provider_class do
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
+
     it 'includes the supplied filesystem options' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('ext4')
@@ -25,6 +26,7 @@ describe provider_class do
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
+
     it 'includes -q for reiserfs' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('reiserfs')
@@ -33,6 +35,7 @@ describe provider_class do
       @resource.expects(:[]).with(:mkfs_cmd)
       @provider.create
     end
+
     it 'calls mkswap for filesystem type swap' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('swap')
@@ -42,6 +45,7 @@ describe provider_class do
       @provider.expects(:execute).with(['swapon', '/dev/myvg/mylv'])
       @provider.create
     end
+
     it 'creates an ext4 journal correctly' do
       @resource.expects(:[]).with(:name).returns('/dev/myvg/mylv')
       @resource.expects(:[]).with(:fs_type).returns('jbd')

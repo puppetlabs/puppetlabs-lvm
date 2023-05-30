@@ -26,9 +26,11 @@ describe Puppet::Type.type(:logical_volume) do
     it 'exists' do
       @type.attrclass(:name).should_not be_nil
     end
+
     it 'does not allow qualified files' do
       -> { @type.new name: 'my/lv' }.should raise_error(Puppet::Error)
     end
+
     it 'supports unqualified names' do
       @type.new(name: 'mylv')[:name].should == 'mylv'
     end
@@ -44,6 +46,7 @@ describe Puppet::Type.type(:logical_volume) do
     it 'exists' do
       @type.attrclass(:size).should_not be_nil
     end
+
     it 'supports setting a value' do
       with(valid_params)[:size].should == valid_params[:size]
     end
@@ -53,37 +56,45 @@ describe Puppet::Type.type(:logical_volume) do
     it 'exists' do
       @type.attrclass(:size_is_minsize).should_not be_nil
     end
+
     it 'supports setting a value' do
       with(valid_params)[:size_is_minsize].should == valid_params[:size_is_minsize]
     end
+
     it "supports 'true' as a value" do
       with(valid_params.merge(size_is_minsize: :true)) do |resource|
         resource[:size_is_minsize].should == :true
       end
     end
+
     it "supports 'false' as a value" do
       with(valid_params.merge(size_is_minsize: :false)) do |resource|
         resource[:size_is_minsize].should == :false
       end
     end
+
     it 'does not support other values' do
       specifying(valid_params.merge(size_is_minsize: :moep)).should raise_error(Puppet::Error)
     end
+
     it 'is insync if current size is greater but size_is_minsize is true' do
       with(valid_params.merge(size_is_minsize: :true)) do |resource|
         expect(resource.parameters[:size].insync?('10g')).to be(true)
       end
     end
+
     it 'is not insync if current size is smaller but size_is_minsize is true' do
       with(valid_params.merge(size_is_minsize: :true)) do |resource|
         expect(resource.parameters[:size].insync?('500m')).to be(false)
       end
     end
+
     it 'is insync if current size is equal to wanted size and size_is_minsize is true' do
       with(valid_params.merge(size_is_minsize: :true)) do |resource|
         expect(resource.parameters[:size].insync?('1g')).to be(true)
       end
     end
+
     it 'is not insync if current size is greater but size_is_minsize is false' do
       with(valid_params.merge(size_is_minsize: :false)) do |resource|
         expect(resource.parameters[:size].insync?('10g')).to be(false)
@@ -95,24 +106,29 @@ describe Puppet::Type.type(:logical_volume) do
     it 'exists' do
       @type.attrclass(:thinpool).should_not be_nil
     end
+
     it 'supports setting a value' do
       with(valid_params)[:thinpool].should == valid_params[:thinpool]
     end
+
     it "supports 'true' as a value" do
       with(valid_params.merge(thinpool: :true)) do |resource|
         resource[:thinpool].should == true
       end
     end
+
     it "supports 'false' as a value" do
       with(valid_params.merge(thinpool: :false)) do |resource|
         resource[:thinpool].should == false
       end
     end
+
     it "supports 'thinpool name' as a value" do
       with(valid_params.merge(thinpool: 'mythinpool')) do |resource|
         resource[:thinpool].should == 'mythinpool'
       end
     end
+
     it 'does not support other values' do
       specifying(valid_params.merge(thinpool: :moep)).should raise_error(Puppet::Error)
     end
@@ -122,6 +138,7 @@ describe Puppet::Type.type(:logical_volume) do
     it 'exists' do
       @type.attrclass(:poolmetadatasize).should_not be_nil
     end
+
     it 'supports setting a value' do
       with(valid_params)[:poolmetadatasize].should == valid_params[:poolmetadatasize]
     end
@@ -143,9 +160,11 @@ describe Puppet::Type.type(:logical_volume) do
     it 'exists' do
       @type.attrclass(:extents).should_not be_nil
     end
+
     it 'supports setting a value' do
       with(valid_params)[:extents].should == valid_params[:extents]
     end
+
     it 'supports only valid values' do
       ['1', '1%', '1%vg', '1%PVS', '1%FrEe', '1%Origin'].each do |extent|
         with(valid_params.merge(extents: extent))[:extents].should == extent
@@ -160,14 +179,17 @@ describe Puppet::Type.type(:logical_volume) do
     it 'exists' do
       @type.attrclass(:ensure).should_not be_nil
     end
+
     it "supports 'present' as a value" do
       with(valid_params)[:ensure].should == :present
     end
+
     it "supports 'absent' as a value" do
       with(valid_params.merge(ensure: :absent)) do |resource|
         resource[:ensure].should == :absent
       end
     end
+
     it 'does not support other values' do
       specifying(valid_params.merge(ensure: :foobar)).should raise_error(Puppet::Error)
     end

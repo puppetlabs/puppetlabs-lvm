@@ -58,6 +58,7 @@ describe provider_class do
       @provider.expects(:pvs).returns(true)
       @provider.should be_exists
     end
+
     it "does not execute 'pvs' if unless_vg VG exists" do
       @resource.expects(:[]).with(:unless_vg).returns('vg01')
       @resource.expects(:[]).with(:unless_vg).returns('vg01')

@@ -20,16 +20,19 @@ describe Puppet::Type.type(:volume_group) do
     it 'exists' do
       @type.attrclass(:ensure).should_not be_nil
     end
+
     it "supports 'present' as a value" do
       with(name: 'myvg', ensure: :present) do |resource|
         resource[:ensure].should == :present
       end
     end
+
     it "supports 'absent' as a value" do
       with(name: 'myvg', ensure: :absent) do |resource|
         resource[:ensure].should == :absent
       end
     end
+
     it 'does not support other values' do
       specifying(name: 'myvg', ensure: :foobar).should raise_error(Puppet::Error)
     end
@@ -39,11 +42,13 @@ describe Puppet::Type.type(:volume_group) do
     it 'exists' do
       @type.attrclass(:physical_volumes).should_not be_nil
     end
+
     it 'supports a single value' do
       with(name: 'myvg', physical_volumes: 'mypv') do |resource|
         resource.should(:physical_volumes).should == ['mypv']
       end
     end
+
     it 'supports an array' do
       with(name: 'myvg', physical_volumes: ['mypv', 'otherpv']) do |resource|
         resource.should(:physical_volumes).should == ['mypv', 'otherpv']

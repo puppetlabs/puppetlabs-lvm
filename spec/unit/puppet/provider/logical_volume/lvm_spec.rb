@@ -35,18 +35,21 @@ describe provider_class do
       @provider.class.stubs(:lvs).with('data').returns(lvs_output)
       expect(@provider.exists?).to be > 10
     end
+
     it "returns 'nil', lv 'jenkins' in vg 'vg_jenkins' exists" do
       @resource.expects(:[]).with(:name).returns('jenkins')
       @resource.expects(:[]).with(:volume_group).returns('vg_jenkins').at_least_once
       @provider.class.stubs(:lvs).with('vg_jenkins').returns(lvs_output)
       expect(@provider.exists?).to be_nil
     end
+
     it "returns 'nil', lv 'swap' in vg 'VolGroup' exists" do
       @resource.expects(:[]).with(:name).returns('swap')
       @resource.expects(:[]).with(:volume_group).returns('VolGroup').at_least_once
       @provider.class.stubs(:lvs).with('VolGroup').returns(lvs_output)
       expect(@provider.exists?).to be_nil
     end
+
     it "returns 'nil', lv 'data' in vg 'myvg' does not exist" do
       @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
       @provider.class.stubs(:lvs).with('myvg').raises(Puppet::ExecutionFailure, 'Execution of \'/sbin/lvs myvg\' returned 5')
@@ -172,6 +175,7 @@ describe provider_class do
           @provider.expects(:blkid).with('/dev/myvg/mylv')
           @provider.size = '2000000k'
         end
+
         context 'with resize_fs flag' do
           it "executes 'blkid' if resize_fs is set to true" do
             @resource.expects(:[]).with(:name).returns('mylv').at_least_once
@@ -186,6 +190,7 @@ describe provider_class do
             @provider.expects(:blkid).with('/dev/myvg/mylv')
             @provider.size = '2000000k'
           end
+
           it "does not execute 'blkid' if resize_fs is set to false" do
             @resource.expects(:[]).with(:name).returns('mylv').at_least_once
             @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
@@ -199,6 +204,7 @@ describe provider_class do
             @provider.expects(:blkid).with('/dev/myvg/mylv').never
             @provider.size = '2000000k'
           end
+
           it "does not report an error from 'blkid' if resizing a filesystem with no filesystem present" do
             @resource.expects(:[]).with(:name).returns('mylv').at_least_once
             @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
@@ -281,6 +287,7 @@ describe provider_class do
       @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
       @provider.destroy
     end
+
     it "executes 'dmsetup' and 'lvremove' and properly escape names with dashes" do
       @resource.expects(:[]).with(:volume_group).returns('my-vg').times(3)
       @resource.expects(:[]).with(:name).returns('my-lv').times(3)
@@ -289,6 +296,7 @@ describe provider_class do
       @provider.expects(:lvremove).with('-f', '/dev/my-vg/my-lv')
       @provider.destroy
     end
+
     it "executes 'swapoff', 'dmsetup', and 'lvremove' when lvm is of type swap" do
       @resource.expects(:[]).with(:volume_group).returns('myvg').times(4)
       @resource.expects(:[]).with(:name).returns('mylv').times(4)

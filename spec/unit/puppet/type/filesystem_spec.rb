@@ -18,9 +18,11 @@ describe Puppet::Type.type(:filesystem) do
     it 'exists' do
       @type.attrclass(:name).should_not be_nil
     end
+
     it 'onlies allow fully qualified files' do
       specifying(name: 'myfs').should raise_error(Puppet::Error)
     end
+
     it 'supports fully qualified names' do
       @type.new(name: valid_params[:name]) do |resource|
         resource[:name].should == valid_params[:name]
@@ -32,6 +34,7 @@ describe Puppet::Type.type(:filesystem) do
     it 'exists' do
       @type.attrclass(:ensure).should_not be_nil
     end
+
     it 'supports a filesystem type as a value' do
       with(valid_params)[:ensure].should == :present
     end

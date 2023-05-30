@@ -176,13 +176,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     raw = lvs('--noheading', '--unit', unit, path)
 
-    if raw =~ %r{\s+(\d+)\.(\d+)#{unit}}i
-      if Regexp.last_match(2).to_i.zero?
-        return Regexp.last_match(1) + unit.capitalize
-      else
-        return Regexp.last_match(1) + '.' + Regexp.last_match(2).sub(%r{0+$}, '') + unit.capitalize
-      end
-    end
+    return unless raw =~ %r{\s+(\d+)\.(\d+)#{unit}}i
+    return Regexp.last_match(1) + unit.capitalize if Regexp.last_match(2).to_i.zero?
+
+    return Regexp.last_match(1) + '.' + Regexp.last_match(2).sub(%r{0+$}, '') + unit.capitalize
   end
 
   def size=(new_size)
@@ -220,11 +217,12 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     if !resizeable
-      if @resource[:size_is_minsize] == :true || @resource[:size_is_minsize] == true || @resource[:size_is_minsize] == 'true'
-        info("Logical volume already has minimum size of #{new_size} (currently #{current_size})")
-      else
+      unless @resource[:size_is_minsize] == :true || @resource[:size_is_minsize] == true || @resource[:size_is_minsize] == 'true'
         raise(Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})")
       end
+
+      info("Logical volume already has minimum size of #{new_size} (currently #{current_size})")
+
     else
       lvextend('-L', new_size, path) || raise("Cannot extend to size #{new_size} because lvextend failed.")
 
@@ -269,21 +267,21 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   def mirror=(new_mirror_count)
     current_mirrors = mirror.to_i
-    if new_mirror_count.to_i != current_mirrors
-      puts "Change mirror from #{current_mirrors} to #{new_mirror_count}..."
-      args = ['-m', new_mirror_count]
-      if @resource[:mirrorlog]
-        args.push('--mirrorlog', @resource[:mirrorlog])
-      end
+    return unless new_mirror_count.to_i != current_mirrors
 
-      # Region size cannot be changed on an existing mirror (not even when changing to zero mirrors).
-
-      if @resource[:alloc]
-        args.push('--alloc', @resource[:alloc])
-      end
-      args.push(path)
-      lvconvert(*args)
+    puts "Change mirror from #{current_mirrors} to #{new_mirror_count}..."
+    args = ['-m', new_mirror_count]
+    if @resource[:mirrorlog]
+      args.push('--mirrorlog', @resource[:mirrorlog])
     end
+
+    # Region size cannot be changed on an existing mirror (not even when changing to zero mirrors).
+
+    if @resource[:alloc]
+      args.push('--alloc', @resource[:alloc])
+    end
+    args.push(path)
+    lvconvert(*args)
   end
 
   # Location of the mirror log. Empty string if mirror==0, else "mirrored", "disk" or "core".
@@ -293,15 +291,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     raw = lvs('-a', '-o', '+devices', vgpath)
 
     if mirror.to_i > 0
-      if %r{\[#{lvname}_mlog\]\s+#{vgname}\s+}im.match?(raw)
-        if %r{\[#{lvname}_mlog\]\s+#{vgname}\s+mw\S+}im.match?(raw) # attributes start with "m" or "M"
-          return 'mirrored'
-        else
-          return 'disk'
-        end
-      else
-        return 'core'
-      end
+      return 'core' unless %r{\[#{lvname}_mlog\]\s+#{vgname}\s+}im.match?(raw)
+      return 'mirrored' if %r{\[#{lvname}_mlog\]\s+#{vgname}\s+mw\S+}im.match?(raw) # attributes start with "m" or "M"
+
+      return 'disk'
+
     end
     nil
   end
@@ -309,18 +303,18 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   def mirrorlog=(new_mirror_log_location)
     # It makes no sense to change this unless we use mirrors.
     mirror_count = mirror.to_i
-    if mirror_count.to_i > 0
-      current_log_location = mirrorlog.to_s
-      if new_mirror_log_location.to_s != current_log_location
-        # puts "Change mirror log location to #{new_mirror_log_location}..."
-        args = ['--mirrorlog', new_mirror_log_location]
-        if @resource[:alloc]
-          args.push('--alloc', @resource[:alloc])
-        end
-        args.push(path)
-        lvconvert(*args)
-      end
+    return unless mirror_count.to_i > 0
+
+    current_log_location = mirrorlog.to_s
+    return unless new_mirror_log_location.to_s != current_log_location
+
+    # puts "Change mirror log location to #{new_mirror_log_location}..."
+    args = ['--mirrorlog', new_mirror_log_location]
+    if @resource[:alloc]
+      args.push('--alloc', @resource[:alloc])
     end
+    args.push(path)
+    lvconvert(*args)
   end
 
   private

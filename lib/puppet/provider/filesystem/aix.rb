@@ -49,11 +49,10 @@ Puppet::Type.type(:filesystem).provide :aix do
     # crfs on AIX will ignore -a size if the logical_volume already
     # has a size and is specified as -d. So to be sure we sync the
     # size property after creation
-    if @resource[:size]
-      if size != @resource[:size]
-        self.size = (@resource[:size])
-      end
-    end
+    return unless @resource[:size]
+    return unless size != @resource[:size]
+
+    self.size = (@resource[:size])
   end
 
   def attribute_flag(pvalue)
@@ -80,9 +79,9 @@ Puppet::Type.type(:filesystem).provide :aix do
   end
 
   def add_flag(flag, param)
-    if @resource[param]
-      ["-#{flag}", parse_boolean(@resource[param]).to_s]
-    end
+    return unless @resource[param]
+
+    ["-#{flag}", parse_boolean(@resource[param]).to_s]
   end
 
   def parse_boolean(param)

@@ -47,10 +47,10 @@ Puppet::Type.type(:filesystem).provide :lvm do
     end
 
     execute mkfs_cmd
-    if fs_type == 'swap'
-      swap_cmd = ['swapon']
-      swap_cmd << name
-      execute swap_cmd
-    end
+    return unless fs_type == 'swap'
+
+    swap_cmd = ['swapon']
+    swap_cmd << name
+    execute swap_cmd
   end
 end

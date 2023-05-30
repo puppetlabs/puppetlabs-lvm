@@ -61,13 +61,13 @@ Puppet::Type.type(:volume_group).provide :lvm do
     # Only take action if createonly is false just to be safe
     #  this is really only here to enforce the createonly setting
     #  if something goes wrong in physical_volumes
-    if @resource[:createonly].to_s == 'false'
-      existing_volumes = physical_volumes
-      extraneous = existing_volumes - new_volumes
-      extraneous.each { |volume| reduce_with(volume) }
-      missing = new_volumes - existing_volumes
-      missing.each { |volume| extend_with(volume) }
-    end
+    return unless @resource[:createonly].to_s == 'false'
+
+    existing_volumes = physical_volumes
+    extraneous = existing_volumes - new_volumes
+    extraneous.each { |volume| reduce_with(volume) }
+    missing = new_volumes - existing_volumes
+    missing.each { |volume| extend_with(volume) }
   end
 
   def physical_volumes

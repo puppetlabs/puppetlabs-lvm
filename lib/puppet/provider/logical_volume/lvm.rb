@@ -179,7 +179,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     return unless raw =~ %r{\s+(\d+)\.(\d+)#{unit}}i
     return Regexp.last_match(1) + unit.capitalize if Regexp.last_match(2).to_i.zero?
 
-    return Regexp.last_match(1) + '.' + Regexp.last_match(2).sub(%r{0+$}, '') + unit.capitalize
+    Regexp.last_match(1) + '.' + Regexp.last_match(2).sub(%r{0+$}, '') + unit.capitalize
   end
 
   def size=(new_size)

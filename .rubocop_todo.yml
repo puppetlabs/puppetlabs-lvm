@@ -216,16 +216,6 @@ Style/OptionalBooleanParameter:
     - 'spec/spec_helper_acceptance_local.rb'
     - 'tests/beaker/lib/lvm_helper.rb'
 
-# Offense count: 4
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Methods.
-Style/RedundantArgument:
-  Exclude:
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/provider/volume_group/lvm.rb'
-    - 'lib/puppet_x/lvm/output.rb'
-
 # Offense count: 3
 # This cop supports safe autocorrection (--autocorrect).
 Style/RedundantAssignment:

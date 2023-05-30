@@ -17,7 +17,7 @@ module Puppet_X
         key     = remove_prefix(key)
 
         data.split("\n").each do |line|
-          parsed_line = line.gsub(%r{\s+}, ' ').strip.split(' ')
+          parsed_line = line.gsub(%r{\s+}, ' ').strip.split
           values      = columns.zip(parsed_line).to_h
           current_key = values[key]
           values.delete(key)

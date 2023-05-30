@@ -65,7 +65,7 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     # PV         VG       Fmt  Attr PSize  PFree
 
     # Split on spaces
-    output_array = physical_volumes_line.gsub(%r{\s+}m, ' ').strip.split(' ')
+    output_array = physical_volumes_line.gsub(%r{\s+}m, ' ').strip.split
 
     # Assign properties based on headers
     # Just doing name for now...

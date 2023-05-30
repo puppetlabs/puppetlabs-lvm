@@ -35,7 +35,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
     # VG       #PV #LV #SN Attr   VSize  VFree
 
     # Split on spaces
-    output_array = volume_groups_line.gsub(%r{\s+}m, ' ').strip.split(' ')
+    output_array = volume_groups_line.gsub(%r{\s+}m, ' ').strip.split
 
     # Assign properties based on headers
     # Just doing name for now...

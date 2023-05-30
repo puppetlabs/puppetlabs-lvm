@@ -49,7 +49,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     # LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
 
     # Split on spaces
-    output_array = logical_volumes_line.gsub(%r{\s+}m, ' ').strip.split(' ')
+    output_array = logical_volumes_line.gsub(%r{\s+}m, ' ').strip.split
 
     # Assign properties based on headers
     logical_volumes_properties[:ensure]       = :present

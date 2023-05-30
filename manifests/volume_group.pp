@@ -1,8 +1,7 @@
-# == Define: lvm::volume_group
 # @param physical_volumes The list of physical volumes to be included in the volume group; 
 # this will automatically set these as dependencies, but they must be defined elsewhere using the physical_volume resource type.
 
-# @param createonly Default value: false - If set to true the volume group will be created if it does not exist. 
+# @param createonly If set to true the volume group will be created if it does not exist. 
 # If the volume group does exist no action will be taken. Defaults to false. Allowed Values:
 # true
 # false

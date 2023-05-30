@@ -1,7 +1,6 @@
-# == Define: lvm::physical_volume
 # @param ensure ensures phycial volume is present or absent
 
-# @param force Boolean - Default value: false - Force the creation without any confirmation.
+# @param force Boolean - Force the creation without any confirmation.
 
 # @param unless_vg Do not do anything if the VG already exists. The value should be the name of the volume group to check for.
 #

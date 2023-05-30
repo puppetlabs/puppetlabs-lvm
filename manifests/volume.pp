@@ -1,11 +1,7 @@
-# == Define: lvm::volume
-#
 # This defined type will create a logical_volume with the name of
 # the define and ensure a physical_volume,
 # volume_group, and filesystem resource have been
 # created on the block device supplied.
-#
-# === Parameters
 #
 # @param ensure Can only be set to cleaned, absent or present. A value of present will ensure that the
 # physical_volume, volume_group,

@@ -1,4 +1,3 @@
-# == Define: lvm::logical_volume
 # @param volume_group The volume group name associated with this logical volume. 
 # This will automatically set this volume group as a dependency, 
 # but it must be defined elsewhere using the volume_group resource type.
@@ -24,13 +23,13 @@
 #
 # @param readahead The readahead count to use for the new logical volume.
 #
-# @param range Default value: false - Set to true if the ‘size’ parameter specified, is just the minimum size you need 
+# @param range - Set to true if the ‘size’ parameter specified, is just the minimum size you need 
 # (if the LV found is larger then the size requests this is just logged not causing a FAIL)
 #
 # @param size_is_minsize Lists strings for access control for connection method, users, databases, IPv4 addresses;
 # @param type Configures the logical volume type. AIX only
 #
-# @param thinpool Default value: false - Set to true to create a thin pool or to pool name to create thin volume
+# @param thinpool - Set to true to create a thin pool or to pool name to create thin volume
 # @param poolmetadatasize Set the initial size of the logical volume pool metadata on creation
 
 # @param mirror The number of mirrors of the volume.

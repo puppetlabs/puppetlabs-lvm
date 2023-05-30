@@ -1,4 +1,3 @@
-# == Class: lvm
 # @param package_ensure ensures package is installed
 
 # @param manage_pkg Boolean (true, false)

@@ -29,16 +29,16 @@ Puppet::Type.type(:physical_volume).provide(:aix) do
       end
     end
     # If vg exists FALSE
-    if !vg_exists
+    if vg_exists
+      # If the VG exists return true
+      true
+    else
       begin
         # Check to see if the PV already exists
         lspv(@resource[:name])
       rescue Puppet::ExecutionFailure
         false
       end
-    else
-      # If the VG exists return true
-      true
     end
   end
 end

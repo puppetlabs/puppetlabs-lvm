@@ -207,14 +207,7 @@ Style/IfUnlessModifier:
     - 'spec/lib/helpers.rb'
     - 'spec/spec_helper_acceptance_local.rb'
     - 'tests/beaker/lib/lvm_helper.rb'
-# Offense count: 4
-# This cop supports safe autocorrection (--autocorrect).
-Style/NegatedIfElseCondition:
-  Exclude:
-    - 'lib/puppet/provider/filesystem/lvm.rb'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/aix.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
+
 
 # Offense count: 3
 # This cop supports unsafe autocorrection (--autocorrect-all).

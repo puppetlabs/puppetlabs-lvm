@@ -218,14 +218,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
       end
     end
 
-    if !resizeable
-      unless @resource[:size_is_minsize] == :true || @resource[:size_is_minsize] == true || @resource[:size_is_minsize] == 'true'
-        raise(Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})")
-      end
-
-      info("Logical volume already has minimum size of #{new_size} (currently #{current_size})")
-
-    else
+    if resizeable
       lvextend('-L', new_size, path) || raise("Cannot extend to size #{new_size} because lvextend failed.")
 
       unless @resource[:resize_fs] == :false || @resource[:resize_fs] == false || @resource[:resize_fs] == 'false'
@@ -250,6 +243,13 @@ Puppet::Type.type(:logical_volume).provide :lvm do
           end
         end
       end
+
+    else
+      unless @resource[:size_is_minsize] == :true || @resource[:size_is_minsize] == true || @resource[:size_is_minsize] == 'true'
+        raise(Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})")
+      end
+
+      info("Logical volume already has minimum size of #{new_size} (currently #{current_size})")
 
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'master_manipulator'
 test_name 'FM-4614 - Cxx - Install Puppet Enterprise'
 

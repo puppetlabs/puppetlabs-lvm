@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 describe Puppet::Type.type(:physical_volume) do
   it 'raises an ArgumentError when the name is not fully qualified' do

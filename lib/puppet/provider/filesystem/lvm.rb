@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:filesystem).provide :lvm do
   desc 'Manages filesystem of a logical volume on Linux'
 

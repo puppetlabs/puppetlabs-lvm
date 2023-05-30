@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:physical_volume).provide(:aix) do
   desc 'Manages LVM physical volumes'
   # defaultof :operatingsystem => AIX

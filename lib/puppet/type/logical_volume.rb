@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:logical_volume) do

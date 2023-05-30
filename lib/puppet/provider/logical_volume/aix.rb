@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'open3'
 Puppet::Type.type(:logical_volume).provide :aix do
   desc 'Manages LVM logical volumes on AIX'

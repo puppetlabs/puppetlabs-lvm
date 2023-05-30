@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'open3'
 Puppet::Type.type(:filesystem).provide :aix do
   desc 'Manages logical volume filesystems on AIX'

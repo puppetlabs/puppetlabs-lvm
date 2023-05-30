@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'master_manipulator'
 require 'lvm_helper'
 require 'securerandom'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Puppet_X
   module LVM
     # Work with LVM Output

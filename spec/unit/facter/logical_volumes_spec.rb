@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'logical_volumes fact' do
@@ -41,7 +43,7 @@ describe 'logical_volumes fact' do
         uedsry-OTVv-wGW4-vaFf-c7IY-oH6Z-ig6IXB cool_tasks tasks/cool_tasks /dev/tasks/cool_tasks /dev/mapper/tasks-cool_tasks -wi-a----- linear     public     active 800.00m writeable
         gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv lame_tasks tasks/lame_tasks /dev/tasks/lame_tasks /dev/mapper/tasks-lame_tasks -wi-a----- linear     public     active 400.00m writeable
         OUTPUT
-        lvs_output.lstrip!
+        lvs_output.dup.lstrip!
         Facter::Core::Execution.expects(:exec).at_least(1).returns(lvs_output)
         Facter.value(:logical_volumes).should include('cool_tasks' => {
                                                         'uuid' => 'uedsry-OTVv-wGW4-vaFf-c7IY-oH6Z-ig6IXB',

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 test_name 'FM-4614 - C97274 - add extra hard drives for LVM testing'
 
 # Get the auth_token from ENV

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Helpers
   TEST_DIR = Pathname.new(__FILE__).parent + '..'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:logical_volume).provide :lvm do
   desc 'Manages LVM logical volumes on Linux'
 

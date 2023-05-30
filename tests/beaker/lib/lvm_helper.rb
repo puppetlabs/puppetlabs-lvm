@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Verify if a physical volume, volume group, logical volume, or filesystem resource type is created
 #
 # ==== Attributes

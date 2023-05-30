@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 test_name 'FM-4614 - C97171 - Install the LVM module'
 
 step 'Install LVM Module Dependencies'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # lvm_support: true/nil
 #   Whether there is LVM support (based on the presence of the "vgs" command)
 Facter.add('lvm_support') do

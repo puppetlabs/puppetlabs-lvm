@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'master_manipulator'
 require 'lvm_helper'
 test_name "FM-4614 - C96646 - create physical volume without parameter 'name'"

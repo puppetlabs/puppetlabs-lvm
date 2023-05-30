@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 
 Puppet::Type.newtype(:physical_volume) do

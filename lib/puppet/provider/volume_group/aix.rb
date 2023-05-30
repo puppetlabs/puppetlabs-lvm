@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:volume_group).provide :aix do
   desc 'Manages LVM volume groups on AIX'
   # defaultof :operatingsystem => AIX

@@ -23,9 +23,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
     full_vgs_output = vgs.split("\n")
 
     # Remove first line
-    volume_groups = full_vgs_output.drop(1)
-
-    volume_groups
+    full_vgs_output.drop(1)
   end
 
   def self.get_logical_volume_properties(volume_groups_line)

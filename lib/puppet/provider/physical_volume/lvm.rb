@@ -53,9 +53,7 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     full_pvs_output = pvs.split("\n")
 
     # Remove first line
-    physical_volumes = full_pvs_output.drop(1)
-
-    physical_volumes
+    full_pvs_output.drop(1)
   end
 
   def self.get_physical_volume_properties(physical_volumes_line)

@@ -37,9 +37,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     full_lvs_output = lvs.split("\n")
 
     # Remove first line
-    logical_volumes = full_lvs_output.drop(1)
-
-    logical_volumes
+    full_lvs_output.drop(1)
   end
 
   def self.get_logical_volume_properties(logical_volumes_line)

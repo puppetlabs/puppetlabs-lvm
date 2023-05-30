@@ -149,7 +149,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   def destroy
     name_escaped = "#{@resource[:volume_group].gsub('-', '--')}-#{@resource[:name].gsub('-', '--')}"
-    if %r{\bTYPE=\"(swap)\"}.match?(blkid(path))
+    if %r{\bTYPE="(swap)"}.match?(blkid(path))
       swapoff(path)
     end
     dmsetup('remove', name_escaped)
@@ -222,16 +222,16 @@ Puppet::Type.type(:logical_volume).provide :lvm do
       unless @resource[:resize_fs] == :false || @resource[:resize_fs] == false || @resource[:resize_fs] == 'false'
         begin
           blkid_type = blkid(path)
-          if command(:resize4fs) && blkid_type =~ %r{\bTYPE=\"(ext4)\"}
+          if command(:resize4fs) && blkid_type =~ %r{\bTYPE="(ext4)"}
             resize4fs(path) || raise("Cannot resize file system to size #{new_size} because resize2fs failed.")
-          elsif %r{\bTYPE=\"(ext[34])\"}.match?(blkid_type)
+          elsif %r{\bTYPE="(ext[34])"}.match?(blkid_type)
             resize2fs(path) || raise("Cannot resize file system to size #{new_size} because resize2fs failed.")
-          elsif %r{\bTYPE=\"(xfs)\"}.match?(blkid_type)
+          elsif %r{\bTYPE="(xfs)"}.match?(blkid_type)
             # New versions of xfs_growfs only support resizing by mount point, not by volume (e.g. under RHEL8)
             # * https://tickets.puppetlabs.com/browse/MODULES-9004
             mount_point = lsblk('-o', 'MOUNTPOINT', '-nr', path).chomp
             xfs_growfs(mount_point) || raise("Cannot resize filesystem to size #{new_size} because xfs_growfs failed.")
-          elsif %r{\bTYPE=\"(swap)\"}.match?(blkid_type)
+          elsif %r{\bTYPE="(swap)"}.match?(blkid_type)
             (swapoff(path) && mkswap(path) && swapon(path)) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
           end
         rescue Puppet::ExecutionFailure => e

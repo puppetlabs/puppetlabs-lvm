@@ -216,13 +216,6 @@ Style/OptionalBooleanParameter:
     - 'spec/spec_helper_acceptance_local.rb'
     - 'tests/beaker/lib/lvm_helper.rb'
 
-# Offense count: 12
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantRegexpEscape:
-  Exclude:
-    - 'lib/puppet/provider/filesystem/lvm.rb'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowMultipleReturnValues.

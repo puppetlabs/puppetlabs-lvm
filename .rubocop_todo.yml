@@ -191,22 +191,6 @@ Style/ClassAndModuleChildren:
   Exclude:
     - 'lib/puppet_x/lvm/output.rb'
 
-# Offense count: 56
-# This cop supports safe autocorrection (--autocorrect).
-Style/IfUnlessModifier:
-  Exclude:
-    - 'lib/facter/lvm_support.rb'
-    - 'lib/puppet/provider/filesystem/aix.rb'
-    - 'lib/puppet/provider/filesystem/lvm.rb'
-    - 'lib/puppet/provider/logical_volume/aix.rb'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/provider/physical_volume/lvm.rb'
-    - 'lib/puppet/type/filesystem.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-    - 'lib/puppet/type/physical_volume.rb'
-    - 'spec/lib/helpers.rb'
-    - 'spec/spec_helper_acceptance_local.rb'
-    - 'tests/beaker/lib/lvm_helper.rb'
 
 # Offense count: 2
 # Configuration parameters: AllowedMethods.

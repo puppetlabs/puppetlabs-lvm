@@ -71,68 +71,42 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     args.push('-n', @resource[:name]) unless @resource[:thinpool] == true
 
     size_option = '--size'
-    if @resource[:thinpool].is_a? String
-      size_option = '--virtualsize'
-    end
+    size_option = '--virtualsize' if @resource[:thinpool].is_a? String
 
     if @resource[:size]
       args.push(size_option, @resource[:size])
     elsif @resource[:initial_size]
       args.push(size_option, @resource[:initial_size])
     end
-    if @resource[:extents]
-      args.push('--extents', @resource[:extents])
-    end
+    args.push('--extents', @resource[:extents]) if @resource[:extents]
 
-    if !@resource[:extents] && !@resource[:size] && !@resource[:initial_size]
-      args.push('--extents', '100%FREE')
-    end
+    args.push('--extents', '100%FREE') if !@resource[:extents] && !@resource[:size] && !@resource[:initial_size]
 
-    if @resource[:stripes]
-      args.push('--stripes', @resource[:stripes])
-    end
+    args.push('--stripes', @resource[:stripes]) if @resource[:stripes]
 
-    if @resource[:stripesize]
-      args.push('--stripesize', @resource[:stripesize])
-    end
+    args.push('--stripesize', @resource[:stripesize]) if @resource[:stripesize]
 
-    if @resource[:poolmetadatasize]
-      args.push('--poolmetadatasize', @resource[:poolmetadatasize])
-    end
+    args.push('--poolmetadatasize', @resource[:poolmetadatasize]) if @resource[:poolmetadatasize]
 
     if @resource[:mirror]
       args.push('--mirrors', @resource[:mirror])
-      if @resource[:mirrorlog]
-        args.push('--mirrorlog', @resource[:mirrorlog])
-      end
-      if @resource[:region_size]
-        args.push('--regionsize', @resource[:region_size])
-      end
-      if @resource[:no_sync]
-        args.push('--nosync')
-      end
+      args.push('--mirrorlog', @resource[:mirrorlog]) if @resource[:mirrorlog]
+      args.push('--regionsize', @resource[:region_size]) if @resource[:region_size]
+      args.push('--nosync') if @resource[:no_sync]
     end
 
-    if @resource[:alloc]
-      args.push('--alloc', @resource[:alloc])
-    end
+    args.push('--alloc', @resource[:alloc]) if @resource[:alloc]
 
-    if @resource[:readahead]
-      args.push('--readahead', @resource[:readahead])
-    end
+    args.push('--readahead', @resource[:readahead]) if @resource[:readahead]
 
     if @resource[:persistent]
       # if persistent param is true, set arg to "y", otherwise set to "n"
       args.push('--persistent', [:true, true, 'true'].include?(@resource[:persistent]) ? 'y' : 'n')
     end
 
-    if @resource[:minor]
-      args.push('--minor', @resource[:minor])
-    end
+    args.push('--minor', @resource[:minor]) if @resource[:minor]
 
-    if @resource[:type]
-      args.push('--type', @resource[:type])
-    end
+    args.push('--type', @resource[:type]) if @resource[:type]
 
     if @resource[:thinpool]
       args.push('--thin')
@@ -149,9 +123,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   def destroy
     name_escaped = "#{@resource[:volume_group].gsub('-', '--')}-#{@resource[:name].gsub('-', '--')}"
-    if %r{\bTYPE="(swap)"}.match?(blkid(path))
-      swapoff(path)
-    end
+    swapoff(path) if %r{\bTYPE="(swap)"}.match?(blkid(path))
     dmsetup('remove', name_escaped)
     lvremove('-f', path)
   end
@@ -199,21 +171,15 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     ## Get the extend size
-    if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ %r{\s+(\d+)\.\d+k}i
-      vg_extent_size = Regexp.last_match(1).to_i
-    end
+    vg_extent_size = Regexp.last_match(1).to_i if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ %r{\s+(\d+)\.\d+k}i
 
     ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
     if lvm_size_units[current_size_unit] < lvm_size_units[new_size_unit]
       resizeable = true
     elsif lvm_size_units[current_size_unit] > lvm_size_units[new_size_unit]
-      if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
-        resizeable = true
-      end
+      resizeable = true if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
     elsif lvm_size_units[current_size_unit] == lvm_size_units[new_size_unit]
-      if new_size_bytes > current_size_bytes
-        resizeable = true
-      end
+      resizeable = true if new_size_bytes > current_size_bytes
     end
 
     if resizeable
@@ -236,9 +202,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
           end
         rescue Puppet::ExecutionFailure => e
           ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
-          if e.message.include?(' returned 2:') # rubocop:disable Metrics/BlockNesting
-            Puppet.debug(e.message)
-          end
+          Puppet.debug(e.message) if e.message.include?(' returned 2:') # rubocop:disable Metrics/BlockNesting
         end
       end
 
@@ -271,15 +235,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     puts "Change mirror from #{current_mirrors} to #{new_mirror_count}..."
     args = ['-m', new_mirror_count]
-    if @resource[:mirrorlog]
-      args.push('--mirrorlog', @resource[:mirrorlog])
-    end
+    args.push('--mirrorlog', @resource[:mirrorlog]) if @resource[:mirrorlog]
 
     # Region size cannot be changed on an existing mirror (not even when changing to zero mirrors).
 
-    if @resource[:alloc]
-      args.push('--alloc', @resource[:alloc])
-    end
+    args.push('--alloc', @resource[:alloc]) if @resource[:alloc]
     args.push(path)
     lvconvert(*args)
   end
@@ -310,9 +270,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     # puts "Change mirror log location to #{new_mirror_log_location}..."
     args = ['--mirrorlog', new_mirror_log_location]
-    if @resource[:alloc]
-      args.push('--alloc', @resource[:alloc])
-    end
+    args.push('--alloc', @resource[:alloc]) if @resource[:alloc]
     args.push(path)
     lvconvert(*args)
   end

@@ -17,9 +17,7 @@ Facter.add('lvm_vgs') do
   confine lvm_support: true
 
   setcode do
-    if Facter.value(:lvm_support)
-      vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', timeout: 30)
-    end
+    vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', timeout: 30) if Facter.value(:lvm_support)
 
     if vgs.nil?
       0
@@ -34,9 +32,7 @@ Facter.add('lvm_vgs') do
           setcode do
             pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
             res = nil
-            unless pvs.nil?
-              res = pvs.split("\n").grep(%r{^\s+/}).collect(&:strip).sort.join(',')
-            end
+            res = pvs.split("\n").grep(%r{^\s+/}).collect(&:strip).sort.join(',') unless pvs.nil?
             res
           end
         end
@@ -53,9 +49,7 @@ Facter.add('lvm_pvs') do
   confine lvm_support: true
 
   setcode do
-    if Facter.value(:lvm_support)
-      pvs = Facter::Core::Execution.execute('pvs -o name --noheadings 2>/dev/null', timeout: 30)
-    end
+    pvs = Facter::Core::Execution.execute('pvs -o name --noheadings 2>/dev/null', timeout: 30) if Facter.value(:lvm_support)
 
     if pvs.nil?
       0

@@ -22,9 +22,7 @@ Puppet::Type.type(:logical_volume).provide :aix do
       end
     end
 
-    if @resource[:type]
-      args.push('-t', @resource[:type])
-    end
+    args.push('-t', @resource[:type]) if @resource[:type]
 
     args.push(@resource[:volume_group], @resource[:initial_size])
 

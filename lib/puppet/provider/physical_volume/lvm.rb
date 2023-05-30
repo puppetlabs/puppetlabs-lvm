@@ -77,9 +77,7 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
 
   def create_physical_volume(path)
     args = []
-    if @resource[:force] == :true
-      args.push('--force')
-    end
+    args.push('--force') if @resource[:force] == :true
     args << path
     pvcreate(*args)
   end

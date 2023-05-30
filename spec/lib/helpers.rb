@@ -49,9 +49,7 @@ module Helpers
 
   # Stub the default provider to get around confines for testing
   def stub_default_provider!
-    unless defined?(@type)
-      raise ArgumentError, '@type must be set'
-    end
+    raise ArgumentError, '@type must be set' unless defined?(@type)
 
     provider = @type.provider(:lvm)
     @type.stubs(defaultprovider: provider)

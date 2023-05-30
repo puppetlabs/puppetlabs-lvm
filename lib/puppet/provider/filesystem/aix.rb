@@ -104,9 +104,7 @@ Puppet::Type.type(:filesystem).provide :aix do
     Open3.popen3("lsfs -q #{@resource[:name]}") do |_stdin, stdout, _stderr|
       stdout.each do |line|
         elements = line.split(%r{\s+})
-        if elements[2] == @resource[:name]
-          cursize = elements[4].to_i
-        end
+        cursize = elements[4].to_i if elements[2] == @resource[:name]
       end
     end
 

@@ -33,9 +33,7 @@ def verify_if_created?(agent, resource_type, resource_name, vol_group = nil, pro
 
     on(agent, "lvdisplay /dev/#{vol_group}/#{resource_name}") do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
-      if properties
-        assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected')
-      end
+      assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected') if properties
     end
   when 'aix_physical_volume'
     on(agent, "lspv #{resource_name}") do |result|
@@ -50,9 +48,7 @@ def verify_if_created?(agent, resource_type, resource_name, vol_group = nil, pro
 
     on(agent, "lslv #{resource_name}") do |result|
       assert_match(%r{#{resource_name}}, result.stdout, 'Unexpected error was detected')
-      if properties
-        assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected')
-      end
+      assert_match(%r{#{properties}}, result.stdout, 'Unexpected error was detected') if properties
     end
   end
 end

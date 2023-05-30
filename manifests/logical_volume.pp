@@ -1,7 +1,9 @@
 # == Define: lvm::logical_volume
 # @param volume_group The volume group name associated with this logical volume. 
-# This will automatically set this volume group as a dependency, but it must be defined elsewhere using the volume_group resource type.
-# @param size  Configures the size of the filesystem. Supports filesystem resizing. The size will be rounded up to the nearest multiple of the partition size.
+# This will automatically set this volume group as a dependency, 
+# but it must be defined elsewhere using the volume_group resource type.
+# @param size  Configures the size of the filesystem. Supports filesystem resizing. The size will be rounded up to the nearest multiple of 
+# the partition size.
 # @param initial_size The initial size of the logical volume. This will only apply to newly-created volumes
 #
 # @param ensure
@@ -36,7 +38,8 @@
 
 # @param no_sync An optimization in lvcreate, at least on Linux.
 
-# @param region_size A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are in sync. 
+# @param region_size A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions 
+# are in sync. 
 # CAN NOT BE CHANGED on already mirrored volume. 
 # Take your mirror size in terabytes and round up that number to the next power of 2, using that number as the -R argument
 

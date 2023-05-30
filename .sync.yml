@@ -21,9 +21,9 @@ spec/spec_helper.rb:
   mock_with: ':mocha'
   coverage_report: true
 .github/workflows/ci.yml:
-  unmanaged: false
+  unmanaged: true
 .github/workflows/nightly.yml:
-  unmanaged: false
+  unmanaged: true
 .github/workflows/release.yml:
   unmanaged: false
 .github/workflows/release_prep.yml:

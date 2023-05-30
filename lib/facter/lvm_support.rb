@@ -35,7 +35,7 @@ Facter.add('lvm_vgs') do
             pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
             res = nil
             unless pvs.nil?
-              res = pvs.split("\n").select { |l| l =~ %r{^\s+/} }.collect(&:strip).sort.join(',')
+              res = pvs.split("\n").grep(%r{^\s+/}).collect(&:strip).sort.join(',')
             end
             res
           end

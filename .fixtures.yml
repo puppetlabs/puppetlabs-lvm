@@ -6,5 +6,4 @@ fixtures:
       repo: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
       ref: v4.13.0
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
-  forge_modules:
-    mount_core: "puppetlabs/mount_core"
+    mount_core: "https://github.com/puppetlabs/puppetlabs-mount_core.git"

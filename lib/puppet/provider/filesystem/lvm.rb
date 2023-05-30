@@ -28,13 +28,15 @@ Puppet::Type.type(:filesystem).provide :lvm do
   def mkfs(fs_type, name)
     mkfs_params = { 'reiserfs' => '-q', 'xfs' => '-f' }
 
-    mkfs_cmd = !@resource[:mkfs_cmd].nil? ?
-                 [@resource[:mkfs_cmd]] :
-               case fs_type
-               when 'swap'
-                 ['mkswap']
+    mkfs_cmd = if !@resource[:mkfs_cmd].nil?
+                 [@resource[:mkfs_cmd]]
                else
-                 ["mkfs.#{fs_type}"]
+                 case fs_type
+                 when 'swap'
+                   ['mkswap']
+                 else
+                   ["mkfs.#{fs_type}"]
+                 end
                end
 
     mkfs_cmd << name

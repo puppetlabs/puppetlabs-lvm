@@ -207,13 +207,6 @@ Style/IfUnlessModifier:
     - 'spec/lib/helpers.rb'
     - 'spec/spec_helper_acceptance_local.rb'
     - 'tests/beaker/lib/lvm_helper.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/MultilineTernaryOperator:
-  Exclude:
-    - 'lib/puppet/provider/filesystem/lvm.rb'
-
 # Offense count: 4
 # This cop supports safe autocorrection (--autocorrect).
 Style/NegatedIfElseCondition:

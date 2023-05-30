@@ -292,7 +292,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     lvname = (@resource[:name]).to_s
     raw = lvs('-a', '-o', '+devices', vgpath)
 
-    if mirror.to_i > 0
+    if mirror.to_i.positive?
       return 'core' unless %r{\[#{lvname}_mlog\]\s+#{vgname}\s+}im.match?(raw)
       return 'mirrored' if %r{\[#{lvname}_mlog\]\s+#{vgname}\s+mw\S+}im.match?(raw) # attributes start with "m" or "M"
 
@@ -305,7 +305,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   def mirrorlog=(new_mirror_log_location)
     # It makes no sense to change this unless we use mirrors.
     mirror_count = mirror.to_i
-    return unless mirror_count.to_i > 0
+    return unless mirror_count.to_i.positive?
 
     current_log_location = mirrorlog.to_s
     return unless new_mirror_log_location.to_s != current_log_location

@@ -118,7 +118,7 @@ Puppet::Type.newtype(:logical_volume) do
   newparam(:minor) do
     desc 'Set the minor number'
     validate do |value|
-      if value.to_i > 255 || value.to_i < 0
+      if value.to_i > 255 || value.to_i.negative?
         raise ArgumentError, "#{value} is not a valid value for minor. It must be an integer between 0 and 255"
       end
     end

@@ -208,17 +208,6 @@ Style/IfUnlessModifier:
     - 'spec/spec_helper_acceptance_local.rb'
     - 'tests/beaker/lib/lvm_helper.rb'
 
-
-# Offense count: 3
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle, AllowedMethods, AllowedPatterns.
-# SupportedStyles: predicate, comparison
-Style/NumericPredicate:
-  Exclude:
-    - 'spec/**/*'
-    - 'lib/puppet/provider/logical_volume/lvm.rb'
-    - 'lib/puppet/type/logical_volume.rb'
-
 # Offense count: 2
 # Configuration parameters: AllowedMethods.
 # AllowedMethods: respond_to_missing?

@@ -19,28 +19,47 @@
   ],
   "operatingsystem_support": [
     {
-      "operatingsystem": "RedHat"
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7",
+        "8",
+        "9"
+      ]
     },
     {
-      "operatingsystem": "CentOS"
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "7",
+        "8"
+      ]
     },
     {
-      "operatingsystem": "OracleLinux"
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "7"
+      ]
     },
     {
-      "operatingsystem": "Scientific"
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "10",
+        "11"
+      ]
     },
     {
-      "operatingsystem": "Debian"
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "18.04",
+        "20.04",
+        "22.04"
+      ]
     },
     {
-      "operatingsystem": "Ubuntu"
-    },
-    {
-      "operatingsystem": "AIX"
-    },
-    {
-      "operatingsystem": "Archlinux"
+      "operatingsystem": "AIX",
+      "operatingsystemrelease": [
+        "7.1",
+        "7.2"
+      ]
     }
   ],
   "requirements": [
@@ -49,7 +68,7 @@
       "version_requirement": ">= 7.0.0 < 9.0.0"
     }
   ],
-  "pdk-version": "2.5.0",
-  "template-url": "pdk-default#2.5.0",
-  "template-ref": "tags/2.5.0-0-g369d483"
+  "pdk-version": "2.7.1",
+  "template-url": "https://github.com/puppetlabs/pdk-templates#main",
+  "template-ref": "heads/main-0-gab2bd48"
 }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:logical_volume).provide :lvm do
   desc 'Manages LVM logical volumes on Linux'
 
@@ -35,9 +37,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     full_lvs_output = lvs.split("\n")
 
     # Remove first line
-    logical_volumes = full_lvs_output.drop(1)
-
-    logical_volumes
+    full_lvs_output.drop(1)
   end
 
   def self.get_logical_volume_properties(logical_volumes_line)
@@ -47,7 +47,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     # LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
 
     # Split on spaces
-    output_array = logical_volumes_line.gsub(%r{\s+}m, ' ').strip.split(' ')
+    output_array = logical_volumes_line.gsub(%r{\s+}m, ' ').strip.split
 
     # Assign properties based on headers
     logical_volumes_properties[:ensure]       = :present
@@ -71,75 +71,49 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     args.push('-n', @resource[:name]) unless @resource[:thinpool] == true
 
     size_option = '--size'
-    if @resource[:thinpool].is_a? String
-      size_option = '--virtualsize'
-    end
+    size_option = '--virtualsize' if @resource[:thinpool].is_a? String
 
     if @resource[:size]
       args.push(size_option, @resource[:size])
     elsif @resource[:initial_size]
       args.push(size_option, @resource[:initial_size])
     end
-    if @resource[:extents]
-      args.push('--extents', @resource[:extents])
-    end
+    args.push('--extents', @resource[:extents]) if @resource[:extents]
 
-    if !@resource[:extents] && !@resource[:size] && !@resource[:initial_size]
-      args.push('--extents', '100%FREE')
-    end
+    args.push('--extents', '100%FREE') if !@resource[:extents] && !@resource[:size] && !@resource[:initial_size]
 
-    if @resource[:stripes]
-      args.push('--stripes', @resource[:stripes])
-    end
+    args.push('--stripes', @resource[:stripes]) if @resource[:stripes]
 
-    if @resource[:stripesize]
-      args.push('--stripesize', @resource[:stripesize])
-    end
+    args.push('--stripesize', @resource[:stripesize]) if @resource[:stripesize]
 
-    if @resource[:poolmetadatasize]
-      args.push('--poolmetadatasize', @resource[:poolmetadatasize])
-    end
+    args.push('--poolmetadatasize', @resource[:poolmetadatasize]) if @resource[:poolmetadatasize]
 
     if @resource[:mirror]
       args.push('--mirrors', @resource[:mirror])
-      if @resource[:mirrorlog]
-        args.push('--mirrorlog', @resource[:mirrorlog])
-      end
-      if @resource[:region_size]
-        args.push('--regionsize', @resource[:region_size])
-      end
-      if @resource[:no_sync]
-        args.push('--nosync')
-      end
+      args.push('--mirrorlog', @resource[:mirrorlog]) if @resource[:mirrorlog]
+      args.push('--regionsize', @resource[:region_size]) if @resource[:region_size]
+      args.push('--nosync') if @resource[:no_sync]
     end
 
-    if @resource[:alloc]
-      args.push('--alloc', @resource[:alloc])
-    end
+    args.push('--alloc', @resource[:alloc]) if @resource[:alloc]
 
-    if @resource[:readahead]
-      args.push('--readahead', @resource[:readahead])
-    end
+    args.push('--readahead', @resource[:readahead]) if @resource[:readahead]
 
     if @resource[:persistent]
       # if persistent param is true, set arg to "y", otherwise set to "n"
       args.push('--persistent', [:true, true, 'true'].include?(@resource[:persistent]) ? 'y' : 'n')
     end
 
-    if @resource[:minor]
-      args.push('--minor', @resource[:minor])
-    end
+    args.push('--minor', @resource[:minor]) if @resource[:minor]
 
-    if @resource[:type]
-      args.push('--type', @resource[:type])
-    end
+    args.push('--type', @resource[:type]) if @resource[:type]
 
     if @resource[:thinpool]
       args.push('--thin')
       args << if @resource[:thinpool].is_a? String
-                @resource[:volume_group] + '/' + @resource[:thinpool]
+                "#{@resource[:volume_group]}/#{@resource[:thinpool]}"
               else
-                @resource[:volume_group] + '/' + @resource[:name]
+                "#{@resource[:volume_group]}/#{@resource[:name]}"
               end
     else
       args << @resource[:volume_group]
@@ -149,9 +123,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   def destroy
     name_escaped = "#{@resource[:volume_group].gsub('-', '--')}-#{@resource[:name].gsub('-', '--')}"
-    if blkid(path) =~ %r{\bTYPE=\"(swap)\"}
-      swapoff(path)
-    end
+    swapoff(path) if %r{\bTYPE="(swap)"}.match?(blkid(path))
     dmsetup('remove', name_escaped)
     lvremove('-f', path)
   end
@@ -176,13 +148,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     raw = lvs('--noheading', '--unit', unit, path)
 
-    if raw =~ %r{\s+(\d+)\.(\d+)#{unit}}i
-      if Regexp.last_match(2).to_i.zero?
-        return Regexp.last_match(1) + unit.capitalize
-      else
-        return Regexp.last_match(1) + '.' + Regexp.last_match(2).sub(%r{0+$}, '') + unit.capitalize
-      end
-    end
+    return unless raw =~ %r{\s+(\d+)\.(\d+)#{unit}}i
+    return Regexp.last_match(1) + unit.capitalize if Regexp.last_match(2).to_i.zero?
+
+    "#{Regexp.last_match(1)}.#{Regexp.last_match(2).sub(%r{0+$}, '')}#{unit.capitalize}"
   end
 
   def size=(new_size)
@@ -202,54 +171,47 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     ## Get the extend size
-    if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ %r{\s+(\d+)\.\d+k}i
-      vg_extent_size = Regexp.last_match(1).to_i
-    end
+    vg_extent_size = Regexp.last_match(1).to_i if lvs('--noheading', '-o', 'vg_extent_size', '--units', 'k', path) =~ %r{\s+(\d+)\.\d+k}i
 
     ## Verify that it's a extension: Reduce is potentially dangerous and should be done manually
     if lvm_size_units[current_size_unit] < lvm_size_units[new_size_unit]
       resizeable = true
     elsif lvm_size_units[current_size_unit] > lvm_size_units[new_size_unit]
-      if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
-        resizeable = true
-      end
+      resizeable = true if (current_size_bytes * lvm_size_units[current_size_unit]) < (new_size_bytes * lvm_size_units[new_size_unit])
     elsif lvm_size_units[current_size_unit] == lvm_size_units[new_size_unit]
-      if new_size_bytes > current_size_bytes
-        resizeable = true
-      end
+      resizeable = true if new_size_bytes > current_size_bytes
     end
 
-    if !resizeable
-      if @resource[:size_is_minsize] == :true || @resource[:size_is_minsize] == true || @resource[:size_is_minsize] == 'true'
-        info("Logical volume already has minimum size of #{new_size} (currently #{current_size})")
-      else
-        raise(Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})")
-      end
-    else
+    if resizeable
       lvextend('-L', new_size, path) || raise("Cannot extend to size #{new_size} because lvextend failed.")
 
       unless @resource[:resize_fs] == :false || @resource[:resize_fs] == false || @resource[:resize_fs] == 'false'
         begin
           blkid_type = blkid(path)
-          if command(:resize4fs) && blkid_type =~ %r{\bTYPE=\"(ext4)\"}
+          if command(:resize4fs) && blkid_type =~ %r{\bTYPE="(ext4)"}
             resize4fs(path) || raise("Cannot resize file system to size #{new_size} because resize2fs failed.")
-          elsif blkid_type =~ %r{\bTYPE=\"(ext[34])\"}
+          elsif %r{\bTYPE="(ext[34])"}.match?(blkid_type)
             resize2fs(path) || raise("Cannot resize file system to size #{new_size} because resize2fs failed.")
-          elsif blkid_type =~ %r{\bTYPE=\"(xfs)\"}
+          elsif %r{\bTYPE="(xfs)"}.match?(blkid_type)
             # New versions of xfs_growfs only support resizing by mount point, not by volume (e.g. under RHEL8)
             # * https://tickets.puppetlabs.com/browse/MODULES-9004
             mount_point = lsblk('-o', 'MOUNTPOINT', '-nr', path).chomp
             xfs_growfs(mount_point) || raise("Cannot resize filesystem to size #{new_size} because xfs_growfs failed.")
-          elsif blkid_type =~ %r{\bTYPE=\"(swap)\"}
-            swapoff(path) && mkswap(path) && swapon(path) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
+          elsif %r{\bTYPE="(swap)"}.match?(blkid_type)
+            (swapoff(path) && mkswap(path) && swapon(path)) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
           end
-        rescue Puppet::ExecutionFailure => detail
+        rescue Puppet::ExecutionFailure => e
           ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.
-          if detail.message =~ %r{ returned 2:} # rubocop:disable Metrics/BlockNesting
-            Puppet.debug(detail.message)
-          end
+          Puppet.debug(e.message) if e.message.include?(' returned 2:') # rubocop:disable Metrics/BlockNesting
         end
       end
+
+    else
+      unless @resource[:size_is_minsize] == :true || @resource[:size_is_minsize] == true || @resource[:size_is_minsize] == 'true'
+        raise(Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})")
+      end
+
+      info("Logical volume already has minimum size of #{new_size} (currently #{current_size})")
 
     end
   end
@@ -269,21 +231,17 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   def mirror=(new_mirror_count)
     current_mirrors = mirror.to_i
-    if new_mirror_count.to_i != current_mirrors
-      puts "Change mirror from #{current_mirrors} to #{new_mirror_count}..."
-      args = ['-m', new_mirror_count]
-      if @resource[:mirrorlog]
-        args.push('--mirrorlog', @resource[:mirrorlog])
-      end
+    return unless new_mirror_count.to_i != current_mirrors
 
-      # Region size cannot be changed on an existing mirror (not even when changing to zero mirrors).
+    puts "Change mirror from #{current_mirrors} to #{new_mirror_count}..."
+    args = ['-m', new_mirror_count]
+    args.push('--mirrorlog', @resource[:mirrorlog]) if @resource[:mirrorlog]
 
-      if @resource[:alloc]
-        args.push('--alloc', @resource[:alloc])
-      end
-      args.push(path)
-      lvconvert(*args)
-    end
+    # Region size cannot be changed on an existing mirror (not even when changing to zero mirrors).
+
+    args.push('--alloc', @resource[:alloc]) if @resource[:alloc]
+    args.push(path)
+    lvconvert(*args)
   end
 
   # Location of the mirror log. Empty string if mirror==0, else "mirrored", "disk" or "core".
@@ -292,16 +250,12 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     lvname = (@resource[:name]).to_s
     raw = lvs('-a', '-o', '+devices', vgpath)
 
-    if mirror.to_i > 0
-      if raw =~ %r{\[#{lvname}_mlog\]\s+#{vgname}\s+}im
-        if raw =~ %r{\[#{lvname}_mlog\]\s+#{vgname}\s+mw\S+}im # attributes start with "m" or "M"
-          return 'mirrored'
-        else
-          return 'disk'
-        end
-      else
-        return 'core'
-      end
+    if mirror.to_i.positive?
+      return 'core' unless %r{\[#{lvname}_mlog\]\s+#{vgname}\s+}im.match?(raw)
+      return 'mirrored' if %r{\[#{lvname}_mlog\]\s+#{vgname}\s+mw\S+}im.match?(raw) # attributes start with "m" or "M"
+
+      return 'disk'
+
     end
     nil
   end
@@ -309,21 +263,19 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   def mirrorlog=(new_mirror_log_location)
     # It makes no sense to change this unless we use mirrors.
     mirror_count = mirror.to_i
-    if mirror_count.to_i > 0
-      current_log_location = mirrorlog.to_s
-      if new_mirror_log_location.to_s != current_log_location
-        # puts "Change mirror log location to #{new_mirror_log_location}..."
-        args = ['--mirrorlog', new_mirror_log_location]
-        if @resource[:alloc]
-          args.push('--alloc', @resource[:alloc])
-        end
-        args.push(path)
-        lvconvert(*args)
-      end
-    end
+    return unless mirror_count.to_i.positive?
+
+    current_log_location = mirrorlog.to_s
+    return unless new_mirror_log_location.to_s != current_log_location
+
+    # puts "Change mirror log location to #{new_mirror_log_location}..."
+    args = ['--mirrorlog', new_mirror_log_location]
+    args.push('--alloc', @resource[:alloc]) if @resource[:alloc]
+    args.push(path)
+    lvconvert(*args)
   end
 
-    private
+  private
 
   def lvs_pattern
     # lvs output format:

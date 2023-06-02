@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'lvm', type: :class do
@@ -11,41 +13,44 @@ describe 'lvm', type: :class do
         volume_groups: {
           'myvg' => {
             'physical_volumes' => ['/dev/sda2', '/dev/sda3'],
-            'logical_volumes'  => {
-              'opt'    => { 'size' => '20G' },
-              'tmp'    => { 'size' => '1G' },
-              'usr'    => { 'size' => '3G' },
-              'var'    => { 'size' => '15G' },
-              'home'   => { 'size' => '5G' },
+            'logical_volumes' => {
+              'opt' => { 'size' => '20G' },
+              'tmp' => { 'size' => '1G' },
+              'usr' => { 'size' => '3G' },
+              'var' => { 'size' => '15G' },
+              'home' => { 'size' => '5G' },
               'backup' => {
-                'size'              => '5G',
-                'mountpath'         => '/var/backups',
-                'mountpath_require' => false,
-              },
-            },
-          },
-        },
+                'size' => '5G',
+                'mountpath' => '/var/backups',
+                'mountpath_require' => false
+              }
+            }
+          }
+        }
       }
     end
 
     it { is_expected.to contain_physical_volume('/dev/sda2') }
     it { is_expected.to contain_physical_volume('/dev/sda3') }
+
     it {
-      is_expected.to contain_volume_group('myvg').with(ensure: 'present',
-                                                       physical_volumes: ['/dev/sda2', '/dev/sda3'])
+      expect(subject).to contain_volume_group('myvg').with(ensure: 'present',
+                                                           physical_volumes: ['/dev/sda2', '/dev/sda3'])
     }
 
     it {
-      is_expected.to contain_logical_volume('opt').with(volume_group: 'myvg',
-                                                        size: '20G')
+      expect(subject).to contain_logical_volume('opt').with(volume_group: 'myvg',
+                                                            size: '20G')
     }
+
     it { is_expected.to contain_filesystem('/dev/myvg/opt') }
     it { is_expected.to contain_mount('/opt') }
 
     it {
-      is_expected.to contain_logical_volume('backup').with(volume_group: 'myvg',
-                                                           size: '5G')
+      expect(subject).to contain_logical_volume('backup').with(volume_group: 'myvg',
+                                                               size: '5G')
     }
+
     it { is_expected.to contain_filesystem('/dev/myvg/backup') }
     it { is_expected.to contain_mount('/var/backups') }
   end
@@ -56,21 +61,21 @@ describe 'lvm', type: :class do
         volume_groups: {
           'myvg' => {
             'physical_volumes' => ['/dev/sda2'],
-            'logical_volumes'  => {
+            'logical_volumes' => {
               'not_mounted' => {
-                'size'              => '5G',
-                'mounted'           => false,
-                'mountpath'         => '/mnt/not_mounted',
-                'mountpath_require' => false,
-              },
-            },
-          },
-        },
+                'size' => '5G',
+                'mounted' => false,
+                'mountpath' => '/mnt/not_mounted',
+                'mountpath_require' => false
+              }
+            }
+          }
+        }
       }
     end
 
     it {
-      is_expected.to contain_mount('/mnt/not_mounted').with(ensure: 'present')
+      expect(subject).to contain_mount('/mnt/not_mounted').with(ensure: 'present')
     }
   end
 
@@ -80,35 +85,37 @@ describe 'lvm', type: :class do
         volume_groups: {
           'myvg' => {
             'physical_volumes' => ['/dev/sda2', '/dev/sda3'],
-            'logical_volumes'  => {
+            'logical_volumes' => {
               'swap' => {
-                'size'    => '20G',
-                'fs_type' => 'swap',
+                'size' => '20G',
+                'fs_type' => 'swap'
               },
               'swap2' => {
-                'ensure'  => 'absent',
-                'size'    => '20G',
-                'fs_type' => 'swap',
-              },
-            },
-          },
-        },
+                'ensure' => 'absent',
+                'size' => '20G',
+                'fs_type' => 'swap'
+              }
+            }
+          }
+        }
       }
     end
 
     it {
-      is_expected.to contain_logical_volume('swap').with(volume_group: 'myvg',
-                                                         size: '20G')
+      expect(subject).to contain_logical_volume('swap').with(volume_group: 'myvg',
+                                                             size: '20G')
     }
+
     it {
-      is_expected.to contain_filesystem('/dev/myvg/swap').with(fs_type: 'swap')
+      expect(subject).to contain_filesystem('/dev/myvg/swap').with(fs_type: 'swap')
     }
+
     it {
-      is_expected.to contain_mount('/dev/myvg/swap').with(name: 'swap_/dev/myvg/swap',
-                                                          ensure: 'present',
-                                                          fstype: 'swap',
-                                                          pass: 0,
-                                                          dump: 0)
+      expect(subject).to contain_mount('/dev/myvg/swap').with(name: 'swap_/dev/myvg/swap',
+                                                              ensure: 'present',
+                                                              fstype: 'swap',
+                                                              pass: 0,
+                                                              dump: 0)
     }
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 dir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(File.join(dir, 'lib'))
 

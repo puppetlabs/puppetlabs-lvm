@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 module Helpers
-  TEST_DIR = Pathname.new(__FILE__).parent + '..'
+  TEST_DIR = "#{Pathname.new(__FILE__).parent}.."
 
   TYPES = {
     pv: :physical_volume,
     lv: :logical_volume,
     vg: :volume_group,
-    fs: :filesystem,
+    fs: :filesystem
   }.freeze
 
   def self.included(obj)
@@ -27,13 +29,15 @@ module Helpers
   # Sets up an expection that a resource for +type+ is not created
   def should_not_create(type)
     raise "Invalid type #{type}" unless TYPES[type]
+
     Puppet::Type.type(TYPES[type]).expects(:new).never
   end
 
   # Sets up an expection that a resource for +type+ is created
-  def should_create(type)
+  def should_create(type, &block)
     raise "Invalid type #{type}" unless TYPES[type]
-    Puppet::Type.type(TYPES[type]).expects(:new).with { |args| yield(args) }
+
+    Puppet::Type.type(TYPES[type]).expects(:new).with(&block)
   end
 
   # Return the +@valid_params+ without one or more keys
@@ -45,14 +49,13 @@ module Helpers
 
   # Stub the default provider to get around confines for testing
   def stub_default_provider!
-    unless defined?(@type)
-      raise ArgumentError, '@type must be set'
-    end
+    raise ArgumentError, '@type must be set' unless defined?(@type)
+
     provider = @type.provider(:lvm)
     @type.stubs(defaultprovider: provider)
   end
 
   def fixture(name, ext = '.txt')
-    (TEST_DIR + 'fixtures' + "#{name}#{ext}").read
+    "#{TEST_DIR}fixtures#{name}#{ext}".read
   end
 end

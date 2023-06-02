@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.newtype(:volume_group) do
   ensurable
 
@@ -18,7 +20,7 @@ Puppet::Type.newtype(:volume_group) do
         should.each do |s|
           if File.symlink?(s)
             device = File.expand_path(File.readlink(s), File.dirname(s))
-            debug("resolved symlink '" + s + "' to device '" + device + "'")
+            debug("resolved symlink '#{s}' to device '#{device}'")
             real_should.push device
           else
             real_should.push s
@@ -27,7 +29,7 @@ Puppet::Type.newtype(:volume_group) do
         is.each do |s|
           if File.symlink?(s)
             device = File.expand_path(File.readlink(s), File.dirname(s))
-            debug("resolved symlink '" + s + "' to device '" + device + "'")
+            debug("resolved symlink '#{s}' to device '#{device}'")
             real_is.push device
           else
             real_is.push s

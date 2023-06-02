@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'volume_groups fact' do
@@ -39,22 +41,22 @@ describe 'volume_groups fact' do
           ZcFkEG-217a-nnc6-PvWx-oXou-7THt-XR6eci centos wz--n- writeable  normal     19.51g 44.00m
           tMqdQC-ukEx-bEft-bLk8-WoM1-jX0a-0p1rri tasks  wz--n- writeable  normal      3.99g  2.82g
         OUTPUT
-        vgs_output.lstrip!
+        vgs_output.dup.lstrip!
         Facter::Core::Execution.expects(:exec).at_least(1).returns(vgs_output)
         Facter.value(:volume_groups).should include('centos' => {
                                                       'uuid' => 'ZcFkEG-217a-nnc6-PvWx-oXou-7THt-XR6eci',
-                                                      'attr'              => 'wz--n-', 'permissions' => 'writeable',
+                                                      'attr' => 'wz--n-', 'permissions' => 'writeable',
                                                       'allocation_policy' => 'normal',
-                                                      'size'              => '19.51g',
-                                                      'free'              => '44.00m'
+                                                      'size' => '19.51g',
+                                                      'free' => '44.00m'
                                                     },
                                                     'tasks' => {
                                                       'uuid' => 'tMqdQC-ukEx-bEft-bLk8-WoM1-jX0a-0p1rri',
-                                                      'attr'              => 'wz--n-',
-                                                      'permissions'       => 'writeable',
+                                                      'attr' => 'wz--n-',
+                                                      'permissions' => 'writeable',
                                                       'allocation_policy' => 'normal',
-                                                      'size'              => '3.99g',
-                                                      'free'              => '2.82g',
+                                                      'size' => '3.99g',
+                                                      'free' => '2.82g'
                                                     })
       end
     end

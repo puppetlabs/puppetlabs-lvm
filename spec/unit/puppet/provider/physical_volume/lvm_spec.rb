@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 provider_class = Puppet::Type.type(:physical_volume).provider(:lvm)
@@ -8,11 +10,11 @@ describe provider_class do
     @provider = provider_class.new(@resource)
   end
 
-  pvs_output = <<-EOS
+  pvs_output = <<-OUTPUT
   PV         VG     Fmt  Attr PSize  PFree
   /dev/sda2  centos lvm2 a--  19.51g    0
   /dev/sda3  centos lvm2 a--  10.11g    0
-  EOS
+  OUTPUT
 
   before :each do
     @provider.class.stubs(:pvs).returns(pvs_output)
@@ -20,7 +22,7 @@ describe provider_class do
 
   describe 'self.instances' do
     it 'returns an array of physical volumes' do
-      physical_volumes = @provider.class.instances.map { |x| x.name }
+      physical_volumes = @provider.class.instances.map(&:name)
 
       expect(physical_volumes).to include('/dev/sda2', '/dev/sda3')
     end
@@ -58,6 +60,7 @@ describe provider_class do
       @provider.expects(:pvs).returns(true)
       @provider.should be_exists
     end
+
     it "does not execute 'pvs' if unless_vg VG exists" do
       @resource.expects(:[]).with(:unless_vg).returns('vg01')
       @resource.expects(:[]).with(:unless_vg).returns('vg01')

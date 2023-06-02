@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 
 Puppet::Type.newtype(:filesystem) do
@@ -12,9 +14,7 @@ Puppet::Type.newtype(:filesystem) do
   newparam(:name) do
     isnamevar
     validate do |value|
-      unless Pathname.new(value).absolute?
-        raise ArgumentError, 'Filesystem names must be fully qualified'
-      end
+      raise ArgumentError, 'Filesystem names must be fully qualified' unless Pathname.new(value).absolute?
     end
   end
 
@@ -142,7 +142,7 @@ Puppet::Type.newtype(:filesystem) do
   end
 
   autorequire(:logical_volume) do
-    if device = @parameters[:device]
+    if (device = @parameters[:device])
       device.value
     else
       @parameters[:name].value

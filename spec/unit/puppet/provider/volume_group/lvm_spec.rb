@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 provider_class = Puppet::Type.type(:volume_group).provider(:lvm)
@@ -8,10 +10,10 @@ describe provider_class do
     @provider = provider_class.new(@resource)
   end
 
-  vgs_output = <<-EOS
+  vgs_output = <<-OUTPUT
   VG       #PV #LV #SN Attr   VSize  VFree
   VolGroup   1   2   0 wz--n- 19.51g    0
-  EOS
+  OUTPUT
 
   describe 'self.instances' do
     before :each do
@@ -19,7 +21,7 @@ describe provider_class do
     end
 
     it 'returns an array of volume groups' do
-      volume_groups = @provider.class.instances.map { |x| x.name }
+      volume_groups = @provider.class.instances.map(&:name)
 
       expect(volume_groups).to include('VolGroup')
     end

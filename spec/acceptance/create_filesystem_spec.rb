@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 require 'securerandom'
 
@@ -7,34 +9,34 @@ describe 'create filesystems' do
       '/dev/sdc'
     end
     let(:vg) do
-      ('VolumeGroup_' + SecureRandom.hex(2))
+      'VolumeGroup'
     end
     let(:lv) do
-      ('LogicalVolume_' + SecureRandom.hex(3))
+      'LogicalVolume'
     end
     let(:pp) do
-      <<-MANIFEST
-physical_volume {'#{pv}':
-	ensure  => present,
-}
-->
-volume_group {'#{vg}':
-	ensure            => present,
-	physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-	ensure        => present,
-	volume_group  => '#{vg}',
-	size          => '20M',
-}
-->
-filesystem {'Create_filesystem':
-	name    => '/dev/#{vg}/#{lv}',
-	ensure  => present,
-	fs_type => 'non-existing-format',
-}
-			MANIFEST
+      <<~MANIFEST
+        physical_volume {'#{pv}':
+        	ensure  => present,
+        }
+        ->
+        volume_group {'#{vg}':
+        	ensure            => present,
+        	physical_volumes  => '#{pv}',
+        }
+        ->
+        logical_volume{'#{lv}':
+        	ensure        => present,
+        	volume_group  => '#{vg}',
+        	size          => '20M',
+        }
+        ->
+        filesystem {'Create_filesystem':
+        	name    => '/dev/#{vg}/#{lv}',
+        	ensure  => present,
+        	fs_type => 'non-existing-format',
+        }
+      MANIFEST
     end
 
     it 'applies the manifest' do
@@ -48,34 +50,34 @@ filesystem {'Create_filesystem':
       '/dev/sdc'
     end
     let(:vg) do
-      ('VolumeGroup_' + SecureRandom.hex(2))
+      'VolumeGroup_ext2'
     end
     let(:lv) do
-      ('LogicalVolume_' + SecureRandom.hex(3))
+      'LogicalVolume_ext2'
     end
     let(:pp) do
-      <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-}
-->
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '20M',
-}
-->
-filesystem {'Create_filesystem':
-  name    => '/dev/#{vg}/#{lv}',
-  ensure  => present,
-  fs_type => 'ext2',
-}
-			MANIFEST
+      <<~MANIFEST
+        physical_volume {'#{pv}':
+          ensure  => present,
+        }
+        ->
+        volume_group {'#{vg}':
+          ensure            => present,
+          physical_volumes  => '#{pv}',
+        }
+        ->
+        logical_volume{'#{lv}':
+          ensure        => present,
+          volume_group  => '#{vg}',
+          size          => '20M',
+        }
+        ->
+        filesystem {'Create_filesystem':
+          name    => '/dev/#{vg}/#{lv}',
+          ensure  => present,
+          fs_type => 'ext2',
+        }
+      MANIFEST
     end
 
     it 'applies the manifest' do
@@ -90,34 +92,34 @@ filesystem {'Create_filesystem':
       '/dev/sdc'
     end
     let(:vg) do
-      ('VolumeGroup_' + SecureRandom.hex(2))
+      'VolumeGroup_ext4'
     end
     let(:lv) do
-      ('LogicalVolume_' + SecureRandom.hex(3))
+      'LogicalVolume_ext4'
     end
     let(:pp) do
-      <<-MANIFEST
-physical_volume {'#{pv}':
-  ensure  => present,
-}
-->
-volume_group {'#{vg}':
-  ensure            => present,
-  physical_volumes  => '#{pv}',
-}
-->
-logical_volume{'#{lv}':
-  ensure        => present,
-  volume_group  => '#{vg}',
-  size          => '20M',
-}
-->
-filesystem {'Create_filesystem':
-  name    => '/dev/#{vg}/#{lv}',
-  ensure  => present,
-  fs_type => 'ext4',
-}
-			MANIFEST
+      <<~MANIFEST
+        physical_volume {'#{pv}':
+          ensure  => present,
+        }
+        ->
+        volume_group {'#{vg}':
+          ensure            => present,
+          physical_volumes  => '#{pv}',
+        }
+        ->
+        logical_volume{'#{lv}':
+          ensure        => present,
+          volume_group  => '#{vg}',
+          size          => '20M',
+        }
+        ->
+        filesystem {'Create_filesystem':
+          name    => '/dev/#{vg}/#{lv}',
+          ensure  => present,
+          fs_type => 'ext4',
+        }
+      MANIFEST
     end
 
     it 'applies the manifest' do

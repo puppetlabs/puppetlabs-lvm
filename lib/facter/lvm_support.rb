@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # lvm_support: true/nil
 #   Whether there is LVM support (based on the presence of the "vgs" command)
 Facter.add('lvm_support') do
@@ -11,34 +13,31 @@ end
 
 # lvm_vgs: [0-9]+
 #   Number of VGs
-vg_list = []
 Facter.add('lvm_vgs') do
   confine lvm_support: true
 
-  if Facter.value(:lvm_support)
+  setcode do
     vgs = Facter::Core::Execution.execute('vgs -o name --noheadings 2>/dev/null', timeout: 30)
-  end
 
-  if vgs.nil?
-    setcode { 0 }
-  else
-    vg_list = vgs.split
-    setcode { vg_list.length }
-  end
-end
+    if vgs.nil?
+      0
+    else
+      vg_list = vgs.split
 
-# lvm_vg_[0-9]+
-#   VG name by index
-vg_list.each_with_index do |vg, i|
-  Facter.add("lvm_vg_#{i}") { setcode { vg } }
-  Facter.add("lvm_vg_#{vg}_pvs") do
-    setcode do
-      pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
-      res = nil
-      unless pvs.nil?
-        res = pvs.split("\n").select { |l| l =~ %r{^\s+/} }.map(&:strip).sort.join(',')
+      # lvm_vg_[0-9]+
+      #   VG name by index
+      vg_list.each_with_index do |vg, i|
+        Facter.add("lvm_vg_#{i}") { setcode { vg } }
+        Facter.add("lvm_vg_#{vg}_pvs") do
+          setcode do
+            pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
+            res = nil
+            res = pvs.split("\n").grep(%r{^\s+/}).collect(&:strip).sort.join(',') unless pvs.nil?
+            res
+          end
+        end
       end
-      res
+      vg_list.length
     end
   end
 end
@@ -48,20 +47,21 @@ end
 pv_list = []
 Facter.add('lvm_pvs') do
   confine lvm_support: true
-  if Facter.value(:lvm_support)
+
+  setcode do
     pvs = Facter::Core::Execution.execute('pvs -o name --noheadings 2>/dev/null', timeout: 30)
-  end
 
-  if pvs.nil?
-    setcode { 0 }
-  else
-    pv_list = pvs.split
-    setcode { pv_list.length }
-  end
-end
+    if pvs.nil?
+      0
+    else
+      pv_list = pvs.split
 
-# lvm_pv_[0-9]+
-#   PV name by index
-pv_list.each_with_index do |pv, i|
-  Facter.add("lvm_pv_#{i}") { setcode { pv } }
+      # lvm_pv_[0-9]+
+      #   PV name by index
+      pv_list.each_with_index do |pv, i|
+        Facter.add("lvm_pv_#{i}") { setcode { pv } }
+      end
+      pv_list.length
+    end
+  end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 provider_class = Puppet::Type.type(:logical_volume).provider(:lvm)
@@ -8,13 +10,13 @@ describe provider_class do
     @provider = provider_class.new(@resource)
   end
 
-  lvs_output = <<-EOS
+  lvs_output = <<-OUTPUT
   LV      VG         Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
   lv_root VolGroup   -wi-ao----  18.54g
   lv_swap VolGroup   -wi-ao---- 992.00m
   data    data       -wi-ao---- 992.00m
   j1      vg_jenkins -wi-a-----   1.00g
-  EOS
+  OUTPUT
 
   describe 'self.instances' do
     before :each do
@@ -22,7 +24,7 @@ describe provider_class do
     end
 
     it 'returns an array of logical volumes' do
-      logical_volumes = @provider.class.instances.map { |x| x.name }
+      logical_volumes = @provider.class.instances.map(&:name)
 
       expect(logical_volumes).to include('lv_root', 'lv_swap')
     end
@@ -35,18 +37,21 @@ describe provider_class do
       @provider.class.stubs(:lvs).with('data').returns(lvs_output)
       expect(@provider.exists?).to be > 10
     end
+
     it "returns 'nil', lv 'jenkins' in vg 'vg_jenkins' exists" do
       @resource.expects(:[]).with(:name).returns('jenkins')
       @resource.expects(:[]).with(:volume_group).returns('vg_jenkins').at_least_once
       @provider.class.stubs(:lvs).with('vg_jenkins').returns(lvs_output)
       expect(@provider.exists?).to be_nil
     end
+
     it "returns 'nil', lv 'swap' in vg 'VolGroup' exists" do
       @resource.expects(:[]).with(:name).returns('swap')
       @resource.expects(:[]).with(:volume_group).returns('VolGroup').at_least_once
       @provider.class.stubs(:lvs).with('VolGroup').returns(lvs_output)
       expect(@provider.exists?).to be_nil
     end
+
     it "returns 'nil', lv 'data' in vg 'myvg' does not exist" do
       @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
       @provider.class.stubs(:lvs).with('myvg').raises(Puppet::ExecutionFailure, 'Execution of \'/sbin/lvs myvg\' returned 5')
@@ -63,6 +68,7 @@ describe provider_class do
       expect(@provider.size).to eq('2.5G')
     end
   end
+
   describe 'when creating' do
     context 'with size' do
       it "executes 'lvcreate' with a '--size' option" do
@@ -73,6 +79,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with size and type' do
       it "executes 'lvcreate' with a '--size' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -83,6 +90,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with initial_size' do
       it "executes 'lvcreate' with a '--size' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -93,6 +101,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'without size and without extents' do
       it "executes 'lvcreate' without a '--size' option or a '--extents' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -104,6 +113,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with extents' do
       it "executes 'lvcreate' with a '--extents' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -114,6 +124,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'without extents' do
       it "executes 'lvcreate' without a '--extents' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -123,6 +134,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with initial_size and mirroring' do
       it "executes 'lvcreate' with '--size' and '--mirrors' and '--mirrorlog' options" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -134,6 +146,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with persistent minor block device' do
       it "executes 'lvcreate' with '--persistent y' and '--minor 100' option" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -145,6 +158,7 @@ describe provider_class do
         @provider.create
       end
     end
+
     context 'with named thinpool option' do
       it "executes 'lvcreate' with '--virtualsize 1g' and '--thin myvg/mythinpool' options" do
         @resource.expects(:[]).with(:name).returns('mylv')
@@ -172,6 +186,7 @@ describe provider_class do
           @provider.expects(:blkid).with('/dev/myvg/mylv')
           @provider.size = '2000000k'
         end
+
         context 'with resize_fs flag' do
           it "executes 'blkid' if resize_fs is set to true" do
             @resource.expects(:[]).with(:name).returns('mylv').at_least_once
@@ -186,6 +201,7 @@ describe provider_class do
             @provider.expects(:blkid).with('/dev/myvg/mylv')
             @provider.size = '2000000k'
           end
+
           it "does not execute 'blkid' if resize_fs is set to false" do
             @resource.expects(:[]).with(:name).returns('mylv').at_least_once
             @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
@@ -199,6 +215,7 @@ describe provider_class do
             @provider.expects(:blkid).with('/dev/myvg/mylv').never
             @provider.size = '2000000k'
           end
+
           it "does not report an error from 'blkid' if resizing a filesystem with no filesystem present" do
             @resource.expects(:[]).with(:name).returns('mylv').at_least_once
             @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
@@ -210,6 +227,7 @@ describe provider_class do
             expect { @provider.size = '1100000k' }.not_to raise_error(Puppet::ExecutionFailure, %r{blkid})
           end
         end
+
         context 'with defined thin pool' do
           it "executes 'lvextend' as with normal volume" do
             @resource.expects(:[]).with(:name).returns('mylv').at_least_once
@@ -226,6 +244,7 @@ describe provider_class do
           end
         end
       end
+
       context 'not in extent portions' do
         it 'raises an exception' do
           @resource.expects(:[]).with(:name).returns('mylv').at_least_once
@@ -240,6 +259,7 @@ describe provider_class do
         end
       end
     end
+
     context 'with a smaller size' do
       context 'without size_is_minsize set to false' do
         it 'raises an exception' do
@@ -254,6 +274,7 @@ describe provider_class do
           proc { @provider.size = '1m' }.should raise_error(Puppet::Error, %r{manual})
         end
       end
+
       context 'with size_is_minsize set to true' do
         it 'does not raise an exception and print info message' do
           Puppet::Util::Log.level = :info
@@ -281,6 +302,7 @@ describe provider_class do
       @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
       @provider.destroy
     end
+
     it "executes 'dmsetup' and 'lvremove' and properly escape names with dashes" do
       @resource.expects(:[]).with(:volume_group).returns('my-vg').times(3)
       @resource.expects(:[]).with(:name).returns('my-lv').times(3)
@@ -289,6 +311,7 @@ describe provider_class do
       @provider.expects(:lvremove).with('-f', '/dev/my-vg/my-lv')
       @provider.destroy
     end
+
     it "executes 'swapoff', 'dmsetup', and 'lvremove' when lvm is of type swap" do
       @resource.expects(:[]).with(:volume_group).returns('myvg').times(4)
       @resource.expects(:[]).with(:name).returns('mylv').times(4)

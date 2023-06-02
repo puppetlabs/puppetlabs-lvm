@@ -5,10 +5,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## Unreleased
+## [v2.0.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.0.0) - 2023-06-02
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v1.4.0...v2.0.0)
+
+### Added
+
+- (CONT-974) - Add puppet module support [#283](https://github.com/puppetlabs/puppetlabs-lvm/pull/283) ([jordanbreen28](https://github.com/jordanbreen28))
+
+### Changed
+- (maint) - Add puppet 8/Drop puppet 6 [#284](https://github.com/puppetlabs/puppetlabs-lvm/pull/284) ([jordanbreen28](https://github.com/jordanbreen28))
+
+### Fixed
 
 - (maint) Update Puppet VS Code Extension ID [#255](https://github.com/puppetlabs/puppetlabs-lvm/pull/255) ([jpogran](https://github.com/jpogran))
 - (RE-12896) use artifactory instead of saturn/pe-releases [#245](https://github.com/puppetlabs/puppetlabs-lvm/pull/245) ([sarameisburger](https://github.com/sarameisburger))
+
 ## [v1.4.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v1.4.0) - 2020-02-12
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v1.3.0...v1.4.0)

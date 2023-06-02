@@ -83,7 +83,7 @@ jobs:
 
       - name: "Authenticate to GCP"
         run: |
-          echo ${{ secrets.GCP_CONNECTION }} > creds.json
+          echo '${{ secrets.GCP_CONNECTION }}' >> creds.json
           bundle exec bolt file upload creds.json creds.json -t ssh_nodes -i spec/fixtures/litmus_inventory.yaml
           bundle exec bolt command run "gcloud auth activate-service-account --key-file creds.json" -t ssh_nodes -i spec/fixtures/litmus_inventory.yaml
 

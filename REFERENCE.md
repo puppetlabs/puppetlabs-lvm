@@ -458,7 +458,7 @@ Default value: `undef`
 
 ##### <a name="-lvm--volume--extents"></a>`extents`
 
-Data type: `Optional[Variant[String[1], Integert]]`
+Data type: `Optional[Variant[String[1], Integer]]`
 
 
 

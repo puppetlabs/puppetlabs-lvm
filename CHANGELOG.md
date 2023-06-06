@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v2.0.1](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.0.1) - 2023-06-06
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.0.0...v2.0.1)
+
+### Fixed
+
+- (gh-290) - fix broken datatype for extents [#291](https://github.com/puppetlabs/puppetlabs-lvm/pull/291) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [v2.0.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.0.0) - 2023-06-02
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v1.4.0...v2.0.0)

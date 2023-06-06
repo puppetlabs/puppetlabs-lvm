@@ -67,7 +67,7 @@ define lvm::volume (
   Stdlib::Absolutepath $vg,
   Optional[String[1]] $fstype                     = undef,
   Optional[String[1]] $size                       = undef,
-  Optional[Variant[String[1], Integert]] $extents = undef,
+  Optional[Variant[String[1], Integer]] $extents  = undef,
   Optional[String[1]] $initial_size               = undef
 ) {
   if ($name == undef) {

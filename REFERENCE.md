@@ -436,7 +436,7 @@ Data type: `Stdlib::Absolutepath`
 
 ##### <a name="-lvm--volume--vg"></a>`vg`
 
-Data type: `Stdlib::Absolutepath`
+Data type: `String[1]`
 
 
 

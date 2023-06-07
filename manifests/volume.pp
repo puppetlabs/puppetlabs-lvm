@@ -62,7 +62,7 @@
 # with puppetlabs/lvm. If not, see http://www.gnu.org/licenses/.
 #
 define lvm::volume (
-  Enum['presnet', 'absent', 'cleaned'] $ensure,
+  Enum['present', 'absent', 'cleaned'] $ensure,
   Stdlib::Absolutepath $pv,
   Stdlib::Absolutepath $vg,
   Optional[String[1]] $fstype                     = undef,

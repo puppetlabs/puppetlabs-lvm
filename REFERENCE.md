@@ -424,7 +424,7 @@ Default value: `undef`
 
 ##### <a name="-lvm--volume--ensure"></a>`ensure`
 
-Data type: `Enum['presnet', 'absent', 'cleaned']`
+Data type: `Enum['present', 'absent', 'cleaned']`
 
 
 

@@ -64,7 +64,7 @@
 define lvm::volume (
   Enum['present', 'absent', 'cleaned'] $ensure,
   Stdlib::Absolutepath $pv,
-  Stdlib::Absolutepath $vg,
+  String[1] $vg,
   Optional[String[1]] $fstype                     = undef,
   Optional[String[1]] $size                       = undef,
   Optional[Variant[String[1], Integer]] $extents  = undef,

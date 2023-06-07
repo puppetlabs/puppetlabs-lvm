@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v2.0.2](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.0.2) - 2023-06-07
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.0.1...v2.0.2)
+
+### Fixed
+
+- (GH-295) - fix vg datatype [#296](https://github.com/puppetlabs/puppetlabs-lvm/pull/296) ([jordanbreen28](https://github.com/jordanbreen28))
+- (gh-293) - fix typo with ensure [#294](https://github.com/puppetlabs/puppetlabs-lvm/pull/294) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ## [v2.0.1](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.0.1) - 2023-06-06
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.0.0...v2.0.1)
@@ -19,6 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
+- pdksync - (MAINT) - Allow Stdlib 9.x [#286](https://github.com/puppetlabs/puppetlabs-lvm/pull/286) ([LukasAud](https://github.com/LukasAud))
 - (CONT-974) - Add puppet module support [#283](https://github.com/puppetlabs/puppetlabs-lvm/pull/283) ([jordanbreen28](https://github.com/jordanbreen28))
 
 ### Changed

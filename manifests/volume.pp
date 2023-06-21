@@ -50,16 +50,15 @@
 # This file is part of the puppetlabs/lvm puppet module.
 #
 # puppetlabs/lvm is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by the
+# it under the terms of the Apache License as published by the
 # Free Software Foundation, version 2 of the License.
 #
 # puppetlabs/lvm is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-# Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Apache License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with puppetlabs/lvm. If not, see http://www.gnu.org/licenses/.
+# You should have received a copy of the Apache License along
+# with puppetlabs/lvm. If not, see http://www.apache.org/licenses/LICENSE-2.0.
 #
 define lvm::volume (
   Enum['present', 'absent', 'cleaned'] $ensure,

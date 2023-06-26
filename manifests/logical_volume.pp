@@ -140,7 +140,7 @@ define lvm::logical_volume (
     no_sync          => $no_sync,
     region_size      => $region_size,
     alloc            => $alloc,
-    yes              => $yes,
+    yes_flag         => $yes_flag,
   }
 
   if $createfs {

@@ -201,7 +201,7 @@ resources out yourself.
 * stripesize (Parameter) - The stripesize to use for the new logical volume.
 * thinpool (Parameter) - Default value: `false` - Set to true to create a thin pool or to pool name to create thin volume
 * volume_group (Parameter) - The volume group name associated with this logical volume. This will automatically set this volume group as a dependency, but it must be defined elsewhere using the volume_group resource type.
-* yes_flag (Parameter) - Default value: `false` - Do not prompt for confirmation interactively but always assume the answer yes.
+* yes_flag (Parameter) - Default value: `false` - If set to true, do not prompt for confirmation interactively but always assume the answer yes.
 
 ### physical_volume
 

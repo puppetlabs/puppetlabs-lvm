@@ -82,7 +82,7 @@
       "type": "Optional[Integer]"
     },
     "yes_flag": {
-      "description": "Do not prompt for confirmation interactively but always assume the answer yes.",
+      "description": "If set to true, do not prompt for confirmation interactively but always assume the answer yes.",
       "type": "Optional[Boolean]"
     }
   }

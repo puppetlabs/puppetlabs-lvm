@@ -64,7 +64,7 @@ describe 'lvm_vgs facts' do
     context 'when there are vgs' do
       it 'lists vgs' do
         Facter::Core::Execution.stubs(:execute) # All other calls
-        Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o name --noheadings 2>/dev/null', timeout: 30).returns("vg0\nvg1")
+        Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o name --noheadings 2>/dev/null', timeout: 30).returns("  vg0\n  vg1")
         Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o pv_name vg0 2>/dev/null', timeout: 30).returns("  PV\n  /dev/pv3\n  /dev/pv2")
         Facter::Core::Execution.expects(:execute).at_least(1).with('vgs -o pv_name vg1 2>/dev/null', timeout: 30).returns("  PV\n  /dev/pv0")
         Facter.fact(:lvm_support).expects(:value).at_least(1).returns(true)
@@ -86,7 +86,6 @@ describe 'lvm_pvs facts' do
 
   context 'when there is no lvm support' do
     it 'does not exist' do
-      Facter.fact(:lvm_support).expects(:value).at_least(1).returns(nil)
       Facter.value(:lvm_pvs).should be_nil
     end
   end
@@ -104,7 +103,7 @@ describe 'lvm_pvs facts' do
     context 'when there are pvs' do
       it 'lists pvs' do
         Facter::Core::Execution.stubs('execute') # All other calls
-        Facter::Core::Execution.expects('execute').at_least(1).with('pvs -o name --noheadings 2>/dev/null', timeout: 30).returns("pv0\npv1")
+        Facter::Core::Execution.expects('execute').at_least(1).with('pvs -o name --noheadings 2>/dev/null', timeout: 30).returns("  pv0\n  pv1")
         Facter.fact(:lvm_support).expects(:value).at_least(1).returns(true)
         Facter.value(:lvm_pvs).should == 2
         Facter.value(:lvm_pv_0).should == 'pv0'

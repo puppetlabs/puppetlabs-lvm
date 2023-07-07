@@ -7,15 +7,17 @@ on:
 
 jobs:
   Spec:
-    name: "Spec tests (Puppet: ${{matrix.puppet_version}}, Ruby Ver: ${{matrix.ruby_version}})"
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson( vars.spec_matrix ) }}
+    uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
+    with:
+      runs_on: "ubuntu-20.04"
+    secrets: "inherit"
 
-    env:
-      PUPPET_GEM_VERSION: ${{ matrix.puppet_version }}
-      FACTER_GEM_VERSION: 'https://github.com/puppetlabs/facter#main'  # why is this set?
+  setup_matrix:
+    name: "Setup Test Matrix"
+    needs: Spec
+    runs-on: "ubuntu-20.04"
+    outputs:
+      matrix: ${{ steps.get-matrix.outputs.matrix }}
 
     steps:
       - name: "Checkout"
@@ -24,28 +26,21 @@ jobs:
       - name: "Setup ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: ${{matrix.ruby_version}}
+          ruby-version: "2.7"
           bundler-cache: true
 
-      - name: "Bundle environment"
+      - name: Setup Test Matrix
+        id: get-matrix
         run: |
-          bundle env
-
-      - name: "Run Static & Syntax Tests"
-        run: |
-          bundle exec rake syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop
-
-      - name: "Run tests"
-        run: |
-          bundle exec rake parallel_spec
+          bundle exec matrix_from_metadata_v2 --provision-service
 
   Acceptance:
     name: "Acceptance tests (${{matrix.platforms.label}}, ${{matrix.collection}})"
-    needs: Spec
+    needs: setup_matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson( vars.matrix ) }}
+      matrix: ${{fromJson(needs.setup_matrix.outputs.matrix)}}
 
     env:
       PUPPET_GEM_VERSION: '~> 7.24'

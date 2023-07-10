@@ -35,9 +35,7 @@ vg_list.each_with_index do |vg, i|
     setcode do
       pvs = Facter::Core::Execution.execute("vgs -o pv_name #{vg} 2>/dev/null", timeout: 30)
       res = nil
-      unless pvs.nil?
-        res = pvs.split("\n").select { |l| l =~ %r{^\s+/} }.map(&:strip).sort.join(',')
-      end
+      res = pvs.split("\n").grep(%r{^\s+/}).map(&:strip).sort.join(',') unless pvs.nil?
       res
     end
   end

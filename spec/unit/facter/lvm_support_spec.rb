@@ -86,6 +86,7 @@ describe 'lvm_pvs facts' do
 
   context 'when there is no lvm support' do
     it 'does not exist' do
+      Facter.fact(:lvm_support).expects(:value).at_least(1).returns(nil)
       Facter.value(:lvm_pvs).should be_nil
     end
   end

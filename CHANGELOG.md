@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v2.0.3](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.0.3) - 2023-07-11
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.0.2...v2.0.3)
+
+### Fixed
+
+- [GH-298] fix lvm_vg_* facts [#301](https://github.com/puppetlabs/puppetlabs-lvm/pull/301) ([rtib](https://github.com/rtib))
+
 ## [v2.0.2](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.0.2) - 2023-06-07
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.0.1...v2.0.2)

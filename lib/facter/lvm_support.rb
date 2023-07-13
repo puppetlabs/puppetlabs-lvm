@@ -25,8 +25,8 @@ Facter.add('lvm_vgs') do
   setcode { vg_list.length }
 end
 
-# # lvm_vg_[0-9]+
-# #   VG name by index
+# lvm_vg_[0-9]+
+#   VG name by index
 vg_list.each_with_index do |vg, i|
   Facter.add("lvm_vg_#{i}") do
     setcode { vg }
@@ -41,8 +41,8 @@ vg_list.each_with_index do |vg, i|
   end
 end
 
-# # lvm_pvs: [0-9]+
-# #   Number of PVs
+# lvm_pvs: [0-9]+
+#   Number of PVs
 pv_list = []
 Facter.add('lvm_pvs') do
   confine lvm_support: true
@@ -55,8 +55,8 @@ Facter.add('lvm_pvs') do
   setcode { pv_list.length }
 end
 
-# # lvm_pv_[0-9]+
-# #   PV name by index
+# lvm_pv_[0-9]+
+#   PV name by index
 pv_list.each_with_index do |pv, i|
   Facter.add("lvm_pv_#{i}") do
     setcode { pv }

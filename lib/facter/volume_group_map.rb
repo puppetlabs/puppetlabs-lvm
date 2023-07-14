@@ -12,9 +12,9 @@ Facter.add(:volume_group_map) do
       [
         vg,
         Facter::Core::Execution.exec("vgs -o pv_name #{vg} --noheading --nosuffix")
-          .split("\n")
-          .map { |x| x.strip }
-          .join(',')
+                               .split("\n")
+                               .map(&:strip)
+                               .join(','),
       ]
     end
   end

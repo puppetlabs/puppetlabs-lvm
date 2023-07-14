@@ -36,6 +36,7 @@ describe 'logical_volumes fact' do
         Facter::Core::Execution.expects('which').with('lvs').returns('/sbin/lvs')
       end
 
+      # rubocop:disable RSpec/ExampleLength
       it 'is able to resolve VGs' do
         lvs_output = <<-OUTPUT
         E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl root       centos/root      /dev/centos/root      /dev/mapper/centos-root      -wi-ao---- linear     public     active  18.46g writeable centos
@@ -56,7 +57,7 @@ describe 'logical_volumes fact' do
                                                         'active' => 'active',
                                                         'size' => '800.00m',
                                                         'permissions' => 'writeable',
-                                                        'vg_name' => 'tasks',
+                                                        'vg_name' => 'tasks'
                                                       },
                                                       'lame_tasks' => {
                                                         'uuid' => 'gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv',
@@ -69,7 +70,7 @@ describe 'logical_volumes fact' do
                                                         'active' => 'active',
                                                         'size' => '400.00m',
                                                         'permissions' => 'writeable',
-                                                        'vg_name' => 'tasks',
+                                                        'vg_name' => 'tasks'
                                                       },
                                                       'root' => {
                                                         'uuid' => 'E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl',
@@ -82,7 +83,7 @@ describe 'logical_volumes fact' do
                                                         'active' => 'active',
                                                         'size' => '18.46g',
                                                         'permissions' => 'writeable',
-                                                        'vg_name' => 'centos',
+                                                        'vg_name' => 'centos'
                                                       },
                                                       'swap' => {
                                                         'uuid' => 'buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA',
@@ -95,9 +96,10 @@ describe 'logical_volumes fact' do
                                                         'active' => 'active',
                                                         'size' => '1.00g',
                                                         'permissions' => 'writeable',
-                                                        'vg_name' => 'centos',
+                                                        'vg_name' => 'centos'
                                                       })
       end
+      # rubocop:enable RSpec/ExampleLength
     end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Facter.add(:volume_group_map) do
-  # Fact should be confined to only linux servers that have the lvs command
+  # Fact should be confined to only linux servers that have the vgs command
   confine do
     Facter.value('kernel') == 'Linux' &&
       Facter::Core::Execution.which('vgs')

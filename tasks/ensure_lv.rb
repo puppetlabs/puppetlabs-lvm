@@ -50,6 +50,7 @@ logical_volume[:mirrorlog]        = params['mirrorlog']        if params['mirror
 logical_volume[:alloc]            = params['alloc']            if params['alloc']
 logical_volume[:no_sync]          = params['no_sync']          if params['no_sync']
 logical_volume[:region_size]      = params['region_size']      if params['region_size']
+logical_volume[:yes_flag]         = params['yes_flag']         if params['yes_flag']
 
 # Save the result
 _resource, report = Puppet::Resource.indirection.save(logical_volume)

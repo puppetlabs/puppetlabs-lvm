@@ -22,15 +22,13 @@ define lvm::volume_group (
   Boolean $followsymlinks           = false,
 ) {
   if $physical_volumes.is_a(Hash) {
-    create_resources(
-      'lvm::physical_volume',
-      $physical_volumes,
-      {
-        ensure           => $ensure,
+    $physical_volumes.each |String $pv, Hash $pvdata| {
+      lvm::physical_volume { $pv:
+        ensure => $ensure,
+        *      => $pvdata,
       }
-    )
-  }
-  else {
+    }
+  } else {
     physical_volume { $physical_volumes:
       ensure => $ensure,
     }
@@ -43,12 +41,11 @@ define lvm::volume_group (
     followsymlinks   => $followsymlinks,
   }
 
-  create_resources(
-    'lvm::logical_volume',
-    $logical_volumes,
-    {
+  $logical_volumes.each |String $lv, Hash $lvdata| {
+    lvm::logical_volume { $lv:
       ensure       => $ensure,
       volume_group => $name,
+      *            => $lvdata,
     }
-  )
+  }
 }

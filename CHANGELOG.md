@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v2.1.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.1.0) - 2023-09-21
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.0.3...v2.1.0)
+
+### Added
+
+- Add yes argument when creating/extending a LV [#279](https://github.com/puppetlabs/puppetlabs-lvm/pull/279) ([bmlit](https://github.com/bmlit))
+
+### Fixed
+
+- fix issues on nodes without lvm [#308](https://github.com/puppetlabs/puppetlabs-lvm/pull/308) ([rtib](https://github.com/rtib))
+
 ## [v2.0.3](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.0.3) - 2023-07-11
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.0.2...v2.0.3)

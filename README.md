@@ -347,6 +347,13 @@ Logical volume size can be extended, but not reduced -- this is for
 safety, as manual intervention is probably required for data
 migration, etc.
 
+## Deprecation Notice
+
+Some facts reported by this module are being deprecated in favor of upcomming structured facts.  The following facts are being deprecated:
+
+* `lvm_vg_*`
+* `lvm_vg_*_pvs`
+* `lvm_pv_*`
 
 # Contributors
 

@@ -13,7 +13,7 @@
 # The block device to ensure a physical_volume has been
 # created on The volume_group to ensure is created on the
 # physical_volume provided by the pv parameter.
-# 
+#
 
 # @param fstype The type of filesystem to create on the logical
 # volume.
@@ -24,10 +24,12 @@
 
 # @param size The size the logical_voluem should be.
 
-# @param extents The number of logical extents to allocate for the new logical volume. 
+# @param extents The number of logical extents to allocate for the new logical volume.
 # Set to undef to use all available space
 
-# @param initial_size The initial size of the logical volume. 
+# @param yes_flag If set to true, do not prompt for confirmation interactively but always assume the answer yes.
+
+# @param initial_size The initial size of the logical volume.
 # This will only apply to newly-created volumes
 #
 # === Examples
@@ -68,7 +70,8 @@ define lvm::volume (
   Optional[String[1]] $fstype                     = undef,
   Optional[String[1]] $size                       = undef,
   Optional[Variant[String[1], Integer]] $extents  = undef,
-  Optional[String[1]] $initial_size               = undef
+  Optional[String[1]] $initial_size               = undef,
+  Boolean $yes_flag                               = false,
 ) {
   if ($name == undef) {
     fail("lvm::volume \$name can't be undefined")
@@ -96,6 +99,7 @@ define lvm::volume (
           volume_group => $vg,
           size         => $size,
           initial_size => $initial_size,
+          yes_flag     => $yes_flag,
           before       => Volume_group[$vg],
         }
       }
@@ -108,6 +112,7 @@ define lvm::volume (
         ensure       => absent,
         volume_group => $vg,
         size         => $size,
+        yes_flag     => $yes_flag,
       }
     }
     #
@@ -132,6 +137,7 @@ define lvm::volume (
         volume_group => $vg,
         size         => $size,
         extents      => $extents,
+        yes_flag     => $yes_flag,
         require      => Volume_group[$vg],
       }
 

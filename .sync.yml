@@ -7,11 +7,6 @@
   delete: true
 appveyor.yml:
   delete: true
-Gemfile:
-  optional:
-    ':development':
-      - gem: 'github_changelog_generator'
-        version: '~> 1.15.0'
 Rakefile:
   changelog_version_tag_pattern: 'v%s'
   changelog_since_tag: '1.2.0'

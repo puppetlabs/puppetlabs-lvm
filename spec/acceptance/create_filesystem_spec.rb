@@ -4,9 +4,13 @@ require 'spec_helper_acceptance'
 require 'securerandom'
 
 describe 'create filesystems' do
+  let(:device_name) do
+    (os[:arch] == 'aarch64') ? 'nvme0n3' : 'sdc'
+  end
+
   describe 'create_filesystem_non-existing-format' do
     let(:pv) do
-      '/dev/sdc'
+      "/dev/#{device_name}"
     end
     let(:vg) do
       'VolumeGroup'
@@ -47,7 +51,7 @@ describe 'create filesystems' do
 
   describe 'create_filesystem_with_ensure_property_ext2' do
     let(:pv) do
-      '/dev/sdc'
+      "/dev/#{device_name}"
     end
     let(:vg) do
       'VolumeGroup_ext2'
@@ -89,7 +93,7 @@ describe 'create filesystems' do
 
   describe 'create_filesystem_with_ensure_property_ext4' do
     let(:pv) do
-      '/dev/sdc'
+      "/dev/#{device_name}"
     end
     let(:vg) do
       'VolumeGroup_ext4'

@@ -134,17 +134,18 @@ end
 RSpec.configure do |c|
   disks = ['sdb', 'sdc']
   hostname = LitmusHelper.instance.run_shell('hostname').stdout.strip.gsub(%r{\..*$}, '')
+  zone = LitmusHelper.instance.run_shell('curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/zone').stdout.strip.gsub(%r{.*zones/}, '')
   c.before :suite do
     install_dependencies
     disks.each do |disk|
-      LitmusHelper.instance.run_shell("gcloud compute disks create #{hostname}-#{disk} --size 10GB --type pd-standard --zone=us-west1-c")
-      LitmusHelper.instance.run_shell("gcloud compute instances attach-disk #{hostname} --disk #{hostname}-#{disk} --zone=us-west1-c")
+      LitmusHelper.instance.run_shell("gcloud compute disks create #{hostname}-#{disk} --size 10GB --type pd-standard --zone=#{zone}")
+      LitmusHelper.instance.run_shell("gcloud compute instances attach-disk #{hostname} --disk #{hostname}-#{disk} --zone=#{zone}")
     end
   end
   c.after :suite do
     disks.each do |disk|
-      LitmusHelper.instance.run_shell("gcloud compute instances detach-disk #{hostname} --disk=#{hostname}-#{disk} --zone=us-west1-c --quiet")
-      LitmusHelper.instance.run_shell("gcloud compute disks delete #{hostname}-#{disk} --zone=us-west1-c --quiet")
+      LitmusHelper.instance.run_shell("gcloud compute instances detach-disk #{hostname} --disk=#{hostname}-#{disk} --zone=#{zone} --quiet")
+      LitmusHelper.instance.run_shell("gcloud compute disks delete #{hostname}-#{disk} --zone=#{zone} --quiet")
     end
   end
 end

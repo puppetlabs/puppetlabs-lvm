@@ -78,9 +78,11 @@ class { 'lvm':
 This could be really convenient when used with hiera:
 
 ```puppet
-include ::lvm
+include lvm
 ```
+
 and
+
 ```yaml
 ---
 lvm::volume_groups:
@@ -104,7 +106,9 @@ lvm::volume_groups:
         mountpath: /var/backups
         mountpath_require: true
 ```
+
 or to just build the VG if it does not exist
+
 ```yaml
 ---
 lvm::volume_groups:
@@ -142,23 +146,26 @@ If you need a more complex configuration, you'll need to build the
 resources out yourself.
 
 ## Optional Values
-  The `unless_vg` (physical_volume) and `createonly` (volume_group) will check
-  to see if "myvg" exists.  If "myvg" does exist then they will not modify
-  the physical volume or volume_group.  This is useful if your environment
-  is built with certain disks but they change while the server grows, shrinks
-  or moves.
 
-  Example:
+The `unless_vg` (physical_volume) and `createonly` (volume_group) will check
+to see if "myvg" exists.  If "myvg" does exist then they will not modify
+the physical volume or volume_group.  This is useful if your environment
+is built with certain disks but they change while the server grows, shrinks
+or moves.
+
+Example:
+
 ```puppet
-    physical_volume { "/dev/hdc":
-        ensure => present,
-        unless_vg => "myvg"
-    }
-    volume_group { "myvg":
-        ensure => present,
-        physical_volumes => "/dev/hdc",
-        createonly => true
-    }
+physical_volume { "/dev/hdc":
+  ensure    => present,
+  unless_vg => "myvg",
+}
+
+volume_group { "myvg":
+  ensure           => present,
+  physical_volumes => "/dev/hdc",
+  createonly       => true,
+}
 ```
 
 ## Type Documentation
@@ -224,10 +231,8 @@ resources out yourself.
 
 ## AIX Specific Type Documentation
 
-
 There are a number of AIX specific parameters and properties. The regular
 parameters documented above also apply to AIX systems.
-
 
 ### filesystem
 
@@ -281,7 +286,7 @@ parameters documented above also apply to AIX systems.
 * vix (Parameter) - Specify that the file system can allocate inode extents smaller than the default, Allowed Values:
     * `true`
     * `false`
-* volume_group (Parameter) - Volume group that the file system should be greated on.
+* volume_group (Parameter) - Volume group that the file system should be created on.
 
 ### logical_volume
 
@@ -349,7 +354,7 @@ migration, etc.
 
 ## Deprecation Notice
 
-Some facts reported by this module are being deprecated in favor of upcomming structured facts.  The following facts are being deprecated:
+Some facts reported by this module are being deprecated in favor of upcoming structured facts.  The following facts are being deprecated:
 
 * `lvm_vg_*`
 * `lvm_vg_*_pvs`
@@ -395,4 +400,4 @@ Raphaël Pinson <raphael.pinson@camptocamp.com>
 
 Garrett Honeycutt <code@garretthoneycutt.com>
 
-[More Contributers](https://github.com/puppetlabs/puppetlabs-lvm/graphs/contributors)
+[More Contributors](https://github.com/puppetlabs/puppetlabs-lvm/graphs/contributors)

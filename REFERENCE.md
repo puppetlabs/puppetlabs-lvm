@@ -722,7 +722,7 @@ Specify that the file system can allocate inode extents smaller than the default
 
 ##### <a name="-filesystem--volume_group"></a>`volume_group`
 
-Volume group that the file system should be greated on. AIX only.
+Volume group that the file system should be created on. AIX only.
 
 ### <a name="logical_volume"></a>`logical_volume`
 
@@ -1204,7 +1204,7 @@ Device to create the filesystem on, this can be a device or a logical volume. AI
 
 Data type: `Optional[String]`
 
-Volume group that the file system should be greated on. AIX only.
+Volume group that the file system should be created on. AIX only.
 
 ### <a name="ensure_lv"></a>`ensure_lv`
 

@@ -1,6 +1,6 @@
 # Puppet LVM Module
 
-Provides Logical Resource Management (LVM) features for Puppet.
+Provides Logical Volume Manager (LVM) types and providers for Puppet.
 
 ## Usage Examples
 

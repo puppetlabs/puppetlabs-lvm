@@ -286,7 +286,7 @@ parameters documented above also apply to AIX systems.
 * vix (Parameter) - Specify that the file system can allocate inode extents smaller than the default, Allowed Values:
     * `true`
     * `false`
-* volume_group (Parameter) - Volume group that the file system should be greated on.
+* volume_group (Parameter) - Volume group that the file system should be created on.
 
 ### logical_volume
 

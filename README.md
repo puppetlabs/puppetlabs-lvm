@@ -353,7 +353,7 @@ migration, etc.
 
 ## Deprecation Notice
 
-Some facts reported by this module are being deprecated in favor of upcomming structured facts.  The following facts are being deprecated:
+Some facts reported by this module are being deprecated in favor of upcoming structured facts.  The following facts are being deprecated:
 
 * `lvm_vg_*`
 * `lvm_vg_*_pvs`
@@ -399,4 +399,4 @@ Raphaël Pinson <raphael.pinson@camptocamp.com>
 
 Garrett Honeycutt <code@garretthoneycutt.com>
 
-[More Contributers](https://github.com/puppetlabs/puppetlabs-lvm/graphs/contributors)
+[More Contributors](https://github.com/puppetlabs/puppetlabs-lvm/graphs/contributors)

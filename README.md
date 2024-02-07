@@ -78,7 +78,7 @@ class { 'lvm':
 This could be really convenient when used with hiera:
 
 ```puppet
-include ::lvm
+include lvm
 ```
 and
 ```yaml

@@ -156,15 +156,16 @@ or moves.
 Example:
 
 ```puppet
-    physical_volume { "/dev/hdc":
-        ensure => present,
-        unless_vg => "myvg"
-    }
-    volume_group { "myvg":
-        ensure => present,
-        physical_volumes => "/dev/hdc",
-        createonly => true
-    }
+physical_volume { "/dev/hdc":
+  ensure    => present,
+  unless_vg => "myvg",
+}
+
+volume_group { "myvg":
+  ensure           => present,
+  physical_volumes => "/dev/hdc",
+  createonly       => true,
+}
 ```
 
 ## Type Documentation

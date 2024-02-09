@@ -170,7 +170,7 @@ volume_group { "myvg":
 
 ## Tasks
 
-Documented in the ["Tasks" tab](https://forge.puppet.com/puppetlabs/lvm/tasks) on the forge
+See [tasks reference](REFERENCE.md#tasks)
 
 ## Plans
 

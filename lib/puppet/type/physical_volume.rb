@@ -3,6 +3,8 @@
 require 'pathname'
 
 Puppet::Type.newtype(:physical_volume) do
+  desc 'Physical volume resource type'
+
   ensurable
 
   newparam(:name) do

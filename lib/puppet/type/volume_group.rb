@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Puppet::Type.newtype(:volume_group) do
+  desc 'Volume group resource type'
+
   ensurable
 
   newparam(:name) do

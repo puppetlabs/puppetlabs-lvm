@@ -3,6 +3,8 @@
 require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:logical_volume) do
+  desc 'Logical volume resource type'
+
   ensurable
 
   newparam(:name) do

@@ -13,7 +13,7 @@
 # The block device to ensure a physical_volume has been
 # created on The volume_group to ensure is created on the
 # physical_volume provided by the pv parameter.
-# 
+#
 
 # @param fstype The type of filesystem to create on the logical
 # volume.
@@ -24,10 +24,10 @@
 
 # @param size The size the logical_voluem should be.
 
-# @param extents The number of logical extents to allocate for the new logical volume. 
+# @param extents The number of logical extents to allocate for the new logical volume.
 # Set to undef to use all available space
 
-# @param initial_size The initial size of the logical volume. 
+# @param initial_size The initial size of the logical volume.
 # This will only apply to newly-created volumes
 #
 # === Examples

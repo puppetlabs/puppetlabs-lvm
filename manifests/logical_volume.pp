@@ -1,7 +1,7 @@
-# @param volume_group The volume group name associated with this logical volume. 
-# This will automatically set this volume group as a dependency, 
+# @param volume_group The volume group name associated with this logical volume.
+# This will automatically set this volume group as a dependency,
 # but it must be defined elsewhere using the volume_group resource type.
-# @param size  Configures the size of the filesystem. Supports filesystem resizing. The size will be rounded up to the nearest multiple of 
+# @param size  Configures the size of the filesystem. Supports filesystem resizing. The size will be rounded up to the nearest multiple of
 # the partition size.
 # @param initial_size The initial size of the logical volume. This will only apply to newly-created volumes
 #
@@ -12,7 +12,7 @@
 # @param dump
 # @param fs_type The file system type. eg. ext3.
 # @param mkfs_options
-# @param mountpath 
+# @param mountpath
 # @param mountpath_require
 # @param mounted If puppet should mount the volume. This only affects what puppet will do, and not what will be mounted at boot-time.
 # @param createfs
@@ -23,7 +23,7 @@
 #
 # @param readahead The readahead count to use for the new logical volume.
 #
-# @param range - Set to true if the ‘size’ parameter specified, is just the minimum size you need 
+# @param range - Set to true if the ‘size’ parameter specified, is just the minimum size you need
 # (if the LV found is larger then the size requests this is just logged not causing a FAIL)
 #
 # @param size_is_minsize Lists strings for access control for connection method, users, databases, IPv4 addresses;
@@ -33,13 +33,13 @@
 # @param poolmetadatasize Set the initial size of the logical volume pool metadata on creation
 
 # @param mirror The number of mirrors of the volume.
-# @param mirrorlog How to store the mirror log (Allowed values: core, disk, mirrored). 
+# @param mirrorlog How to store the mirror log (Allowed values: core, disk, mirrored).
 
 # @param no_sync An optimization in lvcreate, at least on Linux.
 
-# @param region_size A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions 
-# are in sync. 
-# CAN NOT BE CHANGED on already mirrored volume. 
+# @param region_size A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions
+# are in sync.
+# CAN NOT BE CHANGED on already mirrored volume.
 # Take your mirror size in terabytes and round up that number to the next power of 2, using that number as the -R argument
 
 # @param alloc Selects the allocation policy when a command needs to allocate Physical Extents from the Volume Group. Allowed Values:

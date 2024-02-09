@@ -8,6 +8,7 @@ Puppet::Type.newtype(:physical_volume) do
   ensurable
 
   newparam(:name) do
+    desc 'Resource name'
     isnamevar
     validate do |value|
       raise ArgumentError, 'Physical Volume names must be fully qualified' unless Pathname.new(value).absolute?

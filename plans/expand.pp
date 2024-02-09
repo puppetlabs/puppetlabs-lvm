@@ -1,8 +1,6 @@
-# lvm::expand
-#
-# This plan implements an opinionated method for expanding storage on servers
-# that use LVM. If this doesn't fit your needs, simply tie the tasks together
-# in some way that does.
+# @summary An opinionated method for expanding storage on machines that use LVM.
+#   If this doesn't fit your needs, simply tie the tasks together in
+#   some way that does.
 #
 # @param server The target for the plan
 # @param volume_group The volume group to which the logical volume belongs

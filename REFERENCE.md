@@ -6,26 +6,26 @@
 
 ### Classes
 
-* [`lvm`](#lvm)
+* [`lvm`](#lvm): Manage LVM
 
 ### Defined types
 
-* [`lvm::logical_volume`](#lvm--logical_volume)
-* [`lvm::physical_volume`](#lvm--physical_volume)
-* [`lvm::volume`](#lvm--volume): This will only apply to newly-created volumes  === Examples  Provide some examples on how to use this type:    lvm::volume { 'lv_example0':  
-* [`lvm::volume_group`](#lvm--volume_group): files on disk if they are in fact symlinks. This is useful to have Puppet determine what the actual PV device is if the property value is a s
+* [`lvm::logical_volume`](#lvm--logical_volume): Manage a logical volume.
+* [`lvm::physical_volume`](#lvm--physical_volume): Manage a physical volume
+* [`lvm::volume`](#lvm--volume): Manage a logical_volume.
+* [`lvm::volume_group`](#lvm--volume_group): Manage a volume group.
 
 ### Resource types
 
 * [`filesystem`](#filesystem): The filesystem type
-* [`logical_volume`](#logical_volume): The name of the logical volume.  This is the unqualified name and will be automatically added to the volume group's device path (e.g., '/dev/
-* [`physical_volume`](#physical_volume): Do not do anything if the VG already exists.  The value should be the name of the volume group to check for.
-* [`volume_group`](#volume_group): The name of the volume group.
+* [`logical_volume`](#logical_volume): Logical volume resource type
+* [`physical_volume`](#physical_volume): Physical volume resource type
+* [`volume_group`](#volume_group): Volume group resource type
 
 ### Functions
 
-* [`lvm::bytes_to_size`](#lvm--bytes_to_size)
-* [`lvm::size_to_bytes`](#lvm--size_to_bytes)
+* [`lvm::bytes_to_size`](#lvm--bytes_to_size): Convert a number of bytes to a size format that LVM can understand
+* [`lvm::size_to_bytes`](#lvm--size_to_bytes): Convert an LVM size to bytes, the opposite of `lvm::bytes_to_size`
 
 ### Tasks
 
@@ -39,35 +39,29 @@
 
 ### Plans
 
-* [`lvm::expand`](#lvm--expand): lvm::expand  This plan implements an opinionated method for expanding storage on servers that use LVM. If this doesn't fit your needs, simply
+* [`lvm::expand`](#lvm--expand): An opinionated method for expanding storage on machines that use LVM.
+If this doesn't fit your needs, simply tie the tasks together in
+some way that does.
 
 ## Classes
 
 ### <a name="lvm"></a>`lvm`
 
-The lvm class.
+Manage LVM
 
 #### Parameters
 
 The following parameters are available in the `lvm` class:
 
-* [`volume_groups`](#-lvm--volume_groups)
 * [`package_ensure`](#-lvm--package_ensure)
 * [`manage_pkg`](#-lvm--manage_pkg)
-
-##### <a name="-lvm--volume_groups"></a>`volume_groups`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
+* [`volume_groups`](#-lvm--volume_groups)
 
 ##### <a name="-lvm--package_ensure"></a>`package_ensure`
 
 Data type: `Enum['installed', 'present', 'latest', 'absent']`
 
-
+Ensure value for the lvm2 package.
 
 Default value: `'installed'`
 
@@ -75,15 +69,31 @@ Default value: `'installed'`
 
 Data type: `Boolean`
 
-
+Whether to manage the lvm2 package.
 
 Default value: `false`
+
+##### <a name="-lvm--volume_groups"></a>`volume_groups`
+
+Data type: `Hash`
+
+Hash of lvm::volume_group resources to create.
+
+Default value: `{}`
 
 ## Defined types
 
 ### <a name="lvm--logical_volume"></a>`lvm::logical_volume`
 
-The lvm::logical_volume class.
+This will automatically set this volume group as a dependency,
+but it must be defined elsewhere using the volume_group resource type.
+
+the partition size.
+
+(if the LV found is larger then the size requests this is just logged not causing a FAIL)
+
+are in sync. Cannot be changed on already mirrored volume.
+Take your mirror size in terabytes and round up that number to the next power of 2, using that number as the -R argument
 
 #### Parameters
 
@@ -116,18 +126,19 @@ The following parameters are available in the `lvm::logical_volume` defined type
 * [`no_sync`](#-lvm--logical_volume--no_sync)
 * [`region_size`](#-lvm--logical_volume--region_size)
 * [`alloc`](#-lvm--logical_volume--alloc)
+* [`yes_flag`](#-lvm--logical_volume--yes_flag)
 
 ##### <a name="-lvm--logical_volume--volume_group"></a>`volume_group`
 
 Data type: `String[1]`
 
-
+The volume group name associated with this logical volume.
 
 ##### <a name="-lvm--logical_volume--size"></a>`size`
 
 Data type: `Optional[String[1]]`
 
-
+Configures the size of the filesystem. Supports filesystem resizing. The size will be rounded up to the nearest multiple of
 
 Default value: `undef`
 
@@ -135,7 +146,7 @@ Default value: `undef`
 
 Data type: `Optional[String[1]]`
 
-
+The initial size of the logical volume. This will only apply to newly-created volumes
 
 Default value: `undef`
 
@@ -151,7 +162,7 @@ Default value: `present`
 
 Data type: `String[1]`
 
-
+Params for the mkfs command
 
 Default value: `'defaults'`
 
@@ -175,7 +186,7 @@ Default value: `'0'`
 
 Data type: `String[1]`
 
-
+The file system type. eg. ext3.
 
 Default value: `'ext4'`
 
@@ -207,7 +218,7 @@ Default value: `false`
 
 Data type: `Boolean`
 
-
+If puppet should mount the volume. This only affects what puppet will do, and not what will be mounted at boot-time.
 
 Default value: `true`
 
@@ -223,7 +234,7 @@ Default value: `true`
 
 Data type: `Optional[String[1]]`
 
-
+The number of logical extents to allocate for the new logical volume. Set to undef to use all available space
 
 Default value: `undef`
 
@@ -231,7 +242,7 @@ Default value: `undef`
 
 Data type: `Optional[Variant[String[1], Integer]]`
 
-
+The number of stripes to allocate for the new logical volume.
 
 Default value: `undef`
 
@@ -239,7 +250,7 @@ Default value: `undef`
 
 Data type: `Optional[Variant[String[1], Integer]]`
 
-
+The stripesize to use for the new logical volume.
 
 Default value: `undef`
 
@@ -247,7 +258,7 @@ Default value: `undef`
 
 Data type: `Optional[Variant[String[1], Integer]]`
 
-
+The readahead count to use for the new logical volume.
 
 Default value: `undef`
 
@@ -255,7 +266,7 @@ Default value: `undef`
 
 Data type: `Optional[Enum['maximum', 'minimum']]`
 
-
+- Set to true if the ‘size’ parameter specified, is just the minimum size you need
 
 Default value: `undef`
 
@@ -263,7 +274,7 @@ Default value: `undef`
 
 Data type: `Optional[Boolean]`
 
-
+Lists strings for access control for connection method, users, databases, IPv4 addresses;
 
 Default value: `undef`
 
@@ -271,7 +282,7 @@ Default value: `undef`
 
 Data type: `Optional[String[1]]`
 
-
+Configures the logical volume type. AIX only
 
 Default value: `undef`
 
@@ -279,7 +290,7 @@ Default value: `undef`
 
 Data type: `Variant[Boolean, String]`
 
-
+- Set to true to create a thin pool or to pool name to create thin volume
 
 Default value: `false`
 
@@ -287,7 +298,7 @@ Default value: `false`
 
 Data type: `Optional[Integer[0, 4]]`
 
-
+Set the initial size of the logical volume pool metadata on creation
 
 Default value: `undef`
 
@@ -295,7 +306,7 @@ Default value: `undef`
 
 Data type: `Optional[String[1]]`
 
-
+The number of mirrors of the volume.
 
 Default value: `undef`
 
@@ -303,7 +314,7 @@ Default value: `undef`
 
 Data type: `Optional[Enum['core', 'disk', 'mirrored']]`
 
-
+How to store the mirror log (Allowed values: core, disk, mirrored).
 
 Default value: `undef`
 
@@ -311,7 +322,7 @@ Default value: `undef`
 
 Data type: `Optional[Boolean]`
 
-
+An optimization in lvcreate, at least on Linux.
 
 Default value: `undef`
 
@@ -319,7 +330,7 @@ Default value: `undef`
 
 Data type: `Optional[Variant[String[1], Integer]]`
 
-
+A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions
 
 Default value: `undef`
 
@@ -327,21 +338,45 @@ Default value: `undef`
 
 Data type: `Optional[Enum['anywhere', 'contiguous', 'cling', 'inherit', 'normal']]`
 
-
+The allocation policy when a command needs to allocate Physical Extents from the Volume Group.
 
 Default value: `undef`
 
+##### <a name="-lvm--logical_volume--yes_flag"></a>`yes_flag`
+
+Data type: `Boolean`
+
+If set to true, do not prompt for confirmation interactively but always assume the answer yes.
+
+Default value: `false`
+
 ### <a name="lvm--physical_volume"></a>`lvm::physical_volume`
 
-The lvm::physical_volume class.
+Manage a physical volume
 
 #### Parameters
 
 The following parameters are available in the `lvm::physical_volume` defined type:
 
-* [`unless_vg`](#-lvm--physical_volume--unless_vg)
 * [`ensure`](#-lvm--physical_volume--ensure)
 * [`force`](#-lvm--physical_volume--force)
+* [`unless_vg`](#-lvm--physical_volume--unless_vg)
+
+##### <a name="-lvm--physical_volume--ensure"></a>`ensure`
+
+Data type: `Enum['present', 'absent']`
+
+ensures phycial volume is present or absent
+
+Default value: `present`
+
+##### <a name="-lvm--physical_volume--force"></a>`force`
+
+Data type: `Boolean`
+
+Whether to force the creation without any confirmation.
+
+Default value: `false`
 
 ##### <a name="-lvm--physical_volume--unless_vg"></a>`unless_vg`
 
@@ -351,68 +386,91 @@ Do not do anything if the VG already exists. The value should be the name of the
 
 Default value: `undef`
 
-##### <a name="-lvm--physical_volume--ensure"></a>`ensure`
-
-Data type: `Enum['present', 'absent']`
-
-
-
-Default value: `present`
-
-##### <a name="-lvm--physical_volume--force"></a>`force`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
 ### <a name="lvm--volume"></a>`lvm::volume`
+
+Ensures a physical_volume, volume_group, and filesystem resource
+have been created on the block device supplied in the pv parameter.
+
+physical_volume, volume_group,
+logical_volume, and filesystem resources are
+present for the volume. A value of cleaned will ensure that all
+of the resources are absent. Warning: this has a high potential
+for unexpected harm, so use it with caution. A value of absent
+will remove only the logical_volume resource from the system.
+
+volume.
+
+Set to undef to use all available space
 
 This will only apply to newly-created volumes
 
-=== Examples
+#### Examples
 
-Provide some examples on how to use this type:
+##### Basic usage
 
-  lvm::volume { 'lv_example0':
-    vg     => 'vg_example0',
-    pv     => '/dev/sdd1',
-    fstype => 'ext4',
-    size => '100GB',
-  }
+```puppet
 
-=== Copyright
-
-See README.markdown for the module author information.
-
-=== License
-
-This file is part of the puppetlabs/lvm puppet module.
-
-puppetlabs/lvm is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by the
-Free Software Foundation, version 2 of the License.
-
-puppetlabs/lvm is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with puppetlabs/lvm. If not, see http://www.gnu.org/licenses/.
+lvm::volume { 'lv_example0':
+  vg     => 'vg_example0',
+  pv     => '/dev/sdd1',
+  fstype => 'ext4',
+  size   => '100GB',
+}
+```
 
 #### Parameters
 
 The following parameters are available in the `lvm::volume` defined type:
 
-* [`initial_size`](#-lvm--volume--initial_size)
 * [`ensure`](#-lvm--volume--ensure)
+* [`fstype`](#-lvm--volume--fstype)
 * [`pv`](#-lvm--volume--pv)
 * [`vg`](#-lvm--volume--vg)
-* [`fstype`](#-lvm--volume--fstype)
 * [`size`](#-lvm--volume--size)
 * [`extents`](#-lvm--volume--extents)
+* [`initial_size`](#-lvm--volume--initial_size)
+
+##### <a name="-lvm--volume--ensure"></a>`ensure`
+
+Data type: `Enum['present', 'absent', 'cleaned']`
+
+Can only be set to cleaned, absent or present. A value of present will ensure that the
+
+##### <a name="-lvm--volume--fstype"></a>`fstype`
+
+Data type: `Optional[String[1]]`
+
+The type of filesystem to create on the logical
+
+Default value: `undef`
+
+##### <a name="-lvm--volume--pv"></a>`pv`
+
+Data type: `Stdlib::Absolutepath`
+
+path to physcial volume
+
+##### <a name="-lvm--volume--vg"></a>`vg`
+
+Data type: `String[1]`
+
+value of volume group
+
+##### <a name="-lvm--volume--size"></a>`size`
+
+Data type: `Optional[String[1]]`
+
+The size the logical_voluem should be.
+
+Default value: `undef`
+
+##### <a name="-lvm--volume--extents"></a>`extents`
+
+Data type: `Optional[Variant[String[1], Integer]]`
+
+The number of logical extents to allocate for the new logical volume.
+
+Default value: `undef`
 
 ##### <a name="-lvm--volume--initial_size"></a>`initial_size`
 
@@ -422,82 +480,34 @@ The initial size of the logical volume.
 
 Default value: `undef`
 
-##### <a name="-lvm--volume--ensure"></a>`ensure`
-
-Data type: `Enum['present', 'absent', 'cleaned']`
-
-
-
-##### <a name="-lvm--volume--pv"></a>`pv`
-
-Data type: `Stdlib::Absolutepath`
-
-
-
-##### <a name="-lvm--volume--vg"></a>`vg`
-
-Data type: `String[1]`
-
-
-
-##### <a name="-lvm--volume--fstype"></a>`fstype`
-
-Data type: `Optional[String[1]]`
-
-
-
-Default value: `undef`
-
-##### <a name="-lvm--volume--size"></a>`size`
-
-Data type: `Optional[String[1]]`
-
-
-
-Default value: `undef`
-
-##### <a name="-lvm--volume--extents"></a>`extents`
-
-Data type: `Optional[Variant[String[1], Integer]]`
-
-
-
-Default value: `undef`
-
 ### <a name="lvm--volume_group"></a>`lvm::volume_group`
 
-files on disk if they are in fact symlinks. This is useful to have Puppet determine what the actual PV device is if the property
-value is a symlink, like '/dev/disk/by-path/xxxx -> ../../sda'. Defaults to false.
+Manage a volume group.
 
 #### Parameters
 
 The following parameters are available in the `lvm::volume_group` defined type:
 
-* [`followsymlinks`](#-lvm--volume_group--followsymlinks)
 * [`physical_volumes`](#-lvm--volume_group--physical_volumes)
 * [`createonly`](#-lvm--volume_group--createonly)
 * [`ensure`](#-lvm--volume_group--ensure)
 * [`logical_volumes`](#-lvm--volume_group--logical_volumes)
-
-##### <a name="-lvm--volume_group--followsymlinks"></a>`followsymlinks`
-
-Data type: `Boolean`
-
-If set to true all current and wanted values of the physical_volumes property will be followed to their real
-
-Default value: `false`
+* [`followsymlinks`](#-lvm--volume_group--followsymlinks)
 
 ##### <a name="-lvm--volume_group--physical_volumes"></a>`physical_volumes`
 
 Data type: `Variant[Hash, Array, String]`
 
-
+The list of physical volumes to be included in the volume group.
+This will automatically set these as dependencies, but they must
+be defined elsewhere using the physical_volume resource type.
 
 ##### <a name="-lvm--volume_group--createonly"></a>`createonly`
 
 Data type: `Boolean`
 
-
+If true, the volume group will be created if it does not exist. If
+the volume group does exist, no action will be taken.
 
 Default value: `false`
 
@@ -505,7 +515,7 @@ Default value: `false`
 
 Data type: `Enum['present', 'absent']`
 
-
+Whether this volume group should be present or absent.
 
 Default value: `present`
 
@@ -513,9 +523,22 @@ Default value: `present`
 
 Data type: `Hash`
 
-
+A hash of lvm::logical_volume resources to create in this volume
+group.
 
 Default value: `{}`
+
+##### <a name="-lvm--volume_group--followsymlinks"></a>`followsymlinks`
+
+Data type: `Boolean`
+
+If true, all current and wanted values of the physical_volumes
+property will be followed to their real files on disk if they are
+in fact symlinks. This is useful to have Puppet determine what the
+actual PV device is if the property value is a symlink, like
+`/dev/disk/by-path/xxxx -> ../../sda`.
+
+Default value: `false`
 
 ## Resource types
 
@@ -688,6 +711,7 @@ Enable the mountguard. AIX only
 
 namevar
 
+Resource name
 
 ##### <a name="-filesystem--nbpi"></a>`nbpi`
 
@@ -726,8 +750,7 @@ Volume group that the file system should be created on. AIX only.
 
 ### <a name="logical_volume"></a>`logical_volume`
 
-The name of the logical volume.  This is the unqualified name and will be
-automatically added to the volume group's device path (e.g., '/dev/$vg/$lv').
+Logical volume resource type
 
 #### Properties
 
@@ -783,6 +806,7 @@ The following parameters are available in the `logical_volume` type.
 * [`stripesize`](#-logical_volume--stripesize)
 * [`thinpool`](#-logical_volume--thinpool)
 * [`type`](#-logical_volume--type)
+* [`yes_flag`](#-logical_volume--yes_flag)
 
 ##### <a name="-logical_volume--alloc"></a>`alloc`
 
@@ -836,6 +860,9 @@ The readahead count to use for the new logical volume.
 
 ##### <a name="-logical_volume--region_size"></a>`region_size`
 
+A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are
+in sync. CAN NOT BE CHANGED on already mirrored volume. Take your mirror size in terabytes and round up that number to
+the next power of 2, using that number as the -R argument.
 
 ##### <a name="-logical_volume--resize_fs"></a>`resize_fs`
 
@@ -869,10 +896,15 @@ Default value: `false`
 
 Configures the logical volume type.
 
+##### <a name="-logical_volume--yes_flag"></a>`yes_flag`
+
+If set to true, do not prompt for confirmation interactively but always assume the answer yes.
+
+Default value: `false`
+
 ### <a name="physical_volume"></a>`physical_volume`
 
-Do not do anything if the VG already exists.  The value should be the
-name of the volume group to check for.
+Physical volume resource type
 
 #### Properties
 
@@ -907,6 +939,7 @@ Default value: `false`
 
 namevar
 
+Resource name
 
 ##### <a name="-physical_volume--provider"></a>`provider`
 
@@ -920,7 +953,7 @@ name of the volume group to check for.
 
 ### <a name="volume_group"></a>`volume_group`
 
-The name of the volume group.
+Volume group resource type
 
 #### Properties
 
@@ -990,13 +1023,31 @@ usually discover the appropriate provider for your platform.
 
 Type: Puppet Language
 
-The lvm::bytes_to_size function.
+Convert a number of bytes to a size format that LVM can understand
+
+#### Examples
+
+##### Return `200g`
+
+```puppet
+
+lvm::bytes_to_size(214748364800)
+```
 
 #### `lvm::bytes_to_size(Numeric $size)`
 
 The lvm::bytes_to_size function.
 
-Returns: `Any`
+Returns: `Any` LVM-formatted size
+
+##### Examples
+
+###### Return `200g`
+
+```puppet
+
+lvm::bytes_to_size(214748364800)
+```
 
 ##### `size`
 
@@ -1008,13 +1059,13 @@ Data type: `Numeric`
 
 Type: Puppet Language
 
-The lvm::size_to_bytes function.
+Convert an LVM size to bytes, the opposite of `lvm::bytes_to_size`
 
 #### `lvm::size_to_bytes(String $size)`
 
 The lvm::size_to_bytes function.
 
-Returns: `Any`
+Returns: `Any` byte value of LVM-formatted size
 
 ##### `size`
 
@@ -1334,6 +1385,12 @@ Data type: `Optional[Integer]`
 
 A mirror is divided into regions of this size (in MB), the mirror log uses this granularity to track which regions are in sync. CAN NOT BE CHANGED on already mirrored volume. Take your mirror size in terabytes and round up that number to the next power of 2, using that number as the -R argument.
 
+##### `yes_flag`
+
+Data type: `Boolean`
+
+If set to true, do not prompt for confirmation interactively but always assume the answer yes.
+
 ### <a name="ensure_pv"></a>`ensure_pv`
 
 Ensures settings on a physical volumes using the type & provider
@@ -1516,11 +1573,9 @@ Permissions for the mountpoint
 
 ### <a name="lvm--expand"></a>`lvm::expand`
 
-lvm::expand
-
-This plan implements an opinionated method for expanding storage on servers
-that use LVM. If this doesn't fit your needs, simply tie the tasks together
-in some way that does.
+An opinionated method for expanding storage on machines that use LVM.
+If this doesn't fit your needs, simply tie the tasks together in
+some way that does.
 
 #### Parameters
 

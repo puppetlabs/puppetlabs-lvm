@@ -1,65 +1,38 @@
-# This defined type will create a logical_volume with the name of
-# the define and ensure a physical_volume,
-# volume_group, and filesystem resource have been
-# created on the block device supplied.
+# @summary Manage a logical_volume.
+# Ensures a physical_volume, volume_group, and filesystem resource
+# have been created on the block device supplied in the pv parameter.
 #
 # @param ensure Can only be set to cleaned, absent or present. A value of present will ensure that the
 # physical_volume, volume_group,
 # logical_volume, and filesystem resources are
 # present for the volume. A value of cleaned will ensure that all
-# of the resources are absent Warning this has a high potential
-# for unexpected harm use it with caution. A value of absent
+# of the resources are absent. Warning: this has a high potential
+# for unexpected harm, so use it with caution. A value of absent
 # will remove only the logical_volume resource from the system.
-# The block device to ensure a physical_volume has been
-# created on The volume_group to ensure is created on the
-# physical_volume provided by the pv parameter.
-# 
-
+#
 # @param fstype The type of filesystem to create on the logical
 # volume.
-
+#
 # @param pv path to physcial volume
-
+#
 # @param vg value of volume group
-
+#
 # @param size The size the logical_voluem should be.
-
-# @param extents The number of logical extents to allocate for the new logical volume. 
+#
+# @param extents The number of logical extents to allocate for the new logical volume.
 # Set to undef to use all available space
-
-# @param initial_size The initial size of the logical volume. 
+#
+# @param initial_size The initial size of the logical volume.
 # This will only apply to newly-created volumes
 #
-# === Examples
-#
-# Provide some examples on how to use this type:
+# @example Basic usage
 #
 #   lvm::volume { 'lv_example0':
 #     vg     => 'vg_example0',
 #     pv     => '/dev/sdd1',
 #     fstype => 'ext4',
-#     size => '100GB',
+#     size   => '100GB',
 #   }
-#
-# === Copyright
-#
-# See README.markdown for the module author information.
-#
-# === License
-#
-# This file is part of the puppetlabs/lvm puppet module.
-#
-# puppetlabs/lvm is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by the
-# Free Software Foundation, version 2 of the License.
-#
-# puppetlabs/lvm is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-# Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with puppetlabs/lvm. If not, see http://www.gnu.org/licenses/.
 #
 define lvm::volume (
   Enum['present', 'absent', 'cleaned'] $ensure,

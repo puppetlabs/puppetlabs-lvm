@@ -12,6 +12,7 @@ Puppet::Type.newtype(:filesystem) do
   end
 
   newparam(:name) do
+    desc 'Resource name'
     isnamevar
     validate do |value|
       raise ArgumentError, 'Filesystem names must be fully qualified' unless Pathname.new(value).absolute?

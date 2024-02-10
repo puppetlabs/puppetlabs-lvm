@@ -1,8 +1,13 @@
-# @param package_ensure ensures package is installed
-
-# @param manage_pkg Boolean (true, false)
-
+# @summary Manage LVM
+#
+# @param package_ensure
+#   Ensure value for the lvm2 package.
+#
+# @param manage_pkg
+#   Whether to manage the lvm2 package.
+#
 # @param volume_groups
+#   Hash of lvm::volume_group resources to create.
 #
 class lvm (
   Enum['installed', 'present', 'latest', 'absent'] $package_ensure = 'installed',

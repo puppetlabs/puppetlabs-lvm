@@ -44,7 +44,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
   end
 
   def create
-    vgcreate(@resource[:name], *@resource.should(:physical_volumes) -s @resource[:extents_size])
+    vgcreate(@resource[:name], *@resource.should(:physical_volumes) -s@resource[:extents_size])
   end
 
   def destroy

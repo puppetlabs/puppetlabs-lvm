@@ -18,6 +18,12 @@ describe Puppet::Type.type(:volume_group) do
     end
   end
 
+  describe 'the extent_size parameter' do
+    it 'exists' do
+      @type.attrclass(:extent_size).should_not be_nil
+    end
+  end
+
   describe "the 'ensure' parameter" do
     it 'exists' do
       @type.attrclass(:ensure).should_not be_nil

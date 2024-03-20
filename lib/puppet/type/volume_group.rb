@@ -10,6 +10,10 @@ Puppet::Type.newtype(:volume_group) do
     isnamevar
   end
 
+  newparam(:extent_size) do
+    desc 'The physical extent size. Uses OS default if not provided. Only applicable on Linux.'
+  end
+
   newproperty(:physical_volumes, array_matching: :all) do
     desc "The list of physical volumes to be included in the volume group; this
          will automatically set these as dependencies, but they must be defined elsewhere

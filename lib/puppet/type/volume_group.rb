@@ -64,4 +64,12 @@ Puppet::Type.newtype(:volume_group) do
     aliasvalue(:no, :false)
     defaultto :false
   end
+
+  newparam(:extents_size) do
+    desc 'The physical extents size. Defaults to 4(M).'
+    validate do |value|
+      raise ArgumentError, "#{value} is not a valid extents size" unless %r{^[0-9]+(\.[0-9]+)?}i.match?(value)
+    end
+    defaultto 4
+  end
 end

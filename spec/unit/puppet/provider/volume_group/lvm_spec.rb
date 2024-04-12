@@ -28,11 +28,24 @@ describe provider_class do
   end
 
   describe 'when creating' do
-    it "executes 'vgcreate'" do
-      @resource.expects(:[]).with(:name).returns('myvg')
-      @resource.expects(:should).with(:physical_volumes).returns(['/dev/hda'])
-      @provider.expects(:vgcreate).with('myvg', '/dev/hda')
-      @provider.create
+    context 'when an extent size is not provided' do
+      it "executes 'vgcreate'" do
+        @resource.expects(:[]).with(:name).returns('myvg')
+        @resource.expects(:[]).with(:extent_size).returns(nil)
+        @resource.expects(:should).with(:physical_volumes).returns(['/dev/hda'])
+        @provider.expects(:vgcreate).with('myvg', '/dev/hda')
+        @provider.create
+      end
+    end
+
+    context 'when an extent size is provided' do
+      it "executes 'vgcreate' with the desired extent size" do
+        @resource.expects(:[]).with(:name).returns('myvg')
+        @resource.expects(:[]).twice.with(:extent_size).returns('16M')
+        @resource.expects(:should).with(:physical_volumes).returns(['/dev/hda'])
+        @provider.expects(:vgcreate).with('myvg', '/dev/hda', '-s', '16M')
+        @provider.create
+      end
     end
   end
 

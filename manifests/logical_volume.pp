@@ -91,6 +91,7 @@ define lvm::logical_volume (
   Optional[Variant[String[1], Integer]] $region_size                            = undef,
   Optional[Enum['anywhere', 'contiguous', 'cling', 'inherit', 'normal']] $alloc = undef,
   Boolean $yes_flag                                                             = false,
+  Optional[Variant[Array[String],String]] $physical_volume                      = undef,
 ) {
   $lvm_device_path = "/dev/${volume_group}/${name}"
 
@@ -153,6 +154,7 @@ define lvm::logical_volume (
     region_size      => $region_size,
     alloc            => $alloc,
     yes_flag         => $yes_flag,
+    physical_volume  => $physical_volume,
   }
 
   if $createfs {

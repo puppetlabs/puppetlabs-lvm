@@ -62,6 +62,8 @@
 #
 # @param yes_flag If set to true, do not prompt for confirmation interactively but always assume the answer yes.
 #
+# @param physical_volume Create this logical volume on the specified physical volume
+#
 define lvm::logical_volume (
   String[1] $volume_group,
   Optional[String[1]] $size                                                     = undef,

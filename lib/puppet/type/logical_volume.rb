@@ -120,7 +120,7 @@ Puppet::Type.newtype(:logical_volume) do
   end
 
   newparam(:physical_volume) do
-    desc "The physical volume name this logical volume will be created on"
+    desc 'The physical volume name this logical volume will be created on'
     validate do |val|
       unless val.is_a?(::String) || val.is_a?(::Array)
         raise ArgumentError, "physical_volume should be String or Array: #{val}"

@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v2.2.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.2.0) - 2024-05-10
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.1.0...v2.2.0)
+
+### Added
+
+- Allow modifying the physical extent size for volume groups [#333](https://github.com/puppetlabs/puppetlabs-lvm/pull/333) ([glangloi](https://github.com/glangloi))
+
+### Other
+
+- Documentation cleanup [#331](https://github.com/puppetlabs/puppetlabs-lvm/pull/331) ([kenyon](https://github.com/kenyon))
+- pdk update to version 3.0.1 template-ref heads/main-0-g23c6fff [#330](https://github.com/puppetlabs/puppetlabs-lvm/pull/330) ([kenyon](https://github.com/kenyon))
+- Documentation fixes [#329](https://github.com/puppetlabs/puppetlabs-lvm/pull/329) ([kenyon](https://github.com/kenyon))
+- README, metadata: correct name of LVM in summaries [#328](https://github.com/puppetlabs/puppetlabs-lvm/pull/328) ([kenyon](https://github.com/kenyon))
+
 ## [v2.1.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.1.0) - 2023-09-21
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.0.3...v2.1.0)
@@ -46,13 +61,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v1.4.0...v2.0.0)
 
+### Changed
+
+- (maint) - Add puppet 8/Drop puppet 6 [#284](https://github.com/puppetlabs/puppetlabs-lvm/pull/284) ([jordanbreen28](https://github.com/jordanbreen28))
+
 ### Added
 
 - pdksync - (MAINT) - Allow Stdlib 9.x [#286](https://github.com/puppetlabs/puppetlabs-lvm/pull/286) ([LukasAud](https://github.com/LukasAud))
 - (CONT-974) - Add puppet module support [#283](https://github.com/puppetlabs/puppetlabs-lvm/pull/283) ([jordanbreen28](https://github.com/jordanbreen28))
-
-### Changed
-- (maint) - Add puppet 8/Drop puppet 6 [#284](https://github.com/puppetlabs/puppetlabs-lvm/pull/284) ([jordanbreen28](https://github.com/jordanbreen28))
 
 ### Fixed
 

@@ -978,6 +978,7 @@ using the physical_volume resource type.
 The following parameters are available in the `volume_group` type.
 
 * [`createonly`](#-volume_group--createonly)
+* [`extent_size`](#-volume_group--extent_size)
 * [`followsymlinks`](#-volume_group--followsymlinks)
 * [`name`](#-volume_group--name)
 * [`provider`](#-volume_group--provider)
@@ -992,6 +993,10 @@ If set to true the volume group will be created if it does not exist. If the
 volume group does exist no action will be taken. Defaults to `false`.
 
 Default value: `false`
+
+##### <a name="-volume_group--extent_size"></a>`extent_size`
+
+The physical extent size. Uses OS default if not provided. Only applicable on Linux.
 
 ##### <a name="-volume_group--followsymlinks"></a>`followsymlinks`
 

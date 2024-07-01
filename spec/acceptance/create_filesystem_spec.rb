@@ -8,6 +8,10 @@ describe 'create filesystems' do
     (os[:arch] == 'aarch64') ? 'nvme0n3' : 'sdc'
   end
 
+  let(:device_name2) do
+    (os[:arch] == 'aarch64') ? 'nvme1n3' : 'sdd'
+  end
+
   describe 'create_filesystem_non-existing-format' do
     let(:pv) do
       "/dev/#{device_name}"
@@ -135,7 +139,7 @@ describe 'create filesystems' do
 
   describe 'logical_volume_stripes_change_test' do
     let(:pv) { "/dev/#{device_name}" }
-    let(:pv1) { "/dev/#{device_name}p1" }
+    let(:pv1) { "/dev/#{device_name2}" }
     let(:vg) { 'VolumeGroup' }
     let(:lv) { 'LogicalVolume' }
 

@@ -82,7 +82,15 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     args.push('--extents', '100%FREE') if !@resource[:extents] && !@resource[:size] && !@resource[:initial_size]
 
-    args.push('--stripes', @resource[:stripes]) if @resource[:stripes]
+    if @resource[:stripes]
+      current_stripes = get_current_stripes
+      if current_stripes.nil?
+        notice("Creating logical volume with #{@resource[:stripes]} stripes")
+      elsif current_stripes != @resource[:stripes].to_i
+        notice("Updating logical volume stripes from #{current_stripes} to #{@resource[:stripes]}")
+      end
+      args.push('--stripes', @resource[:stripes])
+    end
 
     args.push('--stripesize', @resource[:stripesize]) if @resource[:stripesize]
 
@@ -128,6 +136,11 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     swapoff(path) if %r{\bTYPE="(swap)"}.match?(blkid(path))
     dmsetup('remove', name_escaped)
     lvremove('-f', path)
+  end
+
+  def get_current_stripes
+    lv_info = lvs('--noheadings', '--options', 'stripes', path)
+    lv_info.strip.empty? ? nil : lv_info.strip.to_i
   end
 
   def exists?

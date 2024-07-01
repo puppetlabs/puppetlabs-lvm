@@ -372,4 +372,38 @@ describe Puppet::Type.type(:logical_volume) do
       )
     }.not_to raise_error
   end
+
+  it 'notifies about creating logical volume with 2 stripes' do
+    expect {
+      resource = Puppet::Type.type(:logical_volume).new(
+        name: 'fred',
+        ensure: :present,
+        volume_group: 'daphne',
+        size: '10M',
+        region_size: '910',
+        stripes: '2',
+      )
+    }.not_to raise_error
+  end
+
+  it 'notifies about updating logical volume stripes from 1 to 2' do
+    resource = Puppet::Type.type(:logical_volume).new(
+      name: 'fred',
+      ensure: :present,
+      volume_group: 'daphne',
+      size: '10M',
+      region_size: '910',
+      stripes: '1',
+    )
+    expect {
+      resource = Puppet::Type.type(:logical_volume).new(
+        name: 'fred',
+        ensure: :present,
+        volume_group: 'daphne',
+        size: '10M',
+        region_size: '910',
+        stripes: '2',
+      )
+    }.not_to raise_error
+  end
 end

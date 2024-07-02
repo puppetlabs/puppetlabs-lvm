@@ -134,11 +134,9 @@ define lvm::logical_volume (
   }
 
   # Get the current stripes from the custom fact
-  $current_lv_info = $facts['logical_volumes'][$name]
+  # $current_lv_info = $facts['logical_volumes'][$name]
   notice ('print is working')
-  notice ("current stripes is ${current_lv_info}")
-  warning ("current stripes is ${current_lv_info}")
-  fail ("current stripes is ${current_lv_info}")
+  warning ('current stripes is')
 
   logical_volume { $name:
     ensure           => $ensure,

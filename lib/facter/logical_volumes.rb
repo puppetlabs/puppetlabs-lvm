@@ -26,7 +26,7 @@ Facter.add(:logical_volumes) do
       'lv_active',
       'lv_size',
       'lv_permissions',
-      'stripes' 
+      'stripes',
     ]
 
     output = Facter::Core::Execution.exec("lvs -o #{columns.join(',')}  --noheading --nosuffix")

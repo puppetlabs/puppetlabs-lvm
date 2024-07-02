@@ -135,23 +135,13 @@ define lvm::logical_volume (
 
   # Get the current stripes from the custom fact
   $current_lv_info = $facts['logical_volumes'][$name]
-  $current_stripes = $current_lv_info ? {
-    undef   => undef,
-    default => $current_lv_info['stripes'],
-  }
+  notice ('print is working')
+  notice ("current stripes is ${current_lv_info}")
 
-  # Debugging: Print current and new stripes
-  exec { "print_current_stripes_for_${name}":
-    path    => ['/bin', '/usr/bin'],
-    command => "echo 'Current stripes for LV ${name}: ${current_stripes}'",
-    onlyif  => $current_stripes != undef,
-  }
-
-  exec { "print_new_stripes_for_${name}":
-    path    => ['/bin', '/usr/bin'],
-    command => "echo 'New stripes for LV ${name}: ${stripes}'",
-    onlyif  => $stripes != undef,
-  }
+  #$current_stripes = $current_lv_info ? {
+  #  undef   => undef,
+  #  default => $current_lv_info['stripes'],
+  #}
 
   logical_volume { $name:
     ensure           => $ensure,
@@ -173,31 +163,6 @@ define lvm::logical_volume (
     region_size      => $region_size,
     alloc            => $alloc,
     yes_flag         => $yes_flag,
-  }
-
-  # Debugging: Print current and new stripes
-  exec { "print_current_stripes_for_${name}":
-    path    => ['/bin', '/usr/bin'],
-    command => "echo 'Current stripes for LV ${name}: ${current_stripes}'",
-  }
-
-  exec { "print_new_stripes_for_${name}":
-    path    => ['/bin', '/usr/bin'],
-    command => "echo 'New stripes for LV ${name}: ${stripes}'",
-  }
-
-  # Notify if there is a change in the number of stripes
-  if $stripes != undef and $current_stripes != $stripes {
-    notify { "Stripes for LV ${name} changed from ${current_stripes} to ${stripes}":
-      loglevel => 'warning',
-    }
-  }
-
-  if $stripes {
-    exec { "print stripes for LV ${name}":
-      path    => ['/bin', '/usr/bin'],
-      command => "echo ${stripes}",
-    }
   }
 
   if $createfs {

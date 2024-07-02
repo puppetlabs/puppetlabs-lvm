@@ -8,10 +8,6 @@ describe 'create filesystems' do
     (os[:arch] == 'aarch64') ? 'nvme0n3' : 'sdc'
   end
 
-  let(:device_name2) do
-    (os[:arch] == 'aarch64') ? 'nvme1n3' : 'sdd'
-  end
-
   describe 'create_filesystem_non-existing-format' do
     let(:pv) do
       "/dev/#{device_name}"

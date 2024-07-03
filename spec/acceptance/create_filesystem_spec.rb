@@ -175,7 +175,6 @@ describe 'create filesystems' do
       end
 
       it 'updates the logical volume with specified stripes' do
-        apply_manifest(initial_manifest)
         apply_manifest(updated_manifest)
         expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").chomp).to eq('2')
         remove_all(pv, vg, lv)

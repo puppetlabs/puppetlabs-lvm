@@ -137,19 +137,19 @@ describe 'create filesystems' do
     let(:pv) { "/dev/#{device_name}" }
     let(:vg) { 'VolumeGroup' }
     let(:lv) { 'LogicalVolume' }
-
+  
     context 'creating a logical volume' do
       let(:initial_manifest) do
         <<~MANIFEST
           physical_volume { '#{pv}':
             ensure => present,
           }
-
+  
           volume_group { '#{vg}':
             ensure           => present,
             physical_volumes => '#{pv}',
           }
-
+  
           logical_volume { '#{lv}':
             ensure       => present,
             volume_group => '#{vg}',
@@ -157,7 +157,7 @@ describe 'create filesystems' do
           }
         MANIFEST
       end
-
+  
       let(:updated_manifest) do
         <<~MANIFEST
           logical_volume { '#{lv}':
@@ -168,15 +168,19 @@ describe 'create filesystems' do
           }
         MANIFEST
       end
-
+  
       it 'creates a logical volume with default stripes' do
         apply_manifest(initial_manifest)
-        expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").chomp).to eq('1')
+        run_shell("vgdisplay #{vg}", expect_failures: false)
+        run_shell("lvdisplay #{vg}/#{lv}", expect_failures: false)
+        expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").stdout.chomp).to eq('1')
       end
-
+  
       it 'updates the logical volume with specified stripes' do
         apply_manifest(updated_manifest)
-        expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").chomp).to eq('2')
+        run_shell("vgdisplay #{vg}", expect_failures: false)
+        run_shell("lvdisplay #{vg}/#{lv}", expect_failures: false)
+        expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").stdout.chomp).to eq('2')
         remove_all(pv, vg, lv)
       end
     end

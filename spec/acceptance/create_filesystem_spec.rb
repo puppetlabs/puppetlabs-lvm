@@ -135,7 +135,6 @@ describe 'create filesystems' do
 
   describe 'logical_volume_stripes_change_test' do
     let(:pv) { "/dev/#{device_name}" }
-    let(:pv1) { "/dev/#{device_name2}" }
     let(:vg) { 'VolumeGroup' }
     let(:lv) { 'LogicalVolume' }
 
@@ -143,10 +142,6 @@ describe 'create filesystems' do
       let(:initial_manifest) do
         <<~MANIFEST
           physical_volume { '#{pv}':
-            ensure => present,
-          }
-
-          physical_volume { '#{pv1}':
             ensure => present,
           }
 

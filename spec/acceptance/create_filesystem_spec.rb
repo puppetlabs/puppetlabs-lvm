@@ -136,7 +136,7 @@ describe 'create filesystems' do
   describe 'logical_volume_stripes_change_test' do
     let(:pv) { "/dev/#{device_name}" }
     let(:vg) { 'VolumeGroup_ext4' }
-    let(:lv) { 'LogicalVolume' }
+    let(:lv) { 'LogicalVolume_ext4' }
 
     context 'creating a logical volume' do
       let(:initial_manifest) do
@@ -170,10 +170,10 @@ describe 'create filesystems' do
       end
 
       # it 'creates a logical volume with default stripes' do
-        # apply_manifest(initial_manifest, catch_failures: true)
-        # run_shell("vgdisplay #{vg}", expect_failures: false)
-        # run_shell("lvdisplay #{vg}/#{lv}", expect_failures: false)
-        # expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").stdout.chomp).to eq('1')
+      # apply_manifest(initial_manifest, catch_failures: true)
+      # run_shell("vgdisplay #{vg}", expect_failures: false)
+      # run_shell("lvdisplay #{vg}/#{lv}", expect_failures: false)
+      # expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").stdout.chomp).to eq('1')
       # end
 
       it 'updates the logical volume with specified stripes' do

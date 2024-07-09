@@ -235,7 +235,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   end
 
   def stripes=(new_stripes_count)
-    return if new_stripes_count.to_i == stripes.to_i
+    # return if new_stripes_count.to_i == stripes.to_i
     raise(Puppet::Error, "Changing stripes from #{current_stripes} to #{new_stripes_count} is not supported for existing logical volumes")
   end
 

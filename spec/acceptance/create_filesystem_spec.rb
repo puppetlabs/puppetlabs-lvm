@@ -129,7 +129,7 @@ describe 'create filesystems' do
     it 'applies the manifest' do
       apply_manifest(pp)
       expect(run_shell("file -sL /dev/#{vg}/#{lv}").stdout).to match %r{ext4}
-      #remove_all(pv, vg, lv)
+      # remove_all(pv, vg, lv)
     end
   end
 
@@ -170,10 +170,10 @@ describe 'create filesystems' do
       end
 
       it 'creates a logical volume with default stripes' do
-        #apply_manifest(initial_manifest, catch_failures: true)
+        # apply_manifest(initial_manifest, catch_failures: true)
         run_shell("vgdisplay #{vg}", expect_failures: false)
         run_shell("lvdisplay #{vg}/#{lv}", expect_failures: false)
-        #expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").stdout.chomp).to eq('1')
+        # expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").stdout.chomp).to eq('1')
       end
 
       it 'updates the logical volume with specified stripes' do

@@ -169,12 +169,12 @@ describe 'create filesystems' do
         MANIFEST
       end
 
-      it 'creates a logical volume with default stripes' do
+      # it 'creates a logical volume with default stripes' do
         # apply_manifest(initial_manifest, catch_failures: true)
         # run_shell("vgdisplay #{vg}", expect_failures: false)
         # run_shell("lvdisplay #{vg}/#{lv}", expect_failures: false)
         # expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").stdout.chomp).to eq('1')
-      end
+      # end
 
       it 'updates the logical volume with specified stripes' do
         apply_manifest(updated_manifest, catch_failures: true)

@@ -224,6 +224,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   def stripes
     # Run the lvs command with the -o option to include stripes in the output
     raw = (lvs '-o', '+stripes', '--noheadings', path)
+    # raw = `lvs -o+stripes --noheadings debian-vg/mylv_new7`
 
     # Split the output line into an array
     output_array = raw.strip.split
@@ -235,7 +236,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   end
 
   def stripes=(new_stripes_count)
-    # return if new_stripes_count.to_i == stripes.to_i
+    current_stripes = stripes.to_i
+    return current_stripes if new_stripes_count.to_i == current_stripes
     raise(Puppet::Error, "Changing stripes from #{current_stripes} to #{new_stripes_count} is not supported for existing logical volumes")
   end
 

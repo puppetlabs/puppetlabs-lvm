@@ -164,7 +164,7 @@ describe 'create filesystems' do
             ensure       => present,
             volume_group => '#{vg}',
             size         => '20M',
-            stripes      => '2',
+            stripes      => '1',
           }
         MANIFEST
       end

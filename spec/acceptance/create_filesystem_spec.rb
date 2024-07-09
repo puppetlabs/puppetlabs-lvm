@@ -171,8 +171,8 @@ describe 'create filesystems' do
 
       it 'creates a logical volume with default stripes' do
         # apply_manifest(initial_manifest, catch_failures: true)
-        run_shell("vgdisplay #{vg}", expect_failures: false)
-        run_shell("lvdisplay #{vg}/#{lv}", expect_failures: false)
+        # run_shell("vgdisplay #{vg}", expect_failures: false)
+        # run_shell("lvdisplay #{vg}/#{lv}", expect_failures: false)
         # expect(run_shell("lvs #{vg}/#{lv} --noheadings -o stripes").stdout.chomp).to eq('1')
       end
 

@@ -132,7 +132,7 @@ def remove_all(physical_volume = nil, vol_group = nil, logical_volume = nil, aix
 end
 
 RSpec.configure do |c|
-  disks = ['sdb', 'sdc', 'sdc1']
+  disks = ['sdb', 'sdc', 'sdd']
   hostname = LitmusHelper.instance.run_shell('hostname').stdout.strip.gsub(%r{\..*$}, '')
   zone = LitmusHelper.instance.run_shell('curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/zone').stdout.strip.gsub(%r{.*zones/}, '')
   c.before :suite do

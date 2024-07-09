@@ -145,7 +145,7 @@ describe 'create filesystems' do
 
     it 'change the stripes and re-applies the manifest' do
       # It is expected to fail as number of stripes cannot be changed on a existing logical volume
-      apply_manifest(pp1, { expect_failures: true, debug: true })
+      apply_manifest(pp1, expect_failures: true)
       remove_all(pv, vg, lv)
     end
   end

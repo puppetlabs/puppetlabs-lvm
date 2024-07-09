@@ -119,7 +119,7 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
-  newparam(:stripes) do
+  newproperty(:stripes) do
     desc 'The number of stripes to allocate for the new logical volume.'
     validate do |value|
       raise ArgumentError, "#{value} is not a valid stripe count" unless %r{^[0-9]+$}i.match?(value.to_s)

@@ -163,7 +163,6 @@ describe 'create filesystems' do
           logical_volume { '#{lv}':
             ensure       => present,
             volume_group => '#{vg}',
-            size         => '20M',
             stripes      => '1',
           }
         MANIFEST

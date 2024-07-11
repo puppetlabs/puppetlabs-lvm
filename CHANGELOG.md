@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v2.3.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.3.0) - 2024-07-11
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.2.0...v2.3.0)
+
+### Added
+
+- CAT-1912 : Adding new getters and setters for stripes & not allowing change of stripes for an existing lvm [#343](https://github.com/puppetlabs/puppetlabs-lvm/pull/343) ([malikparvez](https://github.com/malikparvez))
+
 ## [v2.2.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.2.0) - 2024-06-26
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.1.0...v2.2.0)

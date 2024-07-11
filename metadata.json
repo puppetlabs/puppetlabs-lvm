@@ -23,13 +23,6 @@
       ]
     },
     {
-      "operatingsystem": "CentOS",
-      "operatingsystemrelease": [
-        "7",
-        "8"
-      ]
-    },
-    {
       "operatingsystem": "Scientific",
       "operatingsystemrelease": [
         "7"
@@ -38,7 +31,6 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "10",
         "11"
       ]
     },

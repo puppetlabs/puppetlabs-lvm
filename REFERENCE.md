@@ -778,6 +778,10 @@ How to store the mirror log (core, disk, mirrored).
 
 The size of the logical volume. Set to undef to use all available space
 
+##### `stripes`
+
+The number of stripes to allocate for the new logical volume.
+
 ##### `volume_group`
 
 The volume group name associated with this logical volume.  This will automatically
@@ -802,7 +806,6 @@ The following parameters are available in the `logical_volume` type.
 * [`region_size`](#-logical_volume--region_size)
 * [`resize_fs`](#-logical_volume--resize_fs)
 * [`size_is_minsize`](#-logical_volume--size_is_minsize)
-* [`stripes`](#-logical_volume--stripes)
 * [`stripesize`](#-logical_volume--stripesize)
 * [`thinpool`](#-logical_volume--thinpool)
 * [`type`](#-logical_volume--type)
@@ -877,10 +880,6 @@ minimum size you need (if the LV found is larger then the size requests
 this is just logged not causing a FAIL)
 
 Default value: `false`
-
-##### <a name="-logical_volume--stripes"></a>`stripes`
-
-The number of stripes to allocate for the new logical volume.
 
 ##### <a name="-logical_volume--stripesize"></a>`stripesize`
 

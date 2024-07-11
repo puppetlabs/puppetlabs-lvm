@@ -221,6 +221,22 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
   end
 
+  def stripes
+    # Run the lvs command with the -o option to get only the stripes count
+    raw = (lvs '-o', 'stripes', '--noheadings', path)
+
+    output_array = raw.strip
+    output_array
+  end
+
+  def stripes=(new_stripes_count)
+    current_stripes = stripes.to_i
+
+    # Changing stripes is not supported for existing logical volumes
+    return unless new_stripes_count.to_i != current_stripes
+    raise(Puppet::Error, "Changing stripes from #{current_stripes} to #{new_stripes_count} is not supported for existing logical volumes")
+  end
+
   # Look up the current number of mirrors (0=no mirroring, 1=1 spare, 2=2 spares....). Return the number as string.
   def mirror
     raw = lvdisplay(path)

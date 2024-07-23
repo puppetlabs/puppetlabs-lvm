@@ -185,6 +185,19 @@ describe Puppet::Type.type(:logical_volume) do
     }.not_to raise_error
   end
 
+  it 'raises an ArgumentError when the physical volume is neither string nor array' do
+    expect {
+      resource = Puppet::Type.type(:logical_volume).new(
+        name: 'john',
+        ensure: :present,
+        volume_group: 'ernie',
+        size: '10M',
+        physical_volume: 42,
+      )
+    }.to raise_error(Puppet::ResourceError,
+                     'physical_volume should be String or Array: 42')
+  end
+
   it 'invalid number of stripes raises error' do
     expect {
       resource = Puppet::Type.type(:logical_volume).new(

@@ -13,7 +13,7 @@
 # @param fstype The type of filesystem to create on the logical
 # volume.
 #
-# @param pv path to physcial volume
+# @param pv path(s) to physcial volume(s)
 #
 # @param vg value of volume group
 #
@@ -36,7 +36,7 @@
 #
 define lvm::volume (
   Enum['present', 'absent', 'cleaned'] $ensure,
-  Stdlib::Absolutepath $pv,
+  Variant[Stdlib::Absolutepath, Array[Stdlib::Absolutepath]] $pv,
   String[1] $vg,
   Optional[String[1]] $fstype                     = undef,
   Optional[String[1]] $size                       = undef,

@@ -32,7 +32,7 @@ jobs:
       - name: Setup Test Matrix
         id: get-matrix
         run: |
-          bundle exec matrix_from_metadata_v2 --provision-service
+          bundle exec matrix_from_metadata_v2
 
   Acceptance:
     name: "Acceptance tests (${{matrix.platforms.label}}, ${{matrix.collection}})"

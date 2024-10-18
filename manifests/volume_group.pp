@@ -23,12 +23,17 @@
 #   actual PV device is if the property value is a symlink, like
 #   `/dev/disk/by-path/xxxx -> ../../sda`.
 #
+# @param extent_size (optional)
+#   Set the required extent_size. Value can be Integer (`64`)
+#   or String (`4M`).
+#
 define lvm::volume_group (
-  Variant[Hash, Array, String] $physical_volumes,
-  Boolean $createonly               = false,
-  Enum['present', 'absent'] $ensure = present,
-  Hash $logical_volumes             = {},
-  Boolean $followsymlinks           = false,
+  Variant[Hash, Array, String]          $physical_volumes,
+  Boolean                               $createonly      = false,
+  Enum['present', 'absent']             $ensure          = present,
+  Hash                                  $logical_volumes = {},
+  Boolean                               $followsymlinks  = false,
+  Optional[Variant[String[1], Integer]] $extent_size     = undef,
 ) {
   if $physical_volumes.is_a(Hash) {
     create_resources(
@@ -50,6 +55,7 @@ define lvm::volume_group (
     createonly       => $createonly,
     physical_volumes => $physical_volumes,
     followsymlinks   => $followsymlinks,
+    extent_size      => $extent_size,
   }
 
   create_resources(

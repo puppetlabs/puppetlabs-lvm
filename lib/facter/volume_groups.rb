@@ -9,7 +9,7 @@ Facter.add(:volume_groups) do
 
   setcode do
     # Require the helper methods to reduce duplication
-    require 'puppet_x/lvm/output'
+    require_relative '../puppet_x/lvm/output'
 
     # List columns here that can be passed to the lvs -o command. Dont't
     # include things in here that might be bland as we currently can't deal

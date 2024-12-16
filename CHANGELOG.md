@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v3.0.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v3.0.0) - 2024-12-16
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.3.0...v3.0.0)
+
+### Changed
+
+- MAINT : Removing support for centos 7 & 8 [#346](https://github.com/puppetlabs/puppetlabs-lvm/pull/346) ([malikparvez](https://github.com/malikparvez))
+
+### Added
+
+- (CAT-2101) Add support for Debian-12 [#353](https://github.com/puppetlabs/puppetlabs-lvm/pull/353) ([skyamgarp](https://github.com/skyamgarp))
+
+### Fixed
+
+- (CAT-2158) Upgrade rexml to address CVE-2024-49761 [#359](https://github.com/puppetlabs/puppetlabs-lvm/pull/359) ([amitkarsale](https://github.com/amitkarsale))
+
 ## [v2.3.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v2.3.0) - 2024-07-11
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.2.0...v2.3.0)

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v3.0.1](https://github.com/puppetlabs/puppetlabs-lvm/tree/v3.0.1) - 2025-02-26
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v3.0.0...v3.0.1)
+
+### Fixed
+
+- (CAT-2230) Update legacy facts [#363](https://github.com/puppetlabs/puppetlabs-lvm/pull/363) ([amitkarsale](https://github.com/amitkarsale))
+
 ## [v3.0.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v3.0.0) - 2024-12-16
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v2.3.0...v3.0.0)

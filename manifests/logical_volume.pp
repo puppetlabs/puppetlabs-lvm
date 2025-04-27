@@ -21,6 +21,8 @@
 #
 # @param mkfs_options
 #
+# @param use_dm_devicepath Whetever to use the default /dev/$vg/$lv as device name or use /dev/mapper/$vg-$lv for mount and fs creation (Default value: false)
+#
 # @param mountpath
 #
 # @param mountpath_require
@@ -72,6 +74,7 @@ define lvm::logical_volume (
   Variant[String[1], Integer] $dump                                             = '0',
   String[1] $fs_type                                                            = 'ext4',
   Optional[String[1]] $mkfs_options                                             = undef,
+  Boolean $use_dm_devicepath                                                    = false,
   Stdlib::Absolutepath $mountpath                                               = "/${name}",
   Boolean $mountpath_require                                                    = false,
   Boolean $mounted                                                              = true,
@@ -92,7 +95,12 @@ define lvm::logical_volume (
   Optional[Enum['anywhere', 'contiguous', 'cling', 'inherit', 'normal']] $alloc = undef,
   Boolean $yes_flag                                                             = false,
 ) {
-  $lvm_device_path = "/dev/${volume_group}/${name}"
+  # Do not respect for swap, to have a stable mount_title
+  if $use_dm_devicepath and $fs_type != 'swap' {
+    $lvm_device_path = "/dev/mapper/${volume_group}-${name}"
+  } else {
+    $lvm_device_path = "/dev/${volume_group}/${name}"
+  }
 
   if $mountpath_require and $fs_type != 'swap' {
     Mount {

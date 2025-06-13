@@ -95,6 +95,11 @@ define lvm::logical_volume (
   $lvm_device_path = "/dev/${volume_group}/${name}"
 
   if $mountpath_require and $fs_type != 'swap' {
+    file { $mountpath:
+      ensure => directory,
+      before => Mount[$mountpath],
+    }
+
     Mount {
       require => File[$mountpath],
     }

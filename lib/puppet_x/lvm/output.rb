@@ -9,12 +9,12 @@ module Puppet_X
       # the data with the prefix removed i.e. "lv_free" would be come "free"
       # this however doesn't descriminate and will turn something like
       # "foo_bar" into "bar"
-      def self.parse(key, columns, data)
+      def self.parse(key, columns, data, prefix2remove = '[A-Za-z]+_')
         results = {}
 
         # Remove prefixes
-        columns = remove_prefixes(columns)
-        key     = remove_prefix(key)
+        columns = remove_prefixes(columns, prefix2remove)
+        key     = remove_prefix(key, prefix2remove)
 
         data.split("\n").each do |line|
           parsed_line = line.gsub(%r{\s+}, ' ').strip.split
@@ -27,14 +27,14 @@ module Puppet_X
         results
       end
 
-      def self.remove_prefixes(array)
+      def self.remove_prefixes(array, prefix)
         array.map do |item|
-          remove_prefix(item)
+          remove_prefix(item, prefix)
         end
       end
 
-      def self.remove_prefix(item)
-        item.gsub(%r{^[A-Za-z]+_}, '')
+      def self.remove_prefix(item, prefix)
+        item.gsub(%r{^#{prefix}}, '')
       end
     end
   end

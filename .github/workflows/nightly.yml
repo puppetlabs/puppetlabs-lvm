@@ -45,8 +45,13 @@ jobs:
     env:
       PUPPET_GEM_VERSION: '~> 7.24'
       FACTER_GEM_VERSION: 'https://github.com/puppetlabs/facter#main'  # why is this set?
+      TWINGATE_PUBLIC_REPO_KEY: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
 
     steps:
+      - name: "Install Twingate"
+        uses: "twingate/github-action@v1"
+        with:
+          service-key: ${{ env.TWINGATE_PUBLIC_REPO_KEY }}
 
       - name: "Checkout"
         uses: "actions/checkout@v3"

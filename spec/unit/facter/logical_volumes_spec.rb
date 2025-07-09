@@ -36,12 +36,13 @@ describe 'logical_volumes fact' do
         Facter::Core::Execution.expects('which').with('lvs').returns('/sbin/lvs')
       end
 
+      # rubocop:disable RSpec/ExampleLength
       it 'is able to resolve VGs' do
         lvs_output = <<-OUTPUT
-        E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl root       centos/root      /dev/centos/root      /dev/mapper/centos-root      -wi-ao---- linear     public     active  18.46g writeable
-        buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA swap       centos/swap      /dev/centos/swap      /dev/mapper/centos-swap      -wi-ao---- linear     public     active   1.00g writeable
-        uedsry-OTVv-wGW4-vaFf-c7IY-oH6Z-ig6IXB cool_tasks tasks/cool_tasks /dev/tasks/cool_tasks /dev/mapper/tasks-cool_tasks -wi-a----- linear     public     active 800.00m writeable
-        gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv lame_tasks tasks/lame_tasks /dev/tasks/lame_tasks /dev/mapper/tasks-lame_tasks -wi-a----- linear     public     active 400.00m writeable
+        E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl root       centos/root      /dev/centos/root      /dev/mapper/centos-root      -wi-ao---- linear     public     active  18.46g writeable centos
+        buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA swap       centos/swap      /dev/centos/swap      /dev/mapper/centos-swap      -wi-ao---- linear     public     active   1.00g writeable centos
+        uedsry-OTVv-wGW4-vaFf-c7IY-oH6Z-ig6IXB cool_tasks tasks/cool_tasks /dev/tasks/cool_tasks /dev/mapper/tasks-cool_tasks -wi-a----- linear     public     active 800.00m writeable tasks
+        gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv lame_tasks tasks/lame_tasks /dev/tasks/lame_tasks /dev/mapper/tasks-lame_tasks -wi-a----- linear     public     active 400.00m writeable tasks
         OUTPUT
         lvs_output.dup.lstrip!
         Facter::Core::Execution.expects(:exec).at_least(1).returns(lvs_output)
@@ -55,7 +56,8 @@ describe 'logical_volumes fact' do
                                                         'role' => 'public',
                                                         'active' => 'active',
                                                         'size' => '800.00m',
-                                                        'permissions' => 'writeable'
+                                                        'permissions' => 'writeable',
+                                                        'vg_name' => 'tasks'
                                                       },
                                                       'lame_tasks' => {
                                                         'uuid' => 'gmNS3G-cAhA-vRj0-2Uf0-21yO-QVdy-LNXfBv',
@@ -67,7 +69,8 @@ describe 'logical_volumes fact' do
                                                         'role' => 'public',
                                                         'active' => 'active',
                                                         'size' => '400.00m',
-                                                        'permissions' => 'writeable'
+                                                        'permissions' => 'writeable',
+                                                        'vg_name' => 'tasks'
                                                       },
                                                       'root' => {
                                                         'uuid' => 'E7qan8-4NGf-jq2P-l11v-6fFe-MPHK-T6IGzl',
@@ -79,7 +82,8 @@ describe 'logical_volumes fact' do
                                                         'role' => 'public',
                                                         'active' => 'active',
                                                         'size' => '18.46g',
-                                                        'permissions' => 'writeable'
+                                                        'permissions' => 'writeable',
+                                                        'vg_name' => 'centos'
                                                       },
                                                       'swap' => {
                                                         'uuid' => 'buUXDX-GDUh-rN2t-y80n-vtCt-xhhu-XSZ5kA',
@@ -91,9 +95,11 @@ describe 'logical_volumes fact' do
                                                         'role' => 'public',
                                                         'active' => 'active',
                                                         'size' => '1.00g',
-                                                        'permissions' => 'writeable'
+                                                        'permissions' => 'writeable',
+                                                        'vg_name' => 'centos'
                                                       })
       end
+      # rubocop:enable RSpec/ExampleLength
     end
   end
 end

@@ -42,7 +42,7 @@ jobs:
       - name: Setup Test Matrix
         id: get-matrix
         run: |
-          bundle exec matrix_from_metadata_v3 --provision-prefer provision_service --nightly
+          bundle exec matrix_from_metadata_v3 --provision-prefer provision_service --nightly --platform-exclude scientific-7 --platform-exclude ubuntu-18.04 --platform-exclude ubuntu-20.04
 
   Acceptance:
     name: "Acceptance tests (${{matrix.platforms.label}}, ${{matrix.collection.collection || matrix.collection}})"

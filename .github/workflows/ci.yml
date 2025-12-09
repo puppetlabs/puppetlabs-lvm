@@ -105,6 +105,18 @@ jobs:
           FILE='spec/fixtures/litmus_inventory.yaml'
           sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
 
+      - name: "Fix Debian 10 EOL repositories"
+        if: contains(matrix.platforms.image, 'debian-10') || contains(matrix.platforms.image, 'buster')
+        run: |
+          bundle exec bolt command run "
+            sed -i 's|deb.debian.org|archive.debian.org|g' /etc/apt/sources.list &&
+            sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list &&
+            sed -i '/buster-updates/d' /etc/apt/sources.list &&
+            echo 'Acquire::Check-Valid-Until \"false\";' > /etc/apt/apt.conf.d/99no-check-valid-until &&
+            echo 'Acquire::AllowInsecureRepositories \"true\";' > /etc/apt/apt.conf.d/99allow-insecure &&
+            echo 'Acquire::AllowDowngradeToInsecureRepositories \"true\";' >> /etc/apt/apt.conf.d/99allow-insecure
+          " -t ssh_nodes -i spec/fixtures/litmus_inventory.yaml
+
       - name: "Install Puppet agent"
         run: |
           if [[ "${{ matrix.collection.version }}" ]] ; then

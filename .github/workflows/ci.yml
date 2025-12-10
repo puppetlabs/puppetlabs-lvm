@@ -5,6 +5,10 @@ on:
     branches:
       - "main"
   workflow_dispatch:
+
+env:
+  PUPPET_FORGE_TOKEN: ${{ secrets.PUPPET_FORGE_TOKEN_PUBLIC }}
+  BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM: "forge-key:${{ secrets.PUPPET_FORGE_TOKEN_PUBLIC }}"
     
 jobs:
   Spec:
@@ -19,10 +23,13 @@ jobs:
     runs-on: "ubuntu-24.04"
     outputs:
       matrix: ${{ steps.get-matrix.outputs.matrix }}
+    
+    env:
+      BUNDLE_WITHOUT: release_prep
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -35,19 +42,22 @@ jobs:
       - name: Setup Test Matrix
         id: get-matrix
         run: |
-          bundle exec matrix_from_metadata_v2 --provision-service
+          bundle exec matrix_from_metadata_v3 --provision-prefer provision_service --nightly --platform-exclude scientific-7 --platform-exclude ubuntu-18.04 --platform-exclude ubuntu-20.04
 
   Acceptance:
-    name: "Acceptance tests (${{matrix.platforms.label}}, ${{matrix.collection}})"
+    name: "Acceptance tests (${{matrix.platforms.label}}, ${{matrix.collection.collection || matrix.collection}})"
     needs: setup_matrix
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.setup_matrix.outputs.matrix)}}
 
     env:
-      PUPPET_GEM_VERSION: '~> 7.24'
+      BUNDLE_WITHOUT: release_prep
+      PUPPET_GEM_VERSION: '~> 8.9'
       FACTER_GEM_VERSION: 'https://github.com/puppetlabs/facter#main'  # why is this set?
+      TWINGATE_PUBLIC_REPO_KEY: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
 
     steps:
       - name: "Install Twingate"
@@ -55,8 +65,26 @@ jobs:
         with:
           service-key: ${{ secrets.TWINGATE_PUBLIC_REPO_KEY }}
 
+      - name: Fix DNS
+        run: |
+          echo "=== Remove Azure DNS from eth0 interface ==="
+          sudo resolvectl dns eth0 ""
+
+          echo "=== Configure Twingate DNS properly ==="
+          sudo resolvectl dns sdwan0 100.95.0.251 100.95.0.252
+          sudo resolvectl domain sdwan0 delivery.puppetlabs.net
+
+          echo "=== Flush DNS cache ==="
+          sudo resolvectl flush-caches
+
+          echo "=== Check new configuration ==="
+          resolvectl status
+
+          echo "=== Test DNS resolution ==="
+          nslookup artifactory.delivery.puppetlabs.net
+
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -77,9 +105,26 @@ jobs:
           FILE='spec/fixtures/litmus_inventory.yaml'
           sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
 
+      - name: "Fix Debian 10 EOL repositories"
+        if: contains(matrix.platforms.image, 'debian-10') || contains(matrix.platforms.image, 'buster')
+        run: |
+          bundle exec bolt command run "
+            sed -i 's|deb.debian.org|archive.debian.org|g' /etc/apt/sources.list &&
+            sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list &&
+            sed -i '/buster-updates/d' /etc/apt/sources.list &&
+            echo 'Acquire::Check-Valid-Until \"false\";' > /etc/apt/apt.conf.d/99no-check-valid-until &&
+            echo 'Acquire::AllowInsecureRepositories \"true\";' > /etc/apt/apt.conf.d/99allow-insecure &&
+            echo 'Acquire::AllowDowngradeToInsecureRepositories \"true\";' >> /etc/apt/apt.conf.d/99allow-insecure
+          " -t ssh_nodes -i spec/fixtures/litmus_inventory.yaml
+
       - name: "Install Puppet agent"
         run: |
-          bundle exec rake 'litmus:install_agent[${{ matrix.collection }}]'
+          if [[ "${{ matrix.collection.version }}" ]] ; then
+            export PUPPET_VERSION=${{ matrix.collection.version }}
+            bundle exec rake 'litmus:install_agent[${{ matrix.collection.collection }}]'
+          else
+            bundle exec rake 'litmus:install_agent[${{ matrix.collection }}]'
+          fi
 
       - name: "Install module"
         run: |

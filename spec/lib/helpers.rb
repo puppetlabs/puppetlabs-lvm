@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Helpers
-  TEST_DIR = "#{Pathname.new(__FILE__).parent}.."
+  TEST_DIR = "#{Pathname.new(__FILE__).parent}..".freeze
 
   TYPES = {
     pv: :physical_volume,

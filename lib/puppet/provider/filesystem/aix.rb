@@ -4,8 +4,8 @@ require 'open3'
 Puppet::Type.type(:filesystem).provide :aix do
   desc 'Manages logical volume filesystems on AIX'
 
-  confine operatingsystem: :AIX
-  defaultfor operatingsystem: :AIX
+  confine 'os.name': :AIX
+  defaultfor 'os.name': :AIX
 
   commands crfs: 'crfs',
            chfs: 'chfs'

@@ -2,6 +2,7 @@
 
 require 'singleton'
 require 'puppet_litmus'
+require 'open3'
 
 class LitmusHelper
   include Singleton
@@ -70,6 +71,49 @@ def install_dependencies
   LitmusHelper.instance.apply_manifest(pp)
 end
 
+def run_remote_shell_with_retry(command, retries: 3, delay: 3)
+  attempt = 0
+
+  begin
+    LitmusHelper.instance.run_shell(command)
+  rescue RuntimeError => e
+    retryable_error = e.message.match?(%r{connection reset|connect-error|timed out|temporar|rate limit}i)
+    if retryable_error && attempt < retries
+      sleep(delay * (attempt + 1))
+      attempt += 1
+      retry
+    end
+
+    warn("Cleanup command failed: #{command}\n#{e.message}")
+  end
+end
+
+def run_local_gcloud_with_retry(command, retries: 3, delay: 3, capture3: Open3.method(:capture3), sleeper: method(:sleep), warning: method(:warn))
+  attempt = 0
+  combined_output = ''
+
+  loop do
+    stdout, stderr, status = capture3.call(command)
+    return :done if status.success?
+
+    combined_output = "#{stdout}\n#{stderr}"
+    return :done if combined_output.match?(%r{not found}i)
+    return :auth_error if combined_output.match?(%r{do not currently have an active account selected|gcloud auth login}i)
+
+    break unless combined_output.match?(%r{connection reset|timed out|temporar|rate limit}i) && attempt < retries
+
+    sleeper.call(delay * (attempt + 1))
+    attempt += 1
+  end
+
+  warning.call("Cleanup command failed: #{command}\n#{combined_output}")
+  :done
+end
+
+def run_gcloud_cleanup_command(command)
+  run_remote_shell_with_retry(command) if run_local_gcloud_with_retry(command) == :auth_error
+end
+
 # Clean the box after each test, make sure the newly created logical volumes, volume groups,
 # and physical volumes are removed at the end of each test to make the server ready for the
 # next test case.
@@ -131,21 +175,23 @@ def remove_all(physical_volume = nil, vol_group = nil, logical_volume = nil, aix
   end
 end
 
-RSpec.configure do |c|
-  disks = ['sdb', 'sdc']
-  hostname = LitmusHelper.instance.run_shell('hostname').stdout.strip.gsub(%r{\..*$}, '')
-  zone = LitmusHelper.instance.run_shell('curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/zone').stdout.strip.gsub(%r{.*zones/}, '')
-  c.before :suite do
-    install_dependencies
-    disks.each do |disk|
-      LitmusHelper.instance.run_shell("gcloud compute disks create #{hostname}-#{disk} --size 10GB --type pd-standard --zone=#{zone}")
-      LitmusHelper.instance.run_shell("gcloud compute instances attach-disk #{hostname} --disk #{hostname}-#{disk} --zone=#{zone}")
+unless ENV['LVM_SKIP_ACCEPTANCE_SETUP'] == 'true'
+  RSpec.configure do |c|
+    disks = ['sdb', 'sdc']
+    hostname = LitmusHelper.instance.run_shell('hostname').stdout.strip.gsub(%r{\..*$}, '')
+    zone = LitmusHelper.instance.run_shell('curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/zone').stdout.strip.gsub(%r{.*zones/}, '')
+    c.before :suite do
+      install_dependencies
+      disks.each do |disk|
+        LitmusHelper.instance.run_shell("gcloud compute disks create #{hostname}-#{disk} --size 10GB --type pd-standard --zone=#{zone}")
+        LitmusHelper.instance.run_shell("gcloud compute instances attach-disk #{hostname} --disk #{hostname}-#{disk} --zone=#{zone}")
+      end
     end
-  end
-  c.after :suite do
-    disks.each do |disk|
-      LitmusHelper.instance.run_shell("gcloud compute instances detach-disk #{hostname} --disk=#{hostname}-#{disk} --zone=#{zone} --quiet")
-      LitmusHelper.instance.run_shell("gcloud compute disks delete #{hostname}-#{disk} --zone=#{zone} --quiet")
+    c.after :suite do
+      disks.each do |disk|
+        run_gcloud_cleanup_command("gcloud compute instances detach-disk #{hostname} --disk=#{hostname}-#{disk} --zone=#{zone} --quiet")
+        run_gcloud_cleanup_command("gcloud compute disks delete #{hostname}-#{disk} --zone=#{zone} --quiet")
+      end
     end
   end
 end

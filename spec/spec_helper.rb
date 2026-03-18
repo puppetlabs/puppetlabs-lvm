@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rspec'
+
 RSpec.configure do |c|
   c.mock_with :mocha
 end

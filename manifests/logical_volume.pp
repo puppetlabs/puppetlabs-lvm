@@ -166,9 +166,10 @@ define lvm::logical_volume (
   if $createfs or $ensure != 'present' {
     if $fs_type != 'swap' {
       exec { "ensure mountpoint '${fixed_mountpath}' exists":
-        path    => ['/bin', '/usr/bin'],
+        path    => ['/bin', '/usr/bin', '/sbin'],
         command => "mkdir -p ${fixed_mountpath}",
         unless  => "test -d ${fixed_mountpath}",
+        onlyif  => "lvs /dev/${volume_group}/${name} > /dev/null 2>&1",
         before  => Mount[$mount_title],
       }
     }

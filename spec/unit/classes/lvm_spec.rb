@@ -79,6 +79,33 @@ describe 'lvm', type: :class do
     }
   end
 
+  describe 'guards mountpoint creation for absent logical volumes' do
+    let(:params) do
+      {
+        volume_groups: {
+          'testvg' => {
+            'physical_volumes' => ['/dev/sda2', '/dev/sda3'],
+            'logical_volumes' => {
+              'testing' => {
+                'ensure'            => 'absent',
+                'fs_type'           => 'ext4',
+                'mountpath'         => '/var/opt/test',
+                'mountpath_require' => false,
+                'mounted'           => false,
+              }
+            }
+          }
+        }
+      }
+    end
+
+    it 'guards mountpoint creation for absent logical volumes' do
+      expect(subject).to contain_exec("ensure mountpoint '/var/opt/test' exists").with(
+        onlyif: 'lvs /dev/testvg/testing > /dev/null 2>&1',
+      )
+    end
+  end
+
   describe 'with a swap volume' do
     let(:params) do
       {

@@ -163,7 +163,7 @@ define lvm::logical_volume (
     }
   }
 
-  if $createfs or $ensure != 'present' {
+  if $createfs and $ensure == 'present' {
     if $fs_type != 'swap' {
       exec { "ensure mountpoint '${fixed_mountpath}' exists":
         path    => ['/bin', '/usr/bin'],

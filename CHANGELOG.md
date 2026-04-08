@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v4.0.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.0) - 2026-04-08
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v3.0.1...v4.0.0)
+
+### Changed
+
+- (CAT-2379) Puppetcore updates and Remove Puppet 7 support [#371](https://github.com/puppetlabs/puppetlabs-lvm/pull/371) ([LukasAud](https://github.com/LukasAud))
+
+### Fixed
+
+- (MODULES-11666) validate LV present to prevent creating empty mountpaths [#377](https://github.com/puppetlabs/puppetlabs-lvm/pull/377) ([skyamgarp](https://github.com/skyamgarp))
+- (CAT-2014) Address GCP disk orphaning issue [#376](https://github.com/puppetlabs/puppetlabs-lvm/pull/376) ([LukasAud](https://github.com/LukasAud))
+
+### Other
+
+- ci(MODULES-11557): add Twingate setup step to GitHub Actions workflow [#370](https://github.com/puppetlabs/puppetlabs-lvm/pull/370) ([imaqsood](https://github.com/imaqsood))
+- MODULES-11577 chore(ruby): upgrade Ruby from 2.7 to 3.1 [#368](https://github.com/puppetlabs/puppetlabs-lvm/pull/368) ([imaqsood](https://github.com/imaqsood))
+- (CAT-2296) Update github runner image to ubuntu-24.04 [#367](https://github.com/puppetlabs/puppetlabs-lvm/pull/367) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
 ## [v3.0.1](https://github.com/puppetlabs/puppetlabs-lvm/tree/v3.0.1) - 2025-02-26
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v3.0.0...v3.0.1)

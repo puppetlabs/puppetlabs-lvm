@@ -108,6 +108,7 @@ The following parameters are available in the `lvm::logical_volume` defined type
 * [`dump`](#-lvm--logical_volume--dump)
 * [`fs_type`](#-lvm--logical_volume--fs_type)
 * [`mkfs_options`](#-lvm--logical_volume--mkfs_options)
+* [`use_dm_devicepath`](#-lvm--logical_volume--use_dm_devicepath)
 * [`mountpath`](#-lvm--logical_volume--mountpath)
 * [`mountpath_require`](#-lvm--logical_volume--mountpath_require)
 * [`mounted`](#-lvm--logical_volume--mounted)
@@ -197,6 +198,14 @@ Data type: `Optional[String[1]]`
 
 
 Default value: `undef`
+
+##### <a name="-lvm--logical_volume--use_dm_devicepath"></a>`use_dm_devicepath`
+
+Data type: `Boolean`
+
+Whetever to use the default /dev/$vg/$lv as device name or use /dev/mapper/$vg-$lv for mount and filesystem creation.
+
+Default value: `false`
 
 ##### <a name="-lvm--logical_volume--mountpath"></a>`mountpath`
 

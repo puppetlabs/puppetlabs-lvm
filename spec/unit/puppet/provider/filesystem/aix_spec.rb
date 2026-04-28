@@ -36,7 +36,6 @@ describe provider_class do
     end
 
     it 'converts :true attribute values to "yes"' do
-      pending('MODULES-11788')
       # large_files has no entry in attribute_flag's rename map (only large_file does),
       # so the attribute name passes through as-is: "-a large_files=yes"
       resource[:large_files] = :true
@@ -45,7 +44,6 @@ describe provider_class do
     end
 
     it 'converts :false attribute values to "no"' do
-      pending('MODULES-11788')
       resource[:mountguard] = :false
       provider.expects(:crfs).with('-a', 'mountguard=no', '-m', '/mnt/data')
       provider.create

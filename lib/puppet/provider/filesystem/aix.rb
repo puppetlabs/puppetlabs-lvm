@@ -74,7 +74,7 @@ Puppet::Type.type(:filesystem).provide :aix do
     args.each do |arg|
       if @resource[arg]
         ans = parse_boolean(@resource[arg])
-        attr_args.push('-a', "#{attribute_flag(arg)}=#{@resource[arg]}")
+        attr_args.push('-a', "#{attribute_flag(arg)}=#{ans}")
       end
     end
     attr_args

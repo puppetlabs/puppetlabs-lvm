@@ -8,6 +8,10 @@ describe provider_class do
   before(:each) do
     @resource = stub_everything('resource')
     @provider = provider_class.new(@resource)
+    # Default: short-circuit the post-lvcreate udev settle so existing tests
+    # don't need to model it. Tests that exercise settle behaviour override
+    # this stub locally.
+    @provider.stubs(:settle_udev)
   end
 
   lvs_output = <<-OUTPUT
@@ -169,6 +173,63 @@ describe provider_class do
         @provider.create
       end
     end
+
+    context 'udevadm settle behaviour (MODULES-11756)' do
+      before(:each) do
+        # Restore the real settle implementation so we exercise it directly.
+        @provider.unstub(:settle_udev)
+      end
+
+      it "invokes 'udevadm settle --timeout=30' after a successful 'lvcreate'" do
+        provider_class.stubs(:udevadm_available?).returns(true)
+        @resource.expects(:[]).with(:name).returns('mylv')
+        @resource.expects(:[]).with(:volume_group).returns('myvg')
+        @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        creation = sequence('creation')
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg').in_sequence(creation)
+        @provider.expects(:udevadm).with('settle', '--timeout=30').in_sequence(creation)
+        Puppet.expects(:warning).never
+        @provider.create
+      end
+
+      it "skips 'udevadm settle' and logs at debug when udevadm is not on PATH" do
+        provider_class.stubs(:udevadm_available?).returns(false)
+        @resource.expects(:[]).with(:name).returns('mylv')
+        @resource.expects(:[]).with(:volume_group).returns('myvg')
+        @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
+        @provider.expects(:udevadm).never
+        Puppet.expects(:debug).with('udevadm not present, skipping settle')
+        @provider.create
+      end
+
+      it "logs a warning but does not raise when 'udevadm settle' exits non-zero" do
+        provider_class.stubs(:udevadm_available?).returns(true)
+        @resource.expects(:[]).with(:name).returns('mylv').at_least_once
+        @resource.expects(:[]).with(:volume_group).returns('myvg')
+        @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
+        @provider.expects(:udevadm).with('settle', '--timeout=30')
+                 .raises(Puppet::ExecutionFailure, 'udevadm settle timed out')
+        Puppet.expects(:warning).with(regexp_matches(%r{udevadm settle returned non-zero after lvcreate of mylv}))
+        expect { @provider.create }.not_to raise_error
+      end
+
+      it "does not invoke 'udevadm settle' when 'lvcreate' itself fails" do
+        # Use a sequence so this test would also fail if someone reordered
+        # `settle_udev` to run *before* `lvcreate` — settle would then attempt
+        # to run before the failure point and break the sequence.
+        provider_class.stubs(:udevadm_available?).returns(true)
+        @resource.expects(:[]).with(:name).returns('mylv')
+        @resource.expects(:[]).with(:volume_group).returns('myvg')
+        @resource.expects(:[]).with(:size).returns('1g').at_least_once
+        order = sequence('lvcreate-failure')
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg').in_sequence(order)
+                 .raises(Puppet::ExecutionFailure, 'lvcreate failed')
+        @provider.expects(:udevadm).never
+        expect { @provider.create }.to raise_error(Puppet::ExecutionFailure)
+      end
+    end
   end
 
   describe 'when modifying' do
@@ -319,6 +380,17 @@ describe provider_class do
       @provider.expects(:swapoff).with('/dev/myvg/mylv')
       @provider.expects(:dmsetup).with('remove', 'myvg-mylv')
       @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
+      @provider.destroy
+    end
+
+    it "does not invoke 'udevadm settle' on destroy" do
+      @provider.unstub(:settle_udev)
+      @resource.expects(:[]).with(:volume_group).returns('myvg').times(3)
+      @resource.expects(:[]).with(:name).returns('mylv').times(3)
+      @provider.expects(:blkid).with('/dev/myvg/mylv')
+      @provider.expects(:dmsetup).with('remove', 'myvg-mylv')
+      @provider.expects(:lvremove).with('-f', '/dev/myvg/mylv')
+      @provider.expects(:udevadm).never
       @provider.destroy
     end
   end

@@ -181,7 +181,7 @@ describe provider_class do
       end
 
       it "invokes 'udevadm settle --timeout=30' after a successful 'lvcreate'" do
-        Puppet::Util.stubs(:which).with('udevadm').returns('/usr/bin/udevadm')
+        provider_class.stubs(:udevadm_available?).returns(true)
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -193,7 +193,7 @@ describe provider_class do
       end
 
       it "skips 'udevadm settle' and logs at debug when udevadm is not on PATH" do
-        Puppet::Util.stubs(:which).with('udevadm').returns(nil)
+        provider_class.stubs(:udevadm_available?).returns(false)
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -204,7 +204,7 @@ describe provider_class do
       end
 
       it "logs a warning but does not raise when 'udevadm settle' exits non-zero" do
-        Puppet::Util.stubs(:which).with('udevadm').returns('/usr/bin/udevadm')
+        provider_class.stubs(:udevadm_available?).returns(true)
         @resource.expects(:[]).with(:name).returns('mylv').at_least_once
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
@@ -216,11 +216,15 @@ describe provider_class do
       end
 
       it "does not invoke 'udevadm settle' when 'lvcreate' itself fails" do
-        Puppet::Util.stubs(:which).with('udevadm').returns('/usr/bin/udevadm')
+        # Use a sequence so this test would also fail if someone reordered
+        # `settle_udev` to run *before* `lvcreate` — settle would then attempt
+        # to run before the failure point and break the sequence.
+        provider_class.stubs(:udevadm_available?).returns(true)
         @resource.expects(:[]).with(:name).returns('mylv')
         @resource.expects(:[]).with(:volume_group).returns('myvg')
         @resource.expects(:[]).with(:size).returns('1g').at_least_once
-        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
+        order = sequence('lvcreate-failure')
+        @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg').in_sequence(order)
                  .raises(Puppet::ExecutionFailure, 'lvcreate failed')
         @provider.expects(:udevadm).never
         expect { @provider.create }.to raise_error(Puppet::ExecutionFailure)

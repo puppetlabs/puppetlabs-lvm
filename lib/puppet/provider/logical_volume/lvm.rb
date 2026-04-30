@@ -21,7 +21,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
            lsblk: 'lsblk'
 
   optional_commands xfs_growfs: 'xfs_growfs',
-                    resize4fs: 'resize4fs'
+                    resize4fs: 'resize4fs',
+                    udevadm: 'udevadm'
 
   def self.instances
     get_logical_volumes.map do |logical_volumes_line|
@@ -121,6 +122,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     args.push('--yes') if @resource[:yes_flag]
     lvcreate(*args)
+    settle_udev
   end
 
   def destroy
@@ -297,6 +299,26 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   end
 
   private
+
+  # Wait for udev to finish processing events triggered by lvcreate so the
+  # device node is fully settled before downstream resources (e.g. filesystem)
+  # try to open it. Without this, mkfs can race and fail with EBUSY.
+  def settle_udev
+    if udevadm_available?
+      begin
+        udevadm('settle', '--timeout=30')
+      rescue Puppet::ExecutionFailure
+        Puppet.warning("udevadm settle returned non-zero after lvcreate of #{@resource[:name]}; the device may not be fully ready")
+      end
+    else
+      Puppet.debug('udevadm not present, skipping settle')
+    end
+  end
+
+  def udevadm_available?
+    return @udevadm_available if defined?(@udevadm_available)
+    @udevadm_available = !Puppet::Util.which('udevadm').nil?
+  end
 
   def lvs_pattern
     # lvs output format:

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v4.0.1](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.1) - unreleased
+
+### Fixed
+
+- (MODULES-11756) Wait for udev to settle after `lvcreate` so a `filesystem` resource targeting the same device no longer races with `mkfs` and fails with `device or resource busy`.
+
 ## [v4.0.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.0) - 2026-04-08
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v3.0.1...v4.0.0)

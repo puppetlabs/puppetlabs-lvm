@@ -121,6 +121,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     end
 
     args.push('--yes') if @resource[:yes_flag]
+    args.push(@resource[:physical_volume]) if @resource[:physical_volume]
     lvcreate(*args)
     settle_udev
   end

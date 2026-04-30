@@ -5,19 +5,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v4.0.1](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.1) - unreleased
+## [v4.0.1](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.1) - 2026-04-30
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v4.0.0...v4.0.1)
 
 ### Fixed
 
-- (MODULES-11756) Wait for udev to settle after `lvcreate` so a `filesystem` resource targeting the same device no longer races with `mkfs` and fails with `device or resource busy`.
+- (MODULES-11756) Wait for udev to settle after lvcreate [#380](https://github.com/puppetlabs/puppetlabs-lvm/pull/380) ([imaqsood](https://github.com/imaqsood))
 
-## [v4.0.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.0) - 2026-04-08
+### Other
+
+- (MODULES-11788) Pass converted boolean parameter [#379](https://github.com/puppetlabs/puppetlabs-lvm/pull/379) ([joshcooper](https://github.com/joshcooper))
+
+## [v4.0.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.0) - 2026-04-13
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v3.0.1...v4.0.0)
 
 ### Changed
 
-- (CAT-2379) Puppetcore updates and Remove Puppet 7 support [#371](https://github.com/puppetlabs/puppetlabs-lvm/pull/371) ([LukasAud](https://github.com/LukasAud))
+- (CAT-2379) Puppetcore update [#371](https://github.com/puppetlabs/puppetlabs-lvm/pull/371) ([LukasAud](https://github.com/LukasAud))
 
 ### Fixed
 

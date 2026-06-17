@@ -192,7 +192,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
       lvextend('-L', new_size, path, *args) || raise("Cannot extend to size #{new_size} because lvextend failed.")
 
-      unless @resource[:resize_fs] == :false || @resource[:resize_fs] == false || @resource[:resize_fs] == 'false'
+      unless [:false, false, 'false'].include?(@resource[:resize_fs])
         begin
           blkid_type = blkid(path)
           if command(:resize4fs) && blkid_type =~ %r{\bTYPE="(ext4)"}
@@ -214,8 +214,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
       end
 
     else
-      unless @resource[:size_is_minsize] == :true || @resource[:size_is_minsize] == true || @resource[:size_is_minsize] == 'true'
-        raise(Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})")
+      unless [:true, true, 'true'].include?(@resource[:size_is_minsize])
+        raise Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})"
       end
 
       info("Logical volume already has minimum size of #{new_size} (currently #{current_size})")
@@ -236,7 +236,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     # Changing stripes is not supported for existing logical volumes
     return unless new_stripes_count.to_i != current_stripes
-    raise(Puppet::Error, "Changing stripes from #{current_stripes} to #{new_stripes_count} is not supported for existing logical volumes")
+    raise Puppet::Error, "Changing stripes from #{current_stripes} to #{new_stripes_count} is not supported for existing logical volumes"
   end
 
   # Look up the current number of mirrors (0=no mirroring, 1=1 spare, 2=2 spares....). Return the number as string.
@@ -269,8 +269,8 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
   # Location of the mirror log. Empty string if mirror==0, else "mirrored", "disk" or "core".
   def mirrorlog
-    vgname = (@resource[:volume_group]).to_s
-    lvname = (@resource[:name]).to_s
+    vgname = @resource[:volume_group].to_s
+    lvname = @resource[:name].to_s
     raw = lvs('-a', '-o', '+devices', vgpath)
 
     if mirror.to_i.positive?

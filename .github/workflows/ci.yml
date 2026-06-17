@@ -4,14 +4,26 @@ on:
   pull_request:
     branches:
       - "main"
+  pull_request_target:
+    types: [labeled, reopened]
+    branches:
+      - "main"
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   PUPPET_FORGE_TOKEN: ${{ secrets.PUPPET_FORGE_TOKEN_PUBLIC }}
   BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM: "forge-key:${{ secrets.PUPPET_FORGE_TOKEN_PUBLIC }}"
-    
+
 jobs:
   Spec:
+    if: github.event_name != 'pull_request_target'
     uses: "puppetlabs/cat-github-actions/.github/workflows/module_ci.yml@main"
     with:
       runs_on: "ubuntu-24.04"
@@ -19,11 +31,16 @@ jobs:
 
   setup_matrix:
     name: "Setup Test Matrix"
-    needs: Spec
     runs-on: "ubuntu-24.04"
+    if: >-
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork != true) ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request_target' &&
+       (github.event.pull_request.head.repo.fork != true ||
+        contains(github.event.pull_request.labels.*.name, 'allowed-for-ci')))
     outputs:
       matrix: ${{ steps.get-matrix.outputs.matrix }}
-    
+
     env:
       BUNDLE_WITHOUT: release_prep
 
@@ -32,6 +49,7 @@ jobs:
         uses: "actions/checkout@v4"
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: "Setup ruby"
         uses: "ruby/setup-ruby@v1"
@@ -44,14 +62,33 @@ jobs:
         run: |
           bundle exec matrix_from_metadata_v3 --provision-prefer provision_service --nightly --platform-exclude scientific-7 --platform-exclude ubuntu-18.04 --platform-exclude ubuntu-20.04
 
+  approval_gate:
+    name: "Fork PR approval gate"
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'pull_request_target' &&
+      github.event.pull_request.head.repo.fork == true
+    environment: puppetcore-fork
+    steps:
+      - name: "Approval received"
+        run: |
+          echo "Approved fork PR #${{ github.event.pull_request.number }}"
+          echo "Head SHA at approval: ${{ github.event.pull_request.head.sha }}"
+
   Acceptance:
     name: "Acceptance tests (${{matrix.platforms.label}}, ${{matrix.collection.collection || matrix.collection}})"
-    needs: setup_matrix
+    needs: [setup_matrix, approval_gate]
     runs-on: ubuntu-latest
     timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.setup_matrix.outputs.matrix)}}
+    if: >-
+      always() &&
+      needs.setup_matrix.result == 'success' &&
+      (needs.approval_gate.result == 'success' ||
+       needs.approval_gate.result == 'skipped')
 
     env:
       BUNDLE_WITHOUT: release_prep
@@ -87,6 +124,7 @@ jobs:
         uses: "actions/checkout@v4"
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: "Setup ruby"
         uses: "ruby/setup-ruby@v1"

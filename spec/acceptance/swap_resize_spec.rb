@@ -2,89 +2,112 @@
 
 require 'spec_helper_acceptance'
 
-# RHEL 10 support work for https://github.com/puppetlabs/puppetlabs-lvm/issues/372
+# RHEL10 acceptance test for https://github.com/puppetlabs/puppetlabs-lvm/issues/372
 #
-# The reported bug: resizing a swap logical volume runs `swapoff && mkswap &&
-# swapon` (swap branch of lib/puppet/provider/logical_volume/lvm.rb#size=), and
-# `mkswap` mints a fresh UUID every run. On an anaconda-installed RHEL 10 host
-# swap is referenced by UUID in /etc/fstab and in the `resume=UUID=` kernel
-# parameter, so the regenerated UUID orphans those references and swap fails to
-# reactivate. On RHEL 9 and earlier swap is referenced by device path, so the
-# same operation is harmless.
+# Resizing a swap logical volume runs `swapoff && mkswap && swapon` (swap branch
+# of lib/puppet/provider/logical_volume/lvm.rb#size=), and `mkswap` mints a fresh
+# random UUID on every run. On RHEL 10 swap is referenced by UUID in /etc/fstab
+# and in the `resume=UUID=` kernel parameter, so the regenerated UUID orphans
+# those references: swap fails to reactivate at boot and hibernation breaks. On
+# RHEL 9 and earlier swap was referenced by device path, so the issue has only
+# been reported on RHEL 10 -- hence this test only runs there.
 #
-# A *genuine* acceptance test of this must resize the real OS swap on a target
-# that carries the anaconda layout (LVM swap referenced by UUID) and observe
-# that it breaks -- fabricating an fstab entry ourselves would only prove that
-# our own fabrication broke, not that the deployed condition breaks.
+# A probe against the provisioned RHEL 10 image (git history: 2026-07) showed it
+# is an anaconda install but ships NO swap and NO LVM, so there is no pre-existing
+# OS swap to resize. We therefore build the standard swap-by-UUID condition the
+# way an admin/anaconda would -- create the swap LV with the module, then persist
+# it in fstab by UUID -- and observe the REAL failure through the real swapon/fstab
+# path: after a module resize, re-activating swap from fstab (as a reboot does)
+# no longer works because the UUID changed. Hibernation/resume= is not exercised
+# (no hibernation in CI) but shares the identical root cause.
 #
-# This spec is the first step: it runs ONLY on the provisioned RHEL/EL 10 target
-# and reports its storage layout, then asserts the prerequisites the genuine
-# resize test will depend on:
-#   1. an LVM logical volume formatted as swap exists, and
-#   2. it is referenced by UUID in /etc/fstab.
-#
-# If those pass, the provisioned image is anaconda-like and we can evolve this
-# into the real red/green resize test. If they fail, the CI log (printed below)
-# tells us exactly what the image actually is, so we can switch the RHEL 10
-# matrix entry to an anaconda/kickstart-built provider/image instead.
-describe 'RHEL 10 swap layout (issue #372 environment probe)' do
+# Expected lifecycle: RED on RHEL 10 with the current provider, GREEN once the
+# resize preserves the UUID (e.g. `mkswap -U <existing-uuid>`); skipped elsewhere.
+describe 'resize a swap logical volume referenced by UUID' do
   before(:each) do
-    skip 'Only runs on the provisioned RHEL/EL 10 target' unless os[:family] == 'redhat' && os[:release].to_s.to_i >= 10
+    skip 'Only applicable to RHEL/EL 10+, where fstab and resume= reference swap by UUID' unless os[:family] == 'redhat' && os[:release].to_s.to_i >= 10
   end
 
-  # grep/awk exit non-zero when they match nothing, which run_shell treats as a
-  # failure; `|| true` keeps the command successful so we can assert on stdout.
-  def capture(command)
-    run_shell("#{command} 2>&1 || true").stdout
+  let(:device_name) do
+    (os[:arch] == 'aarch64') ? 'nvme0n3' : 'sdc'
   end
 
-  it 'has an anaconda-style LVM swap referenced by UUID' do
-    lsblk   = capture('lsblk -o NAME,TYPE,FSTYPE,SIZE,MOUNTPOINTS')
-    fstab   = capture('cat /etc/fstab')
-    swaps   = capture('swapon --show')
-    cmdline = capture('cat /proc/cmdline')
-    lvs     = capture('lvs')
-    vgs     = capture('vgs')
-    memfree = capture('free -h')
+  let(:pv) { "/dev/#{device_name}" }
+  let(:vg) { 'VolumeGroup_swap' }
+  let(:lv) { 'LogicalVolume_swap' }
+  let(:device_path) { "/dev/#{vg}/#{lv}" }
+  let(:fstab_marker) { '# puppetlabs-lvm issue-372 swap test' }
 
-    # Emit the full picture so it is visible in the CI log regardless of pass/fail.
-    puts <<~REPORT
-      ============================ RHEL 10 storage probe ============================
-      os                : #{os[:family]} #{os[:release]} (#{os[:arch]})
-      ------------------------------- lsblk -----------------------------------------
-      #{lsblk}
-      ------------------------------- /etc/fstab ------------------------------------
-      #{fstab}
-      ------------------------------- swapon --show ---------------------------------
-      #{swaps}
-      ------------------------------- /proc/cmdline ---------------------------------
-      #{cmdline}
-      ------------------------------- lvs -------------------------------------------
-      #{lvs}
-      ------------------------------- vgs -------------------------------------------
-      #{vgs}
-      ------------------------------- free ------------------------------------------
-      #{memfree}
-      ===============================================================================
-    REPORT
+  let(:pp_create) do
+    <<~MANIFEST
+      physical_volume { '#{pv}':
+        ensure => present,
+      }
+      ->
+      volume_group { '#{vg}':
+        ensure           => present,
+        physical_volumes => '#{pv}',
+      }
+      ->
+      logical_volume { '#{lv}':
+        ensure       => present,
+        volume_group => '#{vg}',
+        size         => '100M',
+      }
+      ->
+      filesystem { 'Create_swap':
+        name    => '#{device_path}',
+        ensure  => present,
+        fs_type => 'swap',
+      }
+    MANIFEST
+  end
 
-    # Prerequisite 1: an LVM logical volume formatted as swap.
-    lvm_swap = capture("lsblk -rno NAME,TYPE,FSTYPE | awk '$2 == \"lvm\" && $3 == \"swap\" { print $1 }'").strip
-    # Prerequisite 2: that swap is referenced by UUID in /etc/fstab.
-    fstab_swap_by_uuid = capture(%(grep -E '^[[:space:]]*UUID=[^[:space:]]+[[:space:]]+[^[:space:]]+[[:space:]]+swap' /etc/fstab)).strip
-    # Nice-to-have context: hibernation resume reference (not asserted, just reported).
-    resume = capture(%(grep -oE 'resume=[^[:space:]]+' /proc/cmdline)).strip
-    puts "resume= kernel parameter: #{resume.empty? ? '(none)' : resume}"
+  let(:pp_resize) do
+    <<~MANIFEST
+      logical_volume { '#{lv}':
+        ensure       => present,
+        volume_group => '#{vg}',
+        size         => '200M',
+      }
+    MANIFEST
+  end
 
-    aggregate_failures 'anaconda LVM swap prerequisites' do
-      expect(lvm_swap).not_to(be_empty,
-                              'No LVM logical volume of type swap found on the RHEL 10 target. ' \
-                              'This image is not an anaconda-style install with LVM swap; the genuine ' \
-                              'resize test cannot run here -- switch the RHEL 10 matrix entry to a ' \
-                              'kickstart/anaconda-built provider/image. See the probe output above.')
-      expect(fstab_swap_by_uuid).not_to(be_empty,
-                                        'Swap is not referenced by UUID in /etc/fstab on the RHEL 10 target. ' \
-                                        'The issue #372 failure condition is absent; see the probe output above.')
-    end
+  it 'keeps swap reachable via its fstab UUID after a resize' do
+    # 1. Create the swap LV with the module (its own documented feature).
+    apply_manifest(pp_create, catch_failures: true)
+    expect(run_shell("blkid -s TYPE -o value #{device_path}").stdout.strip).to eq('swap')
+
+    # 2. Persist it in fstab by UUID -- the standard, anaconda-equivalent way to
+    #    record swap on RHEL 10.
+    uuid = run_shell("blkid -s UUID -o value #{device_path}").stdout.strip
+    expect(uuid).not_to be_empty
+    run_shell(%(printf '%s\\nUUID=%s none swap defaults 0 0\\n' '#{fstab_marker}' '#{uuid}' >> /etc/fstab))
+
+    # 3. Baseline: swap activates from its fstab UUID entry before any resize.
+    run_shell('swapoff -a')
+    run_shell('swapon -a || true')
+    expect(run_shell('swapon --show --noheadings').stdout.strip).not_to(
+      be_empty, 'precondition failed: swap did not activate from its fstab UUID entry before the resize'
+    )
+
+    # 4. Resize the swap LV with the module -- the operation issue #372 reports.
+    apply_manifest(pp_resize, catch_failures: true)
+
+    # 5. Re-activate from fstab exactly as a reboot would. With the current
+    #    provider mkswap has regenerated the UUID, so the fstab UUID entry no
+    #    longer resolves and swap fails to come back.
+    run_shell('swapoff -a')
+    run_shell('swapon -a || true')
+    active = run_shell('swapon --show --noheadings').stdout.strip
+    expect(active).not_to(
+      be_empty,
+      "swap did not reactivate from its fstab UUID (#{uuid}) after the resize; mkswap regenerated " \
+      'the UUID and the fstab/resume=UUID= reference is now stale (issue #372)'
+    )
+  ensure
+    run_shell('swapoff -a || true')
+    run_shell(%(sed -i '\\|#{fstab_marker}|,+1d' /etc/fstab || true))
+    remove_all(pv, vg, lv)
   end
 end

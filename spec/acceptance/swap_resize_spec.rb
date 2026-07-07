@@ -87,9 +87,8 @@ describe 'resize a swap logical volume referenced by UUID' do
     # 3. Baseline: swap activates from its fstab UUID entry before any resize.
     run_shell('swapoff -a')
     run_shell('swapon -a || true')
-    expect(run_shell('swapon --show --noheadings').stdout.strip).not_to(
-      be_empty, 'precondition failed: swap did not activate from its fstab UUID entry before the resize'
-    )
+    baseline_swap = run_shell('swapon --show --noheadings').stdout.strip
+    expect(baseline_swap).not_to be_empty, 'precondition failed: swap did not activate from its fstab UUID entry before the resize'
 
     # 4. Resize the swap LV with the module -- the operation issue #372 reports.
     apply_manifest(pp_resize, catch_failures: true)
@@ -100,11 +99,8 @@ describe 'resize a swap logical volume referenced by UUID' do
     run_shell('swapoff -a')
     run_shell('swapon -a || true')
     active = run_shell('swapon --show --noheadings').stdout.strip
-    expect(active).not_to(
-      be_empty,
-      "swap did not reactivate from its fstab UUID (#{uuid}) after the resize; mkswap regenerated " \
-      'the UUID and the fstab/resume=UUID= reference is now stale (issue #372)'
-    )
+    failure = "swap did not reactivate from its fstab UUID (#{uuid}) after the resize; mkswap regenerated the UUID and the fstab/resume=UUID= reference is now stale (issue #372)"
+    expect(active).not_to be_empty, failure
   ensure
     run_shell('swapoff -a || true')
     run_shell(%(sed -i '\\|#{fstab_marker}|,+1d' /etc/fstab || true))

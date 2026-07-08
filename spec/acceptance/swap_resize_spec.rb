@@ -53,6 +53,7 @@ describe 'resize a swap logical volume referenced by UUID' do
         ensure       => present,
         volume_group => '#{vg}',
         size         => '100M',
+        yes_flag     => true,
       }
       ->
       filesystem { 'Create_swap':
@@ -69,12 +70,16 @@ describe 'resize a swap logical volume referenced by UUID' do
         ensure       => present,
         volume_group => '#{vg}',
         size         => '200M',
+        yes_flag     => true,
       }
     MANIFEST
   end
 
   it 'keeps swap reachable via its fstab UUID after a resize' do
     # 1. Create the swap LV with the module (its own documented feature).
+    #    yes_flag => true lets lvcreate wipe any stale filesystem signature left
+    #    on the shared scratch disk by earlier specs, matching how an admin reuses
+    #    a disk that previously held a filesystem.
     apply_manifest(pp_create, catch_failures: true)
     expect(run_shell("blkid -s TYPE -o value #{device_path}").stdout.strip).to eq('swap')
 

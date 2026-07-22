@@ -33,14 +33,20 @@ jobs:
       - name: "Setup ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "3.1"
+          ruby-version: "3.2"
           bundler-cache: true
 
       - name: Setup Test Matrix
         id: get-matrix
         run: |
-          bundle exec matrix_from_metadata_v3 --provision-prefer provision_service --nightly --platform-exclude scientific-7 --platform-exclude ubuntu-18.04 --platform-exclude ubuntu-20.04
-
+          bundle exec matrix_from_metadata_v3 \
+          --provision-prefer provision_service \
+          --nightly \
+          --platform-exclude scientific-7 \
+          --platform-exclude ubuntu-18.04 \
+          --platform-exclude ubuntu-20.04 \
+          --collection-platform-exclude 9:redhat-7 \
+          --collection-platform-exclude 9:debian-10
   Acceptance:
     name: "Acceptance tests (${{matrix.platforms.label}}, ${{matrix.collection.collection || matrix.collection}})"
     needs: setup_matrix
@@ -86,7 +92,7 @@ jobs:
       - name: "Setup ruby"
         uses: "ruby/setup-ruby@v1"
         with:
-          ruby-version: "3.1"
+          ruby-version: "3.2"
           bundler-cache: true
 
       - name: "Bundle environment"
@@ -94,11 +100,21 @@ jobs:
           bundle env
 
       - name: "Provision environment"
+        env:
+          PROVIDER: ${{ matrix.platforms.provider }}
+          IMAGE: ${{ matrix.platforms.image }}
         run: |
-          bundle exec rake "litmus:provision[${{matrix.platforms.provider}},${{ matrix.platforms.image }}]"
-          # Redact password
+          if [[ "${{ inputs.kernel_modules }}" == "true" ]] && [[ "$PROVIDER" =~ docker* ]] ; then
+            DOCKER_RUN_OPTS="docker_run_opts: {'--volume': '/lib/modules/$(uname -r):/lib/modules/$(uname -r)'}"
+          else
+            DOCKER_RUN_OPTS=''
+          fi
+          bundle exec rake "litmus:provision[$PROVIDER,$IMAGE,$DOCKER_RUN_OPTS]"
           FILE='spec/fixtures/litmus_inventory.yaml'
           sed -e 's/password: .*/password: "[redacted]"/' < $FILE || true
+          if [[ -n "$TWINGATE_PUBLIC_REPO_KEY" ]]; then
+            bundle exec bolt command run "sed '/^nameserver 168.63.129.16\$/d; /^search/d' /etc/resolv.conf > /tmp/resolv.conf && cat /tmp/resolv.conf > /etc/resolv.conf" --targets all --inventoryfile spec/fixtures/litmus_inventory.yaml
+          fi
 
       - name: "Fix Debian 10 EOL repositories"
         if: contains(matrix.platforms.image, 'debian-10') || contains(matrix.platforms.image, 'buster')

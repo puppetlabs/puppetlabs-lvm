@@ -287,6 +287,22 @@ describe provider_class do
             @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
             expect { @provider.size = '1100000k' }.not_to raise_error(Puppet::ExecutionFailure, %r{blkid})
           end
+
+          it "preserves the existing swap UUID by calling 'mkswap -U' (issue #372)" do
+            @resource.expects(:[]).with(:name).returns('mylv').at_least_once
+            @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
+            @resource.expects(:[]).with(:size).returns('1g').at_least_once
+            @provider.expects(:lvcreate).with('-n', 'mylv', '--size', '1g', 'myvg')
+            @provider.create
+            @provider.expects(:lvs).with('--noheading', '--unit', 'g', '/dev/myvg/mylv').returns(' 1.00g').at_least_once
+            @provider.expects(:lvs).with('--noheading', '-o', 'vg_extent_size', '--units', 'k', '/dev/myvg/mylv').returns(' 1000.00k')
+            @provider.expects(:lvextend).with('-L', '2000000k', '/dev/myvg/mylv').returns(true)
+            @provider.expects(:blkid).with('/dev/myvg/mylv').returns('/dev/myvg/mylv: UUID="abc-123" TYPE="swap"')
+            @provider.expects(:swapoff).with('/dev/myvg/mylv').returns(true)
+            @provider.expects(:mkswap).with('-U', 'abc-123', '/dev/myvg/mylv').returns(true)
+            @provider.expects(:swapon).with('/dev/myvg/mylv').returns(true)
+            @provider.size = '2000000k'
+          end
         end
 
         context 'with defined thin pool' do

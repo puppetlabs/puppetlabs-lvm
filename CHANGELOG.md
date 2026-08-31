@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v4.0.2](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.2) - 2026-06-28
+## [v4.1.0](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.1.0) - 2026-08-31
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v4.0.2...v4.1.0)
+
+### Added
+
+- (MODULES-11719) Add Puppet 9 support [#391](https://github.com/puppetlabs/puppetlabs-lvm/pull/391) ([imaqsood](https://github.com/imaqsood))
+
+## [v4.0.2](https://github.com/puppetlabs/puppetlabs-lvm/tree/v4.0.2) - 2026-06-29
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-lvm/compare/v4.0.1...v4.0.2)
 

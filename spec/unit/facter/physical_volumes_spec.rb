@@ -46,6 +46,7 @@ describe 'physical_volumes fact' do
         Facter::Core::Execution.expects(:exec).at_least(1).returns(pvs_output)
         Facter.value(:physical_volumes).should include('/dev/sda' => {
                                                          'uuid' => 'dPziSO-573Z-9WuH-q22X-cuyM-gHQx-ZeGbfK',
+                                                         'dev_size' => '2.00g',
                                                          'size' => '2.00g',
                                                          'start' => '1.00m',
                                                          'free' => '844.00m',
@@ -60,6 +61,7 @@ describe 'physical_volumes fact' do
                                                        },
                                                        '/dev/sdc' => {
                                                          'uuid' => '09ksGm-Pt28-AR9H-NlgQ-QxtG-5uEH-Qzy1RR',
+                                                         'dev_size' => '2.00g',
                                                          'size' => '2.00g',
                                                          'start' => '1.00m',
                                                          'free' => '2.00g',
@@ -74,6 +76,7 @@ describe 'physical_volumes fact' do
                                                        },
                                                        '/dev/sdd2' => {
                                                          'uuid' => 'PpSFVZ-SS3P-n3a6-ctPF-sb9H-6M85-i0TqBv',
+                                                         'dev_size' => '19.51g',
                                                          'size' => '19.51g',
                                                          'start' => '1.00m',
                                                          'free' => '44.00m',

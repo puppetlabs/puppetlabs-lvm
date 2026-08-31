@@ -119,6 +119,24 @@ Puppet::Type.newtype(:logical_volume) do
     end
   end
 
+  newparam(:physical_volume) do
+    desc 'The name of the physical volume on which this logical volume will be created'
+    validate do |val|
+      unless val.is_a?(::String) || val.is_a?(::Array)
+        raise ArgumentError, "physical_volume should be String or Array: #{val}"
+      end
+    end
+
+    munge do |val|
+      case val
+      when ::String
+        [val]
+      else
+        val
+      end
+    end
+  end
+
   newproperty(:stripes) do
     desc 'The number of stripes to allocate for the new logical volume.'
     validate do |value|

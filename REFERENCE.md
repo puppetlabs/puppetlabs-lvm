@@ -799,6 +799,7 @@ The following parameters are available in the `logical_volume` type.
 * [`name`](#-logical_volume--name)
 * [`no_sync`](#-logical_volume--no_sync)
 * [`persistent`](#-logical_volume--persistent)
+* [`physical_volume`](#-logical_volume--physical_volume)
 * [`poolmetadatasize`](#-logical_volume--poolmetadatasize)
 * [`provider`](#-logical_volume--provider)
 * [`range`](#-logical_volume--range)
@@ -843,6 +844,10 @@ An optimization in lvcreate, at least on Linux.
 ##### <a name="-logical_volume--persistent"></a>`persistent`
 
 Set to true to make the block device persistent
+
+##### <a name="-logical_volume--physical_volume"></a>`physical_volume`
+
+Create this logical volume on the specified physical volume
 
 ##### <a name="-logical_volume--poolmetadatasize"></a>`poolmetadatasize`
 

@@ -34,6 +34,7 @@ module Puppet_X
       end
 
       def self.remove_prefix(item)
+        return item if item == 'dev_size'
         item.gsub(%r{^[A-Za-z]+_}, '')
       end
     end

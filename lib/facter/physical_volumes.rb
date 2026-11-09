@@ -29,9 +29,13 @@ Facter.add(:physical_volumes) do
       'pv_mda_used_count',
       'pv_ba_start',
       'pv_ba_size',
+      'vg_name', # must be last as it could be empty
     ]
 
     output = Facter::Core::Execution.exec("pvs -o #{columns.join(',')}  --noheading --nosuffix")
-    Puppet_X::LVM::Output.parse('pv_name', columns, output)
+    Puppet_X::LVM::Output.parse('pv_name', columns, output, [
+                                  'dev_size',
+                                  'vg_name',
+                                ])
   end
 end

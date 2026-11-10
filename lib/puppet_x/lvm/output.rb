@@ -4,28 +4,32 @@ module Puppet_X
   module LVM
     # Work with LVM Output
     class Output
-      # Parses the results of LVMs commands. This does not handle when columns
-      # have no data and therefore these columns should be avoided. It returns
+      SEPARATOR = ','
+      ARGS = [
+        '--noheadings',
+        '--separator', SEPARATOR,
+        '--nosuffix'
+      ].freeze
+
+      # Parses the results of LVMs commands. It returns
       # the data with the prefix removed i.e. "lv_free" would be come "free"
       # this however doesn't descriminate and will turn something like
       # "foo_bar" into "bar"
       # Use item_preserve to ensure prefix is not removed from these columns
       def self.parse(key, columns, data, item_preserve = [])
-        results = {}
-
         # Remove prefixes
         columns = columns.map { |col| remove_prefix(col, item_preserve) }
         key     = remove_prefix(key, item_preserve)
+        key_idx = columns.index(key)
 
-        data.split("\n").each do |line|
-          parsed_line = line.gsub(%r{\s+}, ' ').strip.split
-          values      = columns.zip(parsed_line).to_h
-          current_key = values[key]
-          values.delete(key)
-          results[current_key] = values.compact
+        data.lines.each_with_object({}) do |line, results|
+          parsed_line = line.lstrip.chomp.split(self::SEPARATOR)
+          results[parsed_line[key_idx]] = columns.each_with_index.each_with_object({}) do |(col, idx), line_hash|
+            next if idx == key_idx
+
+            line_hash[col] = parsed_line[idx]
+          end
         end
-
-        results
       end
 
       def self.remove_prefix(item, preserve = [])

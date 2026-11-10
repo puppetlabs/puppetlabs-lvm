@@ -27,7 +27,7 @@ module Puppet_X
           results[parsed_line[key_idx]] = columns.each_with_index.each_with_object({}) do |(col, idx), line_hash|
             next if idx == key_idx
 
-            line_hash[col] = parsed_line[idx]
+            line_hash[col] = parsed_line[idx] unless parsed_line[idx].nil?
           end
         end
       end

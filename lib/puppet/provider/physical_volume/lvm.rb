@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../puppet_x/lvm/output'
+
 Puppet::Type.type(:physical_volume).provide(:lvm) do
   desc 'Manages LVM physical volumes on Linux'
 
@@ -11,6 +13,22 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     get_physical_volumes.map do |physical_volumes_line|
       physical_volumes_properties = get_physical_volume_properties(physical_volumes_line)
       new(physical_volumes_properties)
+    end
+  end
+
+  def self.instances
+    columns = [
+      'pv_name',
+    ]
+    Puppet_X::LVM::Output.parse(
+      'pv_name',
+      columns,
+      pvs('-o', columns.join(','), *Puppet_X::LVM::Output::ARGS),
+    ).map do |pv_name, _|
+      new(
+        ensure: :present,
+        name: pv_name,
+      )
     end
   end
 
@@ -29,7 +47,7 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
       begin
         # Check to see if the volume group exists
         # if it does set TRUE else FALSE
-        vgs(@resource[:unless_vg])
+        vgs('-o', 'vg_name', *Puppet_X::LVM::Output::ARGS, @resource[:unless_vg])
         vg_exists = true
       rescue Puppet::ExecutionFailure
         vg_exists = false
@@ -42,35 +60,11 @@ Puppet::Type.type(:physical_volume).provide(:lvm) do
     else
       begin
         # Check to see if the PV already exists
-        pvs(@resource[:name])
+        pvs('-o', 'pv_name', *Puppet_X::LVM::Output::ARGS, @resource[:name])
       rescue Puppet::ExecutionFailure
         false
       end
     end
-  end
-
-  def self.get_physical_volumes
-    full_pvs_output = pvs.split("\n")
-
-    # Remove first line
-    full_pvs_output.drop(1)
-  end
-
-  def self.get_physical_volume_properties(physical_volumes_line)
-    physical_volumes_properties = {}
-
-    # pvs output formats thus:
-    # PV         VG       Fmt  Attr PSize  PFree
-
-    # Split on spaces
-    output_array = physical_volumes_line.gsub(%r{\s+}m, ' ').strip.split
-
-    # Assign properties based on headers
-    # Just doing name for now...
-    physical_volumes_properties[:ensure]     = :present
-    physical_volumes_properties[:name]       = output_array[0]
-
-    physical_volumes_properties
   end
 
   private

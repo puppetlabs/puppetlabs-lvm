@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../puppet_x/lvm/output'
+
 Puppet::Type.type(:volume_group).provide :lvm do
   desc 'Manages LVM volume groups on Linux'
 
@@ -13,34 +15,19 @@ Puppet::Type.type(:volume_group).provide :lvm do
            pvs: 'pvs'
 
   def self.instances
-    get_volume_groups.map do |volume_groups_line|
-      volume_groups_properties = get_logical_volume_properties(volume_groups_line)
-      new(volume_groups_properties)
+    columns = [
+      'vg_name',
+    ]
+    Puppet_X::LVM::Output.parse(
+      'vg_name',
+      columns,
+      vgs('-o', columns.join(','), *Puppet_X::LVM::Output::ARGS),
+    ).map do |vg_name, _|
+      new(
+        ensure: :present,
+        name: vg_name,
+      )
     end
-  end
-
-  def self.get_volume_groups
-    full_vgs_output = vgs.split("\n")
-
-    # Remove first line
-    full_vgs_output.drop(1)
-  end
-
-  def self.get_logical_volume_properties(volume_groups_line)
-    volume_groups_properties = {}
-
-    # vgs output formats thus:
-    # VG       #PV #LV #SN Attr   VSize  VFree
-
-    # Split on spaces
-    output_array = volume_groups_line.gsub(%r{\s+}m, ' ').strip.split
-
-    # Assign properties based on headers
-    # Just doing name for now...
-    volume_groups_properties[:ensure]     = :present
-    volume_groups_properties[:name]       = output_array[0]
-
-    volume_groups_properties
   end
 
   def create
@@ -57,7 +44,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
   end
 
   def exists?
-    vgs(@resource[:name])
+    vgs('-o', 'vg_name', *Puppet_X::LVM::Output::ARGS, @resource[:name])
   rescue Puppet::ExecutionFailure
     false
   end
@@ -66,7 +53,7 @@ Puppet::Type.type(:volume_group).provide :lvm do
     # Only take action if createonly is false just to be safe
     #  this is really only here to enforce the createonly setting
     #  if something goes wrong in physical_volumes
-    return unless @resource[:createonly].to_s == 'false'
+    return unless @resource[:createonly] == :false
 
     existing_volumes = physical_volumes
     extraneous = existing_volumes - new_volumes
@@ -76,10 +63,18 @@ Puppet::Type.type(:volume_group).provide :lvm do
   end
 
   def physical_volumes
-    if @resource[:createonly].to_s == 'false' || !vgs(@resource[:name])
-      lines = pvs('-o', 'pv_name,vg_name', '--separator', ',')
-      lines.split(%r{\n}).grep(%r{,#{@resource[:name]}$}).map do |s|
-        s.split(%r{,})[0].strip
+    if @resource[:createonly] == :false || !vgs('-o', 'vg_name', *Puppet_X::LVM::Output::ARGS, @resource[:name])
+      columns = [
+        'pv_name',
+        'vg_name',
+      ]
+      Puppet_X::LVM::Output.parse(
+        'pv_name',
+        columns,
+        pvs('-o', 'pv_name,vg_name', *Puppet_X::LVM::Output::ARGS),
+        ['vg_name'],
+      ).each_with_object([]) do |(pv_name, values), results|
+        results << pv_name if values['vg_name'] == @resource[:name]
       end
     else
       # Trick the check by setting the returned value to what is

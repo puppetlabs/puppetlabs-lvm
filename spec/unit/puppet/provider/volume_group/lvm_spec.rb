@@ -11,8 +11,7 @@ describe provider_class do
   end
 
   vgs_output = <<-OUTPUT
-  VG       #PV #LV #SN Attr   VSize  VFree
-  VolGroup   1   2   0 wz--n- 19.51g    0
+  VolGroup
   OUTPUT
 
   describe 'self.instances' do

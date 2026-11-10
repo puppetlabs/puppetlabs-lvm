@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'puppet_x/lvm/utils'
+
 Puppet::Type.type(:volume_group).provide :lvm do
   desc 'Manages LVM volume groups on Linux'
 
@@ -68,10 +70,17 @@ Puppet::Type.type(:volume_group).provide :lvm do
     #  if something goes wrong in physical_volumes
     return unless @resource[:createonly].to_s == 'false'
 
-    existing_volumes = physical_volumes
-    extraneous = existing_volumes - new_volumes
+    if @resource[:followsymlinks] == :true
+      existing_volumes = Puppet_X::LVM::Utils.device_expand_path(physical_volumes)
+      real_new_volumes = Puppet_X::LVM::Utils.device_expand_path(new_volumes)
+    else
+      existing_volumes = physical_volumes
+      real_new_volumes = new_volumes
+    end
+
+    extraneous = existing_volumes - real_new_volumes
     extraneous.each { |volume| reduce_with(volume) }
-    missing = new_volumes - existing_volumes
+    missing = real_new_volumes - existing_volumes
     missing.each { |volume| extend_with(volume) }
   end
 

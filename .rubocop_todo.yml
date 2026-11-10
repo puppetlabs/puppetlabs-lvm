@@ -29,12 +29,13 @@ Lint/Void:
   Exclude:
     - 'spec/unit/puppet/type/logical_volume_spec.rb'
 
-# Offense count: 1
+# Offense count: 2
 # Configuration parameters: AllowedNames.
 # AllowedNames: module_parent
 Naming/ClassAndModuleCamelCase:
   Exclude:
     - 'lib/puppet_x/lvm/output.rb'
+    - 'lib/puppet_x/lvm/utils.rb'
 
 # Offense count: 1
 # Configuration parameters: Include, CustomTransform, IgnoreMethods.
@@ -83,10 +84,11 @@ RSpec/ScatteredSetup:
   Exclude:
     - 'spec/unit/puppet/provider/physical_volume/lvm_spec.rb'
 
-# Offense count: 1
+# Offense count: 2
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: nested, compact
 Style/ClassAndModuleChildren:
   Exclude:
     - 'lib/puppet_x/lvm/output.rb'
+    - 'lib/puppet_x/lvm/utils.rb'

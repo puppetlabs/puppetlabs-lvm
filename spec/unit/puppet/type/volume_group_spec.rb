@@ -62,5 +62,9 @@ describe Puppet::Type.type(:volume_group) do
         resource.should(:physical_volumes).should == ['mypv', 'otherpv']
       end
     end
+
+    it 'does not support an hash' do
+      specifying(name: 'myvg', physical_volumes: { 'mypv' => {} }).should raise_error(Puppet::Error)
+    end
   end
 end

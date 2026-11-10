@@ -12,7 +12,10 @@ describe 'lvm', type: :class do
       {
         volume_groups: {
           'myvg' => {
-            'physical_volumes' => ['/dev/sda2', '/dev/sda3'],
+            'physical_volumes' => {
+              '/dev/sda2' => {},
+              '/dev/sda3' => {},
+            },
             'logical_volumes' => {
               'opt' => { 'size' => '20G' },
               'tmp' => { 'size' => '1G' },
@@ -29,6 +32,8 @@ describe 'lvm', type: :class do
         }
       }
     end
+
+    it { is_expected.to compile.with_all_deps }
 
     it { is_expected.to contain_physical_volume('/dev/sda2') }
     it { is_expected.to contain_physical_volume('/dev/sda3') }
@@ -60,7 +65,7 @@ describe 'lvm', type: :class do
       {
         volume_groups: {
           'myvg' => {
-            'physical_volumes' => ['/dev/sda2'],
+            'physical_volumes' => '/dev/sda2',
             'logical_volumes' => {
               'not_mounted' => {
                 'size' => '5G',
@@ -73,6 +78,8 @@ describe 'lvm', type: :class do
         }
       }
     end
+
+    it { is_expected.to compile.with_all_deps }
 
     it {
       expect(subject).to contain_mount('/mnt/not_mounted').with(ensure: 'present')
@@ -98,6 +105,8 @@ describe 'lvm', type: :class do
         }
       }
     end
+
+    it { is_expected.to compile.with_all_deps }
 
     it 'guards mountpoint creation for absent logical volumes' do
       expect(subject).to contain_exec("ensure mountpoint '/var/opt/test' exists").with(
@@ -127,6 +136,8 @@ describe 'lvm', type: :class do
         }
       }
     end
+
+    it { is_expected.to compile.with_all_deps }
 
     it {
       expect(subject).to contain_logical_volume('swap').with(volume_group: 'myvg',

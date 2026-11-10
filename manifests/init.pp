@@ -20,5 +20,9 @@ class lvm (
     }
   }
 
-  create_resources('lvm::volume_group', $volume_groups)
+  $volume_groups.each |String $key, Hash $values| {
+    lvm::volume_group { $key:
+      * => $values,
+    }
+  }
 }

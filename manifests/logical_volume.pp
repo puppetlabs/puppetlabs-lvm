@@ -62,6 +62,8 @@
 #
 # @param yes_flag If set to true, do not prompt for confirmation interactively but always assume the answer yes.
 #
+# @param physical_volume Create this logical volume on the specified physical volume
+#
 define lvm::logical_volume (
   String[1] $volume_group,
   Optional[String[1]] $size                                                     = undef,
@@ -91,6 +93,7 @@ define lvm::logical_volume (
   Optional[Variant[String[1], Integer]] $region_size                            = undef,
   Optional[Enum['anywhere', 'contiguous', 'cling', 'inherit', 'normal']] $alloc = undef,
   Boolean $yes_flag                                                             = false,
+  Optional[Variant[Array[String],String]] $physical_volume                      = undef,
 ) {
   $lvm_device_path = "/dev/${volume_group}/${name}"
 
@@ -153,6 +156,7 @@ define lvm::logical_volume (
     region_size      => $region_size,
     alloc            => $alloc,
     yes_flag         => $yes_flag,
+    physical_volume  => $physical_volume,
   }
 
   if $createfs {

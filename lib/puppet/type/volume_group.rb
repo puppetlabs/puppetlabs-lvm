@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'puppet_x/lvm/utils'
+
 Puppet::Type.newtype(:volume_group) do
   desc 'Volume group resource type'
 
@@ -20,27 +22,9 @@ Puppet::Type.newtype(:volume_group) do
          using the physical_volume resource type."
 
     def insync?(is)
-      if @resource.parameter(:followsymlinks).value == :true
-        real_should = []
-        real_is = []
-        should.each do |s|
-          if File.symlink?(s)
-            device = File.expand_path(File.readlink(s), File.dirname(s))
-            debug("resolved symlink '#{s}' to device '#{device}'")
-            real_should.push device
-          else
-            real_should.push s
-          end
-        end
-        is.each do |s|
-          if File.symlink?(s)
-            device = File.expand_path(File.readlink(s), File.dirname(s))
-            debug("resolved symlink '#{s}' to device '#{device}'")
-            real_is.push device
-          else
-            real_is.push s
-          end
-        end
+      if @resource[:followsymlinks] == :true
+        real_should = Puppet_X::LVM::Utils.device_expand_path(should)
+        real_is = Puppet_X::LVM::Utils.device_expand_path(is)
 
         real_should.sort == real_is.sort
       else

@@ -65,7 +65,7 @@ Puppet::Type.type(:filesystem).provide :aix do
       size: 'size',
       extended_attributes: 'ea',
       mount_options: 'options',
-      encrypted: 'efs'
+      encrypted: 'efs',
     }[pvalue] || pvalue.to_s
   end
 
@@ -160,7 +160,7 @@ Puppet::Type.type(:filesystem).provide :aix do
       size: 'size',
       extended_attributes: 'ea',
       mount_options: 'options',
-      encrypted: 'efs'
+      encrypted: 'efs',
     }[pvalue] || pvalue.to_s
   end
 end

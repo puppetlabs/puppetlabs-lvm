@@ -214,9 +214,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
       end
 
     else
-      unless [:true, true, 'true'].include?(@resource[:size_is_minsize])
-        raise Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})"
-      end
+      raise Puppet::Error, "Decreasing the size requires manual intervention (#{new_size} < #{current_size})" unless [:true, true, 'true'].include?(@resource[:size_is_minsize])
 
       info("Logical volume already has minimum size of #{new_size} (currently #{current_size})")
 
@@ -227,8 +225,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
     # Run the lvs command with the -o option to get only the stripes count
     raw = (lvs '-o', 'stripes', '--noheadings', path)
 
-    output_array = raw.strip
-    output_array
+    raw.strip
   end
 
   def stripes=(new_stripes_count)
@@ -236,6 +233,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
     # Changing stripes is not supported for existing logical volumes
     return unless new_stripes_count.to_i != current_stripes
+
     raise Puppet::Error, "Changing stripes from #{current_stripes} to #{new_stripes_count} is not supported for existing logical volumes"
   end
 
@@ -321,6 +319,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   # second `which` call.
   def self.udevadm_available?
     return @udevadm_available if defined?(@udevadm_available)
+
     @udevadm_available = !command(:udevadm).nil?
   end
 

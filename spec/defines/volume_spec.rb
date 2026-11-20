@@ -12,7 +12,7 @@ describe 'lvm::volume' do
         vg: 'vg_example0',
         pv: '/dev/sdd1',
         fstype: 'ext4',
-        size: '100GB'
+        size: '100GB',
       }
     end
 

@@ -62,7 +62,7 @@ describe 'lvm_vgs facts' do
     context 'when there are vgs' do
       before :each do
         Facter.fact(:kernel).expects(:value).at_least(1).returns('Linux')
-        Facter::Util::Resolution.expects('which').with('vgs').at_least(1).returns('/sbin/vgs')
+        Facter::Core::Execution.expects('which').with('vgs').at_least(1).returns('/sbin/vgs')
         Facter::Core::Execution.stubs(:execute) # All other calls
       end
 

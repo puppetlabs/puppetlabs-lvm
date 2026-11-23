@@ -11,9 +11,8 @@ describe provider_class do
   end
 
   pvs_output = <<-OUTPUT
-  PV         VG     Fmt  Attr PSize  PFree
-  /dev/sda2  centos lvm2 a--  19.51g    0
-  /dev/sda3  centos lvm2 a--  10.11g    0
+  /dev/sda2
+  /dev/sda3
   OUTPUT
 
   before :each do

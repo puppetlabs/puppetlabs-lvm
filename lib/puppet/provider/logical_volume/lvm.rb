@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../puppet_x/lvm/output'
+
 Puppet::Type.type(:logical_volume).provide :lvm do
   desc 'Manages LVM logical volumes on Linux'
 
@@ -25,37 +27,22 @@ Puppet::Type.type(:logical_volume).provide :lvm do
                     udevadm: 'udevadm'
 
   def self.instances
-    get_logical_volumes.map do |logical_volumes_line|
-      logical_volumes_properties = get_logical_volume_properties(logical_volumes_line)
-      instance = new(logical_volumes_properties)
-      # Save the volume group in the provider so the type can find it
-      instance.volume_group = logical_volumes_properties[:volume_group]
-      instance
+    columns = [
+      'lv_name',
+      'vg_name',
+    ]
+    Puppet_X::LVM::Output.parse(
+      'lv_name',
+      columns,
+      lvs('-o', columns.join(','), *Puppet_X::LVM::Output::ARGS),
+      ['vg_name'],
+    ).map do |lv_name, values|
+      new(
+        ensure: :present,
+        name: lv_name,
+        volume_group: values['vg_name'],
+      )
     end
-  end
-
-  def self.get_logical_volumes
-    full_lvs_output = lvs.split("\n")
-
-    # Remove first line
-    full_lvs_output.drop(1)
-  end
-
-  def self.get_logical_volume_properties(logical_volumes_line)
-    logical_volumes_properties = {}
-
-    # lvs output formats thus:
-    # LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
-
-    # Split on spaces
-    output_array = logical_volumes_line.gsub(%r{\s+}m, ' ').strip.split
-
-    # Assign properties based on headers
-    logical_volumes_properties[:ensure]       = :present
-    logical_volumes_properties[:name]         = output_array[0]
-    logical_volumes_properties[:volume_group] = output_array[1]
-
-    logical_volumes_properties
   end
 
   # Just assume that the volume group is correct, we don't support changing
@@ -133,12 +120,21 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   end
 
   def exists?
-    lvs(@resource[:volume_group]) =~ lvs_pattern
+    columns = [
+      'lv_name',
+      'vg_name',
+    ]
+    Puppet_X::LVM::Output.parse(
+      'lv_name',
+      columns,
+      lvs('-o', columns.join(','), *Puppet_X::LVM::Output::ARGS, @resource[:volume_group]),
+      ['vg_name'],
+    ).dig(@resource[:name], 'vg_name') == @resource[:volume_group]
   rescue Puppet::ExecutionFailure
     # lvs fails if we give it an empty volume group name, as would
     # happen if we were running `puppet resource`. This should be
     # interpreted as "The resource does not exist"
-    nil
+    false
   end
 
   def size
@@ -322,12 +318,6 @@ Puppet::Type.type(:logical_volume).provide :lvm do
   def self.udevadm_available?
     return @udevadm_available if defined?(@udevadm_available)
     @udevadm_available = !command(:udevadm).nil?
-  end
-
-  def lvs_pattern
-    # lvs output format:
-    # LV      VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
-    %r{\s+#{Regexp.quote @resource[:name]}\s+#{Regexp.quote @resource[:volume_group]}\s+}
   end
 
   def path

@@ -15,11 +15,10 @@ describe provider_class do
   end
 
   lvs_output = <<-OUTPUT
-  LV      VG         Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
-  lv_root VolGroup   -wi-ao----  18.54g
-  lv_swap VolGroup   -wi-ao---- 992.00m
-  data    data       -wi-ao---- 992.00m
-  j1      vg_jenkins -wi-a-----   1.00g
+  lv_root,VolGroup
+  lv_swap,VolGroup
+  data,data
+  j1,vg_jenkins
   OUTPUT
 
   describe 'self.instances' do
@@ -38,28 +37,28 @@ describe provider_class do
     it "returns 'true', lv 'data' in vg 'data' exists" do
       @resource.expects(:[]).with(:name).returns('data')
       @resource.expects(:[]).with(:volume_group).returns('data').at_least_once
-      @provider.class.stubs(:lvs).with('data').returns(lvs_output)
-      expect(@provider.exists?).to be > 10
+      @provider.class.stubs(:lvs).with('-o', 'lv_name,vg_name', '--noheadings', '--separator', ',', '--nosuffix', 'data').returns(lvs_output)
+      expect(@provider.exists?).to be true
     end
 
-    it "returns 'nil', lv 'jenkins' in vg 'vg_jenkins' exists" do
+    it "returns 'false', lv 'jenkins' in vg 'vg_jenkins' exists" do
       @resource.expects(:[]).with(:name).returns('jenkins')
       @resource.expects(:[]).with(:volume_group).returns('vg_jenkins').at_least_once
-      @provider.class.stubs(:lvs).with('vg_jenkins').returns(lvs_output)
-      expect(@provider.exists?).to be_nil
+      @provider.class.stubs(:lvs).with('-o', 'lv_name,vg_name', '--noheadings', '--separator', ',', '--nosuffix', 'vg_jenkins').returns(lvs_output)
+      expect(@provider.exists?).to be false
     end
 
-    it "returns 'nil', lv 'swap' in vg 'VolGroup' exists" do
+    it "returns 'false', lv 'swap' in vg 'VolGroup' exists" do
       @resource.expects(:[]).with(:name).returns('swap')
       @resource.expects(:[]).with(:volume_group).returns('VolGroup').at_least_once
-      @provider.class.stubs(:lvs).with('VolGroup').returns(lvs_output)
-      expect(@provider.exists?).to be_nil
+      @provider.class.stubs(:lvs).with('-o', 'lv_name,vg_name', '--noheadings', '--separator', ',', '--nosuffix', 'VolGroup').returns(lvs_output)
+      expect(@provider.exists?).to be false
     end
 
-    it "returns 'nil', lv 'data' in vg 'myvg' does not exist" do
+    it "returns 'false', lv 'data' in vg 'myvg' does not exist" do
       @resource.expects(:[]).with(:volume_group).returns('myvg').at_least_once
-      @provider.class.stubs(:lvs).with('myvg').raises(Puppet::ExecutionFailure, 'Execution of \'/sbin/lvs myvg\' returned 5')
-      expect(@provider.exists?).to be_nil
+      @provider.class.stubs(:lvs).with('-o', 'lv_name,vg_name', '--noheadings', '--separator', ',', '--nosuffix', 'myvg').raises(Puppet::ExecutionFailure, 'Execution of \'/sbin/lvs myvg\' returned 5')
+      expect(@provider.exists?).to be false
     end
   end
 

@@ -24,7 +24,7 @@ Facter.add(:volume_groups) do
       'vg_free',
     ]
 
-    output = Facter::Core::Execution.exec("vgs -o #{columns.join(',')}  --noheading --nosuffix")
+    output = Facter::Core::Execution.exec("vgs -o #{columns.join(',')} #{Puppet_X::LVM::Output::ARGS.join(' ')}")
     Puppet_X::LVM::Output.parse('vg_name', columns, output)
   end
 end

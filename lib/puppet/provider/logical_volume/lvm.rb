@@ -205,7 +205,10 @@ Puppet::Type.type(:logical_volume).provide :lvm do
             mount_point = lsblk('-o', 'MOUNTPOINT', '-nr', path).chomp
             xfs_growfs(mount_point) || raise("Cannot resize filesystem to size #{new_size} because xfs_growfs failed.")
           elsif %r{\bTYPE="(swap)"}.match?(blkid_type)
-            (swapoff(path) && mkswap(path) && swapon(path)) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
+            # Preserve the existing swap UUID; mkswap defaults to a new one, which breaks RHEL 10 fstab/resume= UUID references and swap reactivation (issue #372).
+            uuid = blkid_type[%r{\bUUID="([^"]+)"}, 1]
+            mkswap_cmd = uuid ? ['-U', uuid, path] : [path]
+            (swapoff(path) && mkswap(*mkswap_cmd) && swapon(path)) || raise("Cannot resize swap to size #{new_size} because mkswap failed.")
           end
         rescue Puppet::ExecutionFailure => e
           ## If blkid returned 2, there is no filesystem present or the file doesn't exist.  This should not be a failure.

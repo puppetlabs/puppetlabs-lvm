@@ -7,7 +7,7 @@ module Helpers
     pv: :physical_volume,
     lv: :logical_volume,
     vg: :volume_group,
-    fs: :filesystem
+    fs: :filesystem,
   }.freeze
 
   def self.included(obj)
@@ -34,10 +34,10 @@ module Helpers
   end
 
   # Sets up an expection that a resource for +type+ is created
-  def should_create(type, &block)
+  def should_create(type, &)
     raise "Invalid type #{type}" unless TYPES[type]
 
-    Puppet::Type.type(TYPES[type]).expects(:new).with(&block)
+    Puppet::Type.type(TYPES[type]).expects(:new).with(&)
   end
 
   # Return the +@valid_params+ without one or more keys

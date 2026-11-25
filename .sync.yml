@@ -12,6 +12,9 @@ Rakefile:
   changelog_since_tag: '1.2.0'
   requires:
     - 'puppet-strings/tasks'
+  # puppet-lint checks the module disabled by hand (Rakefile/.puppet-lint.rc) (MODULES-11997 pdk update)
+  extra_disabled_lint_checks:
+  - strict_indent
 spec/spec_helper.rb:
   mock_with: ':mocha'
   coverage_report: true

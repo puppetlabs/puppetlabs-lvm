@@ -19,6 +19,10 @@ Puppet::Type.newtype(:volume_group) do
          will automatically set these as dependencies, but they must be defined elsewhere
          using the physical_volume resource type."
 
+    validate do |value|
+      raise ArgumentError, 'expected value of type Variant[Array,String], got %s' % value.class unless [Array, String].include?(value.class)
+    end
+
     def insync?(is)
       if @resource.parameter(:followsymlinks).value == :true
         real_should = []

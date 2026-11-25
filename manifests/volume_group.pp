@@ -30,34 +30,31 @@ define lvm::volume_group (
   Hash $logical_volumes             = {},
   Boolean $followsymlinks           = false,
 ) {
-  if $physical_volumes.is_a(Hash) {
-    create_resources(
-      'lvm::physical_volume',
-      $physical_volumes,
-      {
-        ensure           => $ensure,
-      }
-    )
+  $_physical_volumes = $physical_volumes ? {
+    Hash    => $physical_volumes,
+    default => Hash(Array($physical_volumes, true).map |String $item| { [$item, {}] }),
   }
-  else {
-    physical_volume { $physical_volumes:
-      ensure => $ensure,
+  $_physical_volumes.each |String $key, Hash $values| {
+    lvm::physical_volume { $key:
+      * => {
+        ensure => $ensure,
+      } + $values,
     }
   }
 
   volume_group { $name:
     ensure           => $ensure,
     createonly       => $createonly,
-    physical_volumes => $physical_volumes,
+    physical_volumes => $_physical_volumes.keys,
     followsymlinks   => $followsymlinks,
   }
 
-  create_resources(
-    'lvm::logical_volume',
-    $logical_volumes,
-    {
-      ensure       => $ensure,
-      volume_group => $name,
+  $logical_volumes.each |String $key, Hash $values| {
+    lvm::logical_volume { $key:
+      * => {
+        ensure       => $ensure,
+        volume_group => $name,
+      } + $values,
     }
-  )
+  }
 }
